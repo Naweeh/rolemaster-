@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 3;
+const int rolemasterSqliteSchemaVersion = 4;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -13,15 +13,22 @@ void initializeRolemasterSqliteSchema(Database database) {
       _runMigration(database, () {
         _createCampaignSchemaV2(database);
         _createWorldSchemaV3(database);
+        _createCalendarSchemaV4(database);
       });
     case 1:
       _runMigration(database, () {
         _migrateCampaignV1ToV2(database);
         _createWorldSchemaV3(database);
+        _createCalendarSchemaV4(database);
       });
     case 2:
       _runMigration(database, () {
         _createWorldSchemaV3(database);
+        _createCalendarSchemaV4(database);
+      });
+    case 3:
+      _runMigration(database, () {
+        _createCalendarSchemaV4(database);
       });
     case rolemasterSqliteSchemaVersion:
       return;
@@ -141,5 +148,62 @@ void _createWorldSchemaV3(Database database) {
   );
   database.execute(
     'CREATE INDEX idx_locations_parent_id ON locations(parent_location_id)',
+  );
+}
+
+void _createCalendarSchemaV4(Database database) {
+  database.execute('''
+    CREATE TABLE calendars (
+      id TEXT NOT NULL PRIMARY KEY,
+      name TEXT NOT NULL,
+      months_json TEXT NOT NULL,
+      weekdays_json TEXT NOT NULL,
+      hours_per_day INTEGER NOT NULL CHECK (hours_per_day > 0),
+      minutes_per_hour INTEGER NOT NULL CHECK (minutes_per_hour > 0),
+      starting_weekday_index INTEGER NOT NULL CHECK (starting_weekday_index >= 0)
+    ) STRICT
+  ''');
+
+  database.execute('''
+    CREATE TABLE campaign_timelines (
+      campaign_id TEXT NOT NULL PRIMARY KEY,
+      calendar_id TEXT NOT NULL,
+      current_year INTEGER NOT NULL CHECK (current_year >= 1),
+      current_month INTEGER NOT NULL CHECK (current_month >= 1),
+      current_day INTEGER NOT NULL CHECK (current_day >= 1),
+      current_hour INTEGER NOT NULL CHECK (current_hour >= 0),
+      current_minute INTEGER NOT NULL CHECK (current_minute >= 0),
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (calendar_id) REFERENCES calendars(id) ON DELETE RESTRICT
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_campaign_timelines_calendar_id '
+    'ON campaign_timelines(calendar_id)',
+  );
+
+  database.execute('''
+    CREATE TABLE temporal_events (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      calendar_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      scheduled_year INTEGER NOT NULL CHECK (scheduled_year >= 1),
+      scheduled_month INTEGER NOT NULL CHECK (scheduled_month >= 1),
+      scheduled_day INTEGER NOT NULL CHECK (scheduled_day >= 1),
+      scheduled_hour INTEGER NOT NULL CHECK (scheduled_hour >= 0),
+      scheduled_minute INTEGER NOT NULL CHECK (scheduled_minute >= 0),
+      notes TEXT,
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (calendar_id) REFERENCES calendars(id) ON DELETE RESTRICT
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_temporal_events_campaign_id '
+    'ON temporal_events(campaign_id)',
+  );
+  database.execute(
+    'CREATE INDEX idx_temporal_events_calendar_id '
+    'ON temporal_events(calendar_id)',
   );
 }
