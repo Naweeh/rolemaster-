@@ -37,6 +37,7 @@ void main() {
     events.close();
 
     final legacy = sqlite3.open(path);
+    legacy.execute('DROP TABLE item_instances');
     legacy.execute('DROP TABLE character_skills');
     legacy.execute('DROP TABLE campaign_rulesets');
     legacy.execute('DROP TABLE ruleset_packages');
