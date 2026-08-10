@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v10
+  - [x] esquema SQLite central versionado hasta v11
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -41,7 +41,7 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo: **Skills sobre Ruleset Foundation**.
+Sprint activo: **Inventory / Items**.
 
 - [x] Characters
   - [x] identidad y metadata narrativa
@@ -79,11 +79,17 @@ Sprint activo: **Skills sobre Ruleset Foundation**.
   - [ ] publicar nueva versión inmutable
   - [ ] presets reutilizables separados de campañas
   - [ ] migración controlada entre rulesets/versiones
-- [ ] Skills
-  - [ ] `SkillDefinition` perteneciente al Ruleset
-  - [ ] estado/rangos de skill pertenecientes a personaje/campaña
-  - [ ] modificadores y metadata
-  - [ ] persistencia y tests
+- [x] Skills Foundation
+  - [x] `SkillDefinition` perteneciente al Ruleset
+  - [x] catálogo tipado desde `RulesetPackage.data['skills']`
+  - [x] activación condicionada por módulos del Ruleset
+  - [x] `CharacterSkillState` separado de la definición
+  - [x] rangos, modificadores nombrados y notas
+  - [x] validación contra el Ruleset exacto de la campaña
+  - [x] persistencia SQLite v11
+  - [x] migración v10→v11 preservando binding de Ruleset
+  - [x] tests Core y SQLite
+  - [x] fórmulas/costes/estadísticas asociadas diferidas al Rules Engine
 - [ ] Inventory / Items
 - [ ] Maps / Locations
 - [ ] Encounters
@@ -102,6 +108,8 @@ Sprint activo: **Skills sobre Ruleset Foundation**.
 
 - [x] Base responsive/adaptativa compartida
 - [x] UI técnica provisional: crear campaña + seleccionar ruleset/versión/módulos
+- [x] Build web técnico automatizado como artefacto de GitHub Actions
+- [ ] Publicación directa de preview por GitHub Pages — pendiente habilitar Pages en el repositorio
 - [ ] Workspace definitivo del GM en escritorio
 - [ ] Layout táctil definitivo para tablet
 - [ ] Vista contextual definitiva para móvil
