@@ -17,6 +17,7 @@ final class Npc {
         createdAt = createdAt.toUtc(),
         updatedAt = (updatedAt ?? createdAt).toUtc(),
         archivedAt = archivedAt?.toUtc(),
+        metadata = metadata,
         placement = placement ?? NpcPlacement.unplaced() {
     if (this.id.isEmpty) {
       throw ArgumentError.value(id, 'id', 'NPC id cannot be empty.');
