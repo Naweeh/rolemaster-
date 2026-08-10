@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
 import '../campaign/campaign_home_page.dart';
+import 'visual_alpha_character_panel.dart';
+import 'visual_alpha_character_profile.dart';
 import 'visual_alpha_dice_panel.dart';
 import 'visual_alpha_workspace.dart';
 
 final class VisualAlphaLandingPage extends StatefulWidget {
   const VisualAlphaLandingPage({
     required this.campaignRepository,
+    required this.characterRepository,
+    required this.characterProfileRepository,
     required this.rulesetRepository,
     required this.campaignRulesetRepository,
     super.key,
   });
 
   final CampaignRepository campaignRepository;
+  final CharacterRepository characterRepository;
+  final VisualAlphaCharacterProfileRepository characterProfileRepository;
   final RulesetRepository rulesetRepository;
   final CampaignRulesetRepository campaignRulesetRepository;
 
@@ -88,6 +94,20 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
     await showVisualAlphaDicePanel(context, rulesetPackage: package);
   }
 
+  Future<void> _openCharacterPanel() async {
+    final campaign = _campaign;
+    final package = _package;
+    if (campaign == null || package == null) return;
+    await showVisualAlphaCharacterPanel(
+      context,
+      campaign: campaign,
+      rulesetPackage: package,
+      campaignRepository: widget.campaignRepository,
+      characterRepository: widget.characterRepository,
+      profileRepository: widget.characterProfileRepository,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,10 +125,22 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
       body: _buildBody(context),
       floatingActionButton: _package == null
           ? null
-          : FloatingActionButton.extended(
-              onPressed: _openDicePanel,
-              icon: const Icon(Icons.casino_outlined),
-              label: const Text('Tiradas'),
+          : Wrap(
+              spacing: 10,
+              children: <Widget>[
+                FloatingActionButton.extended(
+                  heroTag: 'characters',
+                  onPressed: _openCharacterPanel,
+                  icon: const Icon(Icons.groups_outlined),
+                  label: const Text('Personajes'),
+                ),
+                FloatingActionButton.extended(
+                  heroTag: 'dice',
+                  onPressed: _openDicePanel,
+                  icon: const Icon(Icons.casino_outlined),
+                  label: const Text('Tiradas'),
+                ),
+              ],
             ),
     );
   }
