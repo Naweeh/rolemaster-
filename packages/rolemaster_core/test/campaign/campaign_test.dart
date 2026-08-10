@@ -120,31 +120,34 @@ void main() {
       expect(renamed.isArchived, isFalse);
     });
 
-    test('archives without destructive deletion and preserves campaign data', () {
-      final createdAt = DateTime.utc(2026, 8, 10, 10);
-      final archivedAt = DateTime.utc(2026, 8, 10, 12);
-      final metadata = CampaignMetadata(
-        description: 'Persistente',
-        tags: <String>['tag'],
-      );
-      const configuration = CampaignConfiguration(aiEnabled: false);
-      final campaign = Campaign(
-        id: 'campaign-1',
-        name: 'Campaign',
-        createdAt: createdAt,
-        metadata: metadata,
-        configuration: configuration,
-      );
+    test(
+      'archives without destructive deletion and preserves campaign data',
+      () {
+        final createdAt = DateTime.utc(2026, 8, 10, 10);
+        final archivedAt = DateTime.utc(2026, 8, 10, 12);
+        final metadata = CampaignMetadata(
+          description: 'Persistente',
+          tags: <String>['tag'],
+        );
+        const configuration = CampaignConfiguration(aiEnabled: false);
+        final campaign = Campaign(
+          id: 'campaign-1',
+          name: 'Campaign',
+          createdAt: createdAt,
+          metadata: metadata,
+          configuration: configuration,
+        );
 
-      final archived = campaign.archive(at: archivedAt);
+        final archived = campaign.archive(at: archivedAt);
 
-      expect(archived.id, campaign.id);
-      expect(archived.isArchived, isTrue);
-      expect(archived.archivedAt, archivedAt);
-      expect(archived.updatedAt, archivedAt);
-      expect(archived.metadata, same(metadata));
-      expect(archived.configuration, same(configuration));
-    });
+        expect(archived.id, campaign.id);
+        expect(archived.isArchived, isTrue);
+        expect(archived.archivedAt, archivedAt);
+        expect(archived.updatedAt, archivedAt);
+        expect(archived.metadata, same(metadata));
+        expect(archived.configuration, same(configuration));
+      },
+    );
 
     test('an archived campaign cannot be renamed', () {
       final campaign = Campaign(
