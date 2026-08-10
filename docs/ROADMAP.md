@@ -27,35 +27,12 @@ Objetivo: definir el producto antes de implementar lógica específica.
 Estado: **completada**.
 
 - [x] Campaign
-  - [x] entidad base
-  - [x] puerto `CampaignRepository`
-  - [x] caso de uso `CreateCampaign`
-  - [x] persistencia SQLite
-  - [x] carga/apertura de campaña
-  - [x] edición y archivado
-  - [x] metadata y configuración por campaña
 - [x] World
-  - [x] mundos
-  - [x] regiones jerárquicas
-  - [x] localizaciones jerárquicas
-  - [x] persistencia SQLite
 - [x] Calendar / Time
-  - [x] calendarios personalizados
-  - [x] línea temporal de campaña
-  - [x] eventos temporales programados
-  - [x] persistencia SQLite
 - [x] Event Engine
-  - [x] eventos de dominio extensibles
-  - [x] bus en memoria
-  - [x] suscripciones filtrables
-  - [x] historial append-only SQLite
 - [x] State Manager
-  - [x] revisión autoritativa por campaña
-  - [x] validación previa y rollback lógico
-  - [x] optimistic revisioning
-  - [x] compare-and-swap persistente
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v7
+  - [x] esquema SQLite central versionado hasta v8
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -64,7 +41,7 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo: **NPCs**.
+Sprint activo: **Creatures**.
 
 - [x] Characters
   - [x] entidad y metadata narrativa
@@ -72,8 +49,15 @@ Sprint activo: **NPCs**.
   - [x] casos de uso crear/cargar/listar/editar/archivar
   - [x] persistencia SQLite
   - [x] migración SQLite v6→v7
-  - [x] compatibilidad con Event History, State Manager y snapshots
-- [ ] NPCs
+- [x] NPCs
+  - [x] entidad y metadata narrativa
+  - [x] idioma nativo e idiomas conocidos libres/extensibles
+  - [x] ubicación opcional en mundo/localización
+  - [x] validación de pertenencia Campaign/World/Location
+  - [x] casos de uso crear/cargar/listar/editar/archivar
+  - [x] persistencia SQLite
+  - [x] migración SQLite v7→v8
+  - [x] compatibilidad con Character, Event History, State Manager y snapshots
 - [ ] Creatures
 - [ ] Skills
 - [ ] Inventory / Items
