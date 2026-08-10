@@ -20,7 +20,8 @@ final class CreatureMetadata {
   static String _normalizeRequired(String value, String fieldName) {
     final normalized = value.trim();
     if (normalized.isEmpty) {
-      throw ArgumentError.value(value, fieldName, '$fieldName cannot be empty.');
+      throw ArgumentError.value(
+          value, fieldName, '$fieldName cannot be empty.');
     }
     return normalized;
   }
