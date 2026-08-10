@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 3.4 — Skills Foundation + persistencia SQLite v11 + build web técnico automatizado.
-- **Activo:** Fase 3.5 — Inventory / Items.
-- **Siguiente:** Maps / Locations y luego Encounters.
+- **Último completado:** Fase 3.5 — Inventory / Items + persistencia SQLite v12.
+- **Activo:** Fase 3.6 — Maps / Locations.
+- **Siguiente:** Fase 3.7 — Encounters.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La UI actual es únicamente una herramienta funcional de validación.
 
 ---
@@ -27,82 +27,30 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [ ] Estrategia de plugins/extensiones.
 - [ ] Runners Windows/Android validados en toolchain real.
 
-**Cierre:** fundaciones principales COMPLETADAS; ítems de dispositivos/plugins diferidos explícitamente.
-
 ---
 
 # Fase 1 — Fundaciones verificables
 
-## CI y tests
-
-- [x] GitHub Actions para Core Dart.
-- [x] `dart format` como gate.
-- [x] `dart analyze --fatal-infos`.
-- [x] `dart test`.
-- [x] Flutter analyze.
-- [x] Job independiente para persistencia SQLite.
-- [x] Build web técnico automatizado en GitHub Actions.
+## CI y persistencia
+- [x] GitHub Actions para Core, SQLite y Flutter.
+- [x] Gates de formato, análisis y tests.
+- [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-
-## Persistencia
-
-- [x] SQLite multiplataforma seleccionado.
-- [x] Esquema central versionado hasta v11.
-- [x] Migraciones secuenciales.
-- [x] Tests de migraciones históricas.
-- [x] Snapshots mediante backup SQLite.
-- [x] Integridad + foreign keys.
-- [x] Restauración segura.
-- [x] Snapshot pre-restore automático.
-
-**Cierre Fase 1:** COMPLETADO.
+- [x] Esquema SQLite central versionado hasta v12.
+- [x] Migraciones secuenciales e históricas.
+- [x] Snapshots, integridad, restore y rollback pre-restore.
 
 ---
 
 # Fase 2 — Core de campaña
 
-## 2.1 Campaign
-- [x] Entidad, metadata y configuración.
-- [x] Create/Get/List/Update/Rename/Archive.
-- [x] Persistencia.
-
-## 2.2 World
-- [x] World.
-- [x] Regiones jerárquicas.
-- [x] Locations jerárquicas.
-- [x] Persistencia.
-
-## 2.3 Calendar / Time
-- [x] Calendario personalizado.
-- [x] Campaign timeline.
-- [x] Advance time.
-- [x] Temporal events.
-- [x] Persistencia.
-
-## 2.4 Event Engine
-- [x] `DomainEvent` extensible.
-- [x] Payload JSON-safe e inmutable.
-- [x] Bus interno.
-- [x] Suscripciones filtrables.
-- [x] Dispatcher.
-- [x] Historial append-only SQLite.
-
-## 2.5 State Manager
-- [x] Revisión autoritativa por campaña.
-- [x] Prevalidación.
-- [x] Aplicación secuencial.
-- [x] Rollback lógico.
-- [x] Optimistic revisioning.
-- [x] Compare-and-swap persistente.
-- [x] Protección contra carrera entre repositorios/instancias.
-
-## 2.6 Snapshots / backup
-- [x] Snapshot consistente.
-- [x] Validación antes de restaurar.
-- [x] Restore.
-- [x] Backup automático pre-restore.
-- [x] Rechazo de schema futuro.
+- [x] Campaign.
+- [x] World / Region / Location.
+- [x] Calendar / Time.
+- [x] Event Engine.
+- [x] State Manager.
+- [x] Snapshots / backup.
 
 **Cierre Fase 2:** COMPLETADO.
 
@@ -111,188 +59,117 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 # Fase 3 — Dominio de juego
 
 ## 3.1 Characters
-- [x] Identidad y metadata narrativa.
-- [x] Asociación a campaña.
-- [x] Crear/cargar/listar/editar/archivar.
-- [x] SQLite v7.
-- [x] Estadísticas específicas diferidas correctamente al Ruleset.
+- [x] Entidad y ciclo de vida.
+- [x] Metadata narrativa.
+- [x] Persistencia SQLite v7.
 
 ## 3.2 NPCs
-- [x] Identidad y metadata.
-- [x] Idioma nativo.
-- [x] Idiomas conocidos extensibles.
-- [x] Ubicación World/Location.
-- [x] Validaciones de pertenencia.
-- [x] Crear/cargar/listar/editar/archivar.
-- [x] SQLite v8.
-- [ ] Personalidad dinámica — fase IA.
-- [ ] Memoria — fase IA.
-- [ ] Voz/TTS — fase Voz.
+- [x] Entidad y ciclo de vida.
+- [x] Idiomas y ubicación World/Location.
+- [x] Persistencia SQLite v8.
+- [ ] Inteligencia/memoria/voz diferidas a sus fases opcionales.
 
 ## 3.3 Creatures
-- [x] Entidad base.
-- [x] Especie/categoría.
-- [x] Metadata narrativa.
-- [x] Ubicación.
-- [x] Lifecycle.
-- [x] SQLite v9.
-- [x] Stats/ataques/defensas diferidos al Ruleset/Rules Engine.
+- [x] Entidad, especie/categoría, metadata y ubicación.
+- [x] Persistencia SQLite v9.
+- [x] Stats dependientes del sistema diferidos al Ruleset/Rules Engine.
 
 ## 3.3A Ruleset Foundation
-
-### Modelo
-- [x] `RulesetModuleDefinition`.
-- [x] `RulesetManifest`.
-- [x] `RulesetPackage`.
-- [x] Paquete base inmutable.
-- [x] Datos de paquete JSON-safe e inmutables en profundidad.
-- [x] Edición y versión exactas.
-- [x] Módulos obligatorios, default y opcionales.
-
-### Campaña
-- [x] `CampaignRulesetBinding`.
-- [x] `CampaignRulesOverlay`.
-- [x] Cada campaña nueva comienza con overlay limpio.
-- [x] Una campaña nunca hereda automáticamente house rules de otra.
-- [x] Reset elimina overrides pero conserva binding.
-- [x] Re-inicialización silenciosa bloqueada.
-- [x] Cambio silencioso de versión bloqueado.
-
-### Persistencia v10
-- [x] Catálogo `ruleset_packages`.
-- [x] Binding/overlay `campaign_rulesets`.
-- [x] Paquetes publicados inmutables por `(ruleset_id, version)`.
-- [x] Migración v9→v10.
-- [x] Fixtures históricos compatibles con schema actual.
-- [x] CI Core + SQLite + Flutter verde.
-
-### Manuales / contenido
-- [ ] Ruleset Builder.
-- [ ] Importación PDF/manuales.
-- [ ] Extracción y normalización.
-- [ ] Revisión del GM antes de publicar.
-- [ ] Publicación de nueva versión inmutable.
-- [ ] Presets de house rules separados del Ruleset base.
-- [ ] Importación explícita de preset/configuración de otra campaña.
-- [ ] Preview de migración entre versiones/ediciones.
-- [ ] Snapshot automático antes de migrar Ruleset.
-- [ ] Conversión y resolución manual de campos incompatibles.
+- [x] `RulesetManifest`, módulos y paquete versionado/inmutable.
+- [x] Binding exacto por campaña.
+- [x] Overlay aislado y limpio por defecto.
+- [x] Persistencia SQLite v10.
+- [x] Reemplazo silencioso de versión bloqueado.
+- [ ] Ruleset Builder / importación de manuales.
+- [ ] Migración controlada entre ediciones/versiones.
 
 ## 3.4 Skills — COMPLETADO
-
-Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el valor/rango concreto pertenece al personaje/campaña.
-
-- [x] `SkillDefinition` versionada dentro del Ruleset.
-- [x] IDs estables de definición dentro de cada paquete/version.
-- [x] Categoría/descripcion/tags como metadata tipada.
-- [x] Asociación opcional a módulo del Ruleset.
-- [x] `RulesetSkillCatalog` desde `RulesetPackage.data['skills']`.
-- [x] Rechazo de IDs duplicados.
-- [x] Rechazo de módulos inexistentes.
-- [x] `CharacterSkillState` separado de la definición.
-- [x] Rangos.
-- [x] Modificadores nombrados.
-- [x] Notas.
-- [x] Validación contra Ruleset exacto y módulos activos de campaña.
-- [x] Bloqueo de modificación sobre personaje archivado.
-- [x] Listado que une definición activa + estado opcional del personaje.
+- [x] Definiciones desde Ruleset.
+- [x] Estado de personaje separado.
+- [x] Rangos/modificadores/notas.
+- [x] Validación por módulos activos.
 - [x] Persistencia SQLite v11.
-- [x] Migración v10→v11 preservando el binding de Ruleset.
-- [x] Reapertura y upsert verificados.
-- [x] Fixtures históricos v5–v9 saneados para schema v11.
-- [x] CI Core + SQLite + Flutter verde.
-- [x] Atributos derivados, fórmulas y costes diferidos al Rules Engine para evitar hardcodear reglas en el dominio.
+- [x] CI completo verde.
 
-## 3.5 Inventory / Items — ACTIVO
-- [ ] `ItemDefinition` dependiente de Ruleset cuando corresponda.
-- [ ] IDs estables de definición.
-- [ ] Categoría y metadata base.
-- [ ] `ItemInstance` perteneciente a campaña.
-- [ ] Propietario/contenedor opcional.
-- [ ] Cantidad.
-- [ ] Estado de equipamiento.
-- [ ] Transferencias entre entidades/contenedores.
-- [ ] Validación contra Ruleset activo cuando exista definición.
-- [ ] Persistencia SQLite.
+## 3.5 Inventory / Items — COMPLETADO
+
+Regla arquitectónica: las propiedades del tipo de objeto viven en el Ruleset; la campaña sólo persiste el estado mutable de cada instancia.
+
+- [x] `ItemDefinition` desde Ruleset.
+- [x] IDs estables, categoría, tags y propiedades JSON-safe e inmutables.
+- [x] Filtrado por módulos activos.
+- [x] `ItemInstance` perteneciente a campaña.
+- [x] Objetos custom sin definición de Ruleset.
+- [x] Cantidad positiva.
+- [x] Estado equipado.
+- [x] Propietario genérico mediante `InventoryHolderRef`.
+- [x] Contenedor opcional mediante otra instancia de item.
+- [x] Holder y contenedor mutuamente excluyentes.
+- [x] Transferencias entre holder/contenedor/desasignado.
+- [x] Des-equipado automático al contener/desasignar.
+- [x] Rechazo de contenedor inexistente.
+- [x] Rechazo de contenedor de otra campaña.
+- [x] Detección de ciclos de contención.
+- [x] Persistencia SQLite v12.
+- [x] Reapertura y upsert.
+- [x] Migración v11→v12 preservando Skills y binding de Ruleset.
+- [x] Constraints SQLite de cantidad, holder/contenedor y autocontención.
+- [x] Fixtures históricos v5–v10 saneados.
+- [x] CI Core + SQLite + Flutter verde.
+
+## 3.6 Maps / Locations — ACTIVO
+
+Regla arquitectónica: `World/Region/Location` sigue siendo la geografía canónica. Este sprint agrega representaciones visuales/lógicas de una localización, no una segunda jerarquía geográfica.
+
+- [ ] `SceneMap` / mapa lógico perteneciente a campaña.
+- [ ] Vínculo opcional a `World` y `Location` existentes.
+- [ ] Validación de pertenencia Campaign/World/Location.
+- [ ] Espacio lógico de coordenadas independiente del renderer.
+- [ ] Capas lógicas ordenadas.
+- [ ] Metadata de visibilidad GM/pública.
+- [ ] Posiciones opcionales de entidades por referencia genérica.
+- [ ] Sin dependencia de Flutter/canvas/imágenes concretas en Core.
+- [ ] Preparación para pantalla secundaria futura.
+- [ ] Persistencia SQLite v13.
+- [ ] Migración v12→v13 preservando inventario y datos previos.
 - [ ] Tests.
 
-## 3.6 Maps / Locations
-- [ ] Modelo lógico de mapas/escenas.
-- [ ] Vínculo con World/Location.
-- [ ] Sin dependencia del renderer.
-
-## 3.7 Encounters
-- [ ] Encounter.
+## 3.7 Encounters — SIGUIENTE
+- [ ] Encounter base.
 - [ ] Participantes.
-- [ ] Contexto/localización.
+- [ ] Contexto/localización/mapa opcional.
 - [ ] Inicio/cierre/estado.
 - [ ] Tests.
-
-**Criterio de cierre Fase 3:** entidades de juego y sus estados funcionan sin Flutter, y cualquier dato dependiente del sistema referencia definiciones del Ruleset activo en vez de quedar hardcodeado en el Core.
 
 ---
 
 # Fase 4 — Reglas y combate
 
-## 4.1 Rules Engine
-- [ ] Resolver el Ruleset efectivo = base + módulos + overlay.
-- [ ] Definiciones de atributos/profesiones/tablas.
-- [ ] Fórmulas/costes de Skills y otras definiciones dependientes del sistema.
-- [ ] Validadores.
-- [ ] Consultas de reglas sin UI.
-
-## 4.2 Dice / Resolution Engine
-- [ ] Dados estándar.
-- [ ] Tiradas abiertas/encadenadas definibles por Ruleset.
-- [ ] Modificadores.
-- [ ] Resultado estructurado.
-- [ ] RNG/semilla controlable para tests.
-- [ ] Historial de tiradas.
-
-## 4.3 Combat
-- [ ] Combat state.
-- [ ] Participantes.
-- [ ] Iniciativa/turnos definidos por Ruleset.
-- [ ] Acciones.
-- [ ] Ataques/defensas/daño.
-- [ ] Tablas y críticos.
+- [ ] Rules Engine efectivo = base + módulos + overlay.
+- [ ] Dice / Resolution Engine.
+- [ ] Combat.
 - [ ] Efectos/condiciones.
-- [ ] Tests completos.
-
-## 4.4 Migración de Ruleset
-- [ ] Comparación de schemas/definiciones.
-- [ ] Compatible / convertible / decisión GM / no compatible.
-- [ ] Preview.
-- [ ] Snapshot.
-- [ ] Confirmación GM.
-- [ ] Migración.
-- [ ] Validación.
-- [ ] Rollback.
+- [ ] Migración de Ruleset.
 
 ---
 
 # Fase 5 — Servicios opcionales
 
-- [ ] AI Service + Disabled/Built-in/Custom/Local providers.
+- [ ] AI Service.
 - [ ] NPC Intelligence.
-- [ ] Speech-to-Text.
-- [ ] Text-to-Speech.
+- [ ] STT/TTS.
 - [ ] Audio Director.
-- [ ] Música / ambience / SFX.
-- [ ] Ninguna capacidad esencial depende de estos servicios.
 
 ---
 
 # Fase 6 — Hardening y Backend/Core Freeze
 
 - [ ] Suite completa verde.
-- [ ] Migraciones de todas las versiones verificadas.
+- [ ] Migraciones verificadas.
 - [ ] Corrupción/recuperación.
 - [ ] Logging/diagnóstico.
 - [ ] Benchmarks.
-- [ ] Auditoría de contratos públicos.
-- [ ] Eliminación de duplicaciones.
-- [ ] Documentación técnica.
+- [ ] Auditoría de contratos.
 - [ ] Tag Backend/Core Freeze.
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
@@ -301,19 +178,12 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 
 # Fase 7 — Fase gráfica
 
-## Prototipo técnico ya disponible
+## Prototipo técnico disponible
 - [x] Base responsive Flutter.
-- [x] Crear campaña desde UI técnica.
-- [x] Seleccionar Ruleset/edición/versión.
-- [x] Activar/desactivar módulos opcionales.
-- [x] Mostrar que la campaña comienza con Ruleset limpio.
-- [x] Mostrar binding/versión de campañas creadas.
-- [x] Flutter analyze verde.
-- [x] Build Flutter Web release automatizado.
-- [x] Artefacto web descargable por GitHub Actions.
-- [ ] URL directa GitHub Pages — pendiente habilitar Pages en Settings.
-
-> Este prototipo es descartable/evolutivo y NO constituye el inicio de la UI final.
+- [x] Crear campaña y seleccionar Ruleset/módulos.
+- [x] Build Flutter Web automatizado.
+- [x] Artefacto descargable.
+- [ ] URL directa GitHub Pages — pendiente habilitar Pages.
 
 ## UI definitiva
 - [ ] Design system.
@@ -321,9 +191,8 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 - [ ] Tablet.
 - [ ] Mobile.
 - [ ] Fichas.
-- [ ] Map/scene.
+- [ ] Map/scene renderer.
 - [ ] Panel contextual.
-- [ ] Reglas/consulta.
 - [ ] Voz/audio.
 - [ ] Secondary display.
 
@@ -332,9 +201,7 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 # Fase 8 — Dispositivos del GM
 
 - [ ] Descubrimiento local.
-- [ ] Autorización.
-- [ ] Sync.
-- [ ] Conflictos.
+- [ ] Autorización y sync.
 - [ ] PC host opcional.
 - [ ] Tablet/móvil complementarios.
 
@@ -346,7 +213,7 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 - [ ] Instalador Windows.
 - [ ] Android build.
 - [ ] iOS/iPadOS cuando haya toolchain.
-- [ ] Docs usuario/técnicas.
+- [ ] Documentación.
 - [ ] Release candidate.
 - [ ] v1.0.
 
@@ -354,14 +221,4 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 
 # Regla operativa por sprint
 
-Cada sprint debe reportar:
-
-1. Último completado.
-2. Activo.
-3. Siguiente.
-4. Archivos modificados.
-5. Tests/CI.
-6. Commit/HEAD.
-7. Riesgos o deuda técnica.
-
-No se avanza al siguiente bloque si el criterio de cierre del bloque activo no está cumplido o explícitamente diferido y documentado.
+Cada sprint debe reportar: último completado, activo, siguiente, archivos, tests/CI, commit/HEAD y deuda/riesgos. No se avanza si el gate activo no está cumplido o explícitamente diferido.
