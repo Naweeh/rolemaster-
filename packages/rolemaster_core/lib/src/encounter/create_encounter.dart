@@ -52,7 +52,8 @@ final class CreateEncounter {
     if (normalizedSceneMapId != null) {
       final map = await _sceneMapRepository.getMapById(normalizedSceneMapId);
       if (map == null) {
-        throw EncounterContextException('Scene map not found: $normalizedSceneMapId.');
+        throw EncounterContextException(
+            'Scene map not found: $normalizedSceneMapId.');
       }
       if (map.campaignId != normalizedCampaignId) {
         throw EncounterContextException(
@@ -94,9 +95,11 @@ final class CreateEncounter {
     }
 
     if (resolvedLocationId != null) {
-      final location = await _worldRepository.getLocationById(resolvedLocationId);
+      final location =
+          await _worldRepository.getLocationById(resolvedLocationId);
       if (location == null) {
-        throw EncounterContextException('Location not found: $resolvedLocationId.');
+        throw EncounterContextException(
+            'Location not found: $resolvedLocationId.');
       }
       if (location.worldId != resolvedWorldId) {
         throw EncounterContextException(
