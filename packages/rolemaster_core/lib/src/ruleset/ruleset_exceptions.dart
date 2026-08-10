@@ -43,3 +43,12 @@ final class RequiredRulesetModuleMissingException implements Exception {
   @override
   String toString() => 'Required ruleset module missing: $moduleId';
 }
+
+final class RulesetBindingMismatchException implements Exception {
+  RulesetBindingMismatchException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'Ruleset binding mismatch: $message';
+}
