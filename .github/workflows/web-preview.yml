@@ -1,0 +1,77 @@
+name: Rolemaster Web Preview
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/rolemaster_app/**'
+      - 'packages/rolemaster_core/**'
+      - '.github/workflows/web-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: rolemaster-web-preview
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build web preview
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/rolemaster_app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate web runner
+        run: flutter create . --platforms=web --project-name rolemaster_app --org app.rolemaster
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Build web
+        run: flutter build web --release --base-href "/rolemaster-/"
+
+      - name: Upload downloadable preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: rolemaster-web-preview
+          path: apps/rolemaster_app/build/web
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/rolemaster_app/build/web
+
+  deploy:
+    name: Deploy GitHub Pages preview
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
