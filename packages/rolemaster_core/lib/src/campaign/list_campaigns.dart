@@ -3,7 +3,7 @@ import 'campaign_repository.dart';
 
 final class ListCampaigns {
   ListCampaigns({required CampaignRepository repository})
-    : _repository = repository;
+      : _repository = repository;
 
   final CampaignRepository _repository;
 

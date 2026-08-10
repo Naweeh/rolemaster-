@@ -4,7 +4,7 @@ import 'campaign_repository.dart';
 
 final class GetCampaign {
   GetCampaign({required CampaignRepository repository})
-    : _repository = repository;
+      : _repository = repository;
 
   final CampaignRepository _repository;
 

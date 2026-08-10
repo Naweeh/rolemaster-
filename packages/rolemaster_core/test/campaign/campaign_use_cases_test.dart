@@ -29,7 +29,8 @@ void main() {
       final archived = _campaign(id: 'archived', name: 'Archivada').archive(
         at: DateTime.utc(2026, 8, 10, 12),
       );
-      final repository = _MemoryCampaignRepository(<Campaign>[active, archived]);
+      final repository =
+          _MemoryCampaignRepository(<Campaign>[active, archived]);
       final useCase = ListCampaigns(repository: repository);
 
       final visible = await useCase();

@@ -9,9 +9,9 @@ final class CreateCampaign {
     required CampaignRepository repository,
     required CampaignIdGenerator idGenerator,
     required Clock clock,
-  }) : _repository = repository,
-       _idGenerator = idGenerator,
-       _clock = clock;
+  })  : _repository = repository,
+        _idGenerator = idGenerator,
+        _clock = clock;
 
   final CampaignRepository _repository;
   final CampaignIdGenerator _idGenerator;

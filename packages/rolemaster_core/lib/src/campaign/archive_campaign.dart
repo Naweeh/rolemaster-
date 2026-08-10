@@ -7,8 +7,8 @@ final class ArchiveCampaign {
   ArchiveCampaign({
     required CampaignRepository repository,
     required Clock clock,
-  }) : _repository = repository,
-       _clock = clock;
+  })  : _repository = repository,
+        _clock = clock;
 
   final CampaignRepository _repository;
   final Clock _clock;

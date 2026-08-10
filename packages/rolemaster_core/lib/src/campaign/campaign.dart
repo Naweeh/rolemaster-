@@ -5,11 +5,11 @@ final class Campaign {
     required DateTime createdAt,
     DateTime? updatedAt,
     DateTime? archivedAt,
-  }) : id = id.trim(),
-       name = name.trim(),
-       createdAt = createdAt.toUtc(),
-       updatedAt = (updatedAt ?? createdAt).toUtc(),
-       archivedAt = archivedAt?.toUtc() {
+  })  : id = id.trim(),
+        name = name.trim(),
+        createdAt = createdAt.toUtc(),
+        updatedAt = (updatedAt ?? createdAt).toUtc(),
+        archivedAt = archivedAt?.toUtc() {
     if (this.id.isEmpty) {
       throw ArgumentError.value(id, 'id', 'Campaign id cannot be empty.');
     }

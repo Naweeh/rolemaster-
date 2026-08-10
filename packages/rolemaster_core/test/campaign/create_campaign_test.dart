@@ -3,7 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('CreateCampaign', () {
-    test('generates id, normalizes time to UTC and saves through repository', () async {
+    test('generates id, normalizes time to UTC and saves through repository',
+        () async {
       final repository = _RecordingCampaignRepository();
       final localTime = DateTime(2026, 8, 10, 11, 30);
       final useCase = CreateCampaign(
