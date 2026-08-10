@@ -84,10 +84,10 @@ void main() {
       final other = await repository.getForCampaign('campaign-2');
 
       expect(active.map((character) => character.id), <String>['active-1']);
-      expect(
-        all.map((character) => character.id).toSet(),
-        <String>{'active-1', 'archived-1'},
-      );
+      expect(all.map((character) => character.id).toSet(), <String>{
+        'active-1',
+        'archived-1',
+      });
       expect(other.map((character) => character.id), <String>['other-1']);
     });
 
@@ -119,71 +119,76 @@ void main() {
       expect(all.single.createdAt, DateTime.utc(2026, 8, 10, 10));
     });
 
-    test('migrates v6 to v7 while preserving event history and state',
-        () async {
-      final fixture = await _createFixture('character-migration');
-      addTearDown(fixture.dispose);
+    test(
+      'migrates v6 to v7 while preserving event history and state',
+      () async {
+        final fixture = await _createFixture('character-migration');
+        addTearDown(fixture.dispose);
 
-      final events = SqliteEventHistoryRepository.open(fixture.path);
-      await events.append(
-        DomainEvent(
-          id: 'event-before-character',
-          type: DomainEventTypes.campaignUpdated,
-          campaignId: 'campaign-1',
-          occurredAt: DateTime.utc(2026, 8, 10, 11),
-        ),
-      );
-      events.close();
-
-      final states = SqliteCampaignStateRepository.open(fixture.path);
-      expect(
-        await states.save(
-          CampaignState(
+        final events = SqliteEventHistoryRepository.open(fixture.path);
+        await events.append(
+          DomainEvent(
+            id: 'event-before-character',
+            type: DomainEventTypes.campaignUpdated,
             campaignId: 'campaign-1',
-            revision: 1,
-            updatedAt: DateTime.utc(2026, 8, 10, 12),
+            occurredAt: DateTime.utc(2026, 8, 10, 11),
           ),
-          expectedRevision: 0,
-        ),
-        isTrue,
-      );
-      states.close();
+        );
+        events.close();
 
-      final legacy = sqlite3.open(fixture.path);
-      legacy.execute('DROP TABLE characters');
-      legacy.execute('PRAGMA user_version = 6');
-      legacy.close();
+        final states = SqliteCampaignStateRepository.open(fixture.path);
+        expect(
+          await states.save(
+            CampaignState(
+              campaignId: 'campaign-1',
+              revision: 1,
+              updatedAt: DateTime.utc(2026, 8, 10, 12),
+            ),
+            expectedRevision: 0,
+          ),
+          isTrue,
+        );
+        states.close();
 
-      final characters = SqliteCharacterRepository.open(fixture.path);
-      await characters.save(
-        Character(
-          id: 'character-new',
-          campaignId: 'campaign-1',
-          name: 'Nueva',
-          createdAt: DateTime.utc(2026, 8, 10, 13),
-        ),
-      );
-      characters.close();
+        final legacy = sqlite3.open(fixture.path);
+        legacy.execute('DROP TABLE characters');
+        legacy.execute('PRAGMA user_version = 6');
+        legacy.close();
 
-      final reopenedEvents = SqliteEventHistoryRepository.open(fixture.path);
-      final event = await reopenedEvents.getById('event-before-character');
-      reopenedEvents.close();
-      final reopenedStates = SqliteCampaignStateRepository.open(fixture.path);
-      final state = await reopenedStates.getByCampaignId('campaign-1');
-      reopenedStates.close();
-      final migrated = sqlite3.open(fixture.path);
-      final version = migrated.select('PRAGMA user_version').single;
-      final characterRows = migrated.select(
-        "SELECT id FROM characters WHERE id = 'character-new'",
-      );
-      migrated.close();
+        final characters = SqliteCharacterRepository.open(fixture.path);
+        await characters.save(
+          Character(
+            id: 'character-new',
+            campaignId: 'campaign-1',
+            name: 'Nueva',
+            createdAt: DateTime.utc(2026, 8, 10, 13),
+          ),
+        );
+        characters.close();
 
-      expect(version['user_version'], SqliteCharacterRepository.schemaVersion);
-      expect(characterRows.single['id'], 'character-new');
-      expect(event, isNotNull);
-      expect(state, isNotNull);
-      expect(state!.revision, 1);
-    });
+        final reopenedEvents = SqliteEventHistoryRepository.open(fixture.path);
+        final event = await reopenedEvents.getById('event-before-character');
+        reopenedEvents.close();
+        final reopenedStates = SqliteCampaignStateRepository.open(fixture.path);
+        final state = await reopenedStates.getByCampaignId('campaign-1');
+        reopenedStates.close();
+        final migrated = sqlite3.open(fixture.path);
+        final version = migrated.select('PRAGMA user_version').single;
+        final characterRows = migrated.select(
+          "SELECT id FROM characters WHERE id = 'character-new'",
+        );
+        migrated.close();
+
+        expect(
+          version['user_version'],
+          SqliteCharacterRepository.schemaVersion,
+        );
+        expect(characterRows.single['id'], 'character-new');
+        expect(event, isNotNull);
+        expect(state, isNotNull);
+        expect(state!.revision, 1);
+      },
+    );
   });
 }
 
