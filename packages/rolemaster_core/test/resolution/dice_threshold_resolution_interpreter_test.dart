@@ -2,7 +2,9 @@ import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('threshold interpreter reads dice, modifier and target from ruleset/request', () {
+  test(
+      'threshold interpreter reads dice, modifier and target from ruleset/request',
+      () {
     final ruleset = _ruleset(
       rule: const <String, Object?>{
         'id': 'skill-check',
