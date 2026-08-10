@@ -55,7 +55,7 @@ Estado: **completada**.
   - [x] optimistic revisioning
   - [x] compare-and-swap persistente
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v6
+  - [x] esquema SQLite central versionado hasta v7
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -64,9 +64,15 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo siguiente: **Characters**.
+Sprint activo: **NPCs**.
 
-- [ ] Characters
+- [x] Characters
+  - [x] entidad y metadata narrativa
+  - [x] asociación a campaña
+  - [x] casos de uso crear/cargar/listar/editar/archivar
+  - [x] persistencia SQLite
+  - [x] migración SQLite v6→v7
+  - [x] compatibilidad con Event History, State Manager y snapshots
 - [ ] NPCs
 - [ ] Creatures
 - [ ] Skills
