@@ -74,9 +74,7 @@ void main() {
 
       final reader = SqliteCalendarRepository.open(databasePath);
       final loadedCalendar = await reader.getCalendarById('calendar-1');
-      final loadedTimeline = await reader.getTimelineForCampaign(
-        'campaign-1',
-      );
+      final loadedTimeline = await reader.getTimelineForCampaign('campaign-1');
       final events = await reader.getEventsForCampaign('campaign-1');
       final loadedEvent = await reader.getEventById('event-2');
       reader.close();
