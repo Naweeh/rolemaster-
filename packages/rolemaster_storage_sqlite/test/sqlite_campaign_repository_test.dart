@@ -135,16 +135,18 @@ void main() {
       },
     );
 
-    test('migrates a schema v1 database to v2 without losing campaigns', () async {
-      final directory = await Directory.systemTemp.createTemp(
-        'rolemaster_sqlite_v1_',
-      );
-      final databasePath =
-          '${directory.path}${Platform.pathSeparator}campaign-v1.db';
-      addTearDown(() => directory.delete(recursive: true));
+    test(
+      'migrates a schema v1 database to v2 without losing campaigns',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'rolemaster_sqlite_v1_',
+        );
+        final databasePath =
+            '${directory.path}${Platform.pathSeparator}campaign-v1.db';
+        addTearDown(() => directory.delete(recursive: true));
 
-      final legacy = sqlite3.open(databasePath);
-      legacy.execute('''
+        final legacy = sqlite3.open(databasePath);
+        legacy.execute('''
         CREATE TABLE campaigns (
           id TEXT NOT NULL PRIMARY KEY,
           name TEXT NOT NULL,
@@ -153,8 +155,8 @@ void main() {
           archived_at INTEGER
         ) STRICT
       ''');
-      legacy.execute(
-        '''
+        legacy.execute(
+          '''
         INSERT INTO campaigns (
           id,
           name,
@@ -163,33 +165,34 @@ void main() {
           archived_at
         ) VALUES (?, ?, ?, ?, ?)
         ''',
-        <Object?>[
-          'legacy',
-          'Campaña anterior',
-          DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
-          DateTime.utc(2026, 8, 10, 11).millisecondsSinceEpoch,
-          null,
-        ],
-      );
-      legacy.execute('PRAGMA user_version = 1');
-      legacy.close();
+          <Object?>[
+            'legacy',
+            'Campaña anterior',
+            DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
+            DateTime.utc(2026, 8, 10, 11).millisecondsSinceEpoch,
+            null,
+          ],
+        );
+        legacy.execute('PRAGMA user_version = 1');
+        legacy.close();
 
-      final repository = SqliteCampaignRepository.open(databasePath);
-      final loaded = await repository.getById('legacy');
-      repository.close();
+        final repository = SqliteCampaignRepository.open(databasePath);
+        final loaded = await repository.getById('legacy');
+        repository.close();
 
-      expect(loaded, isNotNull);
-      expect(loaded!.name, 'Campaña anterior');
-      expect(loaded.metadata.description, isNull);
-      expect(loaded.metadata.tags, isEmpty);
-      expect(loaded.configuration.aiEnabled, isTrue);
-      expect(loaded.configuration.voiceEnabled, isTrue);
-      expect(loaded.configuration.audioEnabled, isTrue);
+        expect(loaded, isNotNull);
+        expect(loaded!.name, 'Campaña anterior');
+        expect(loaded.metadata.description, isNull);
+        expect(loaded.metadata.tags, isEmpty);
+        expect(loaded.configuration.aiEnabled, isTrue);
+        expect(loaded.configuration.voiceEnabled, isTrue);
+        expect(loaded.configuration.audioEnabled, isTrue);
 
-      final migrated = sqlite3.open(databasePath);
-      final version = migrated.select('PRAGMA user_version').single;
-      migrated.close();
-      expect(version['user_version'], SqliteCampaignRepository.schemaVersion);
-    });
+        final migrated = sqlite3.open(databasePath);
+        final version = migrated.select('PRAGMA user_version').single;
+        migrated.close();
+        expect(version['user_version'], SqliteCampaignRepository.schemaVersion);
+      },
+    );
   });
 }
