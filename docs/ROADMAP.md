@@ -12,32 +12,59 @@ Objetivo: definir el producto antes de implementar lógica específica.
 - [x] Definir enfoque local-first y funcionamiento esencial offline
 - [x] Descartar clientes obligatorios para jugadores
 - [x] Prever pantalla secundaria opcional controlada por el GM
-- [x] Elegir stack tecnológico: Dart + Flutter, local-first, SQLite previsto
+- [x] Elegir stack tecnológico: Dart + Flutter, local-first, SQLite
 - [x] Crear ADR inicial de stack y reglas de dependencia
 - [x] Separar `rolemaster_core` de la aplicación Flutter
 - [x] Crear bootstrap de UI adaptativa y dominio Campaign
-- [ ] Definir estructura de persistencia SQLite
-- [ ] Definir arquitectura de eventos
+- [x] Definir estructura de persistencia SQLite y migraciones secuenciales
+- [x] Definir arquitectura de eventos y registro append-only
 - [ ] Definir comunicación local opcional entre dispositivos del GM
 - [ ] Definir estrategia de plugins/extensiones
 - [ ] Generar y validar runners Windows/Android con toolchain Flutter real
 
 ## Fase 1 — Core de campaña
 
-- [ ] Campaign
+Estado: **completada**.
+
+- [x] Campaign
   - [x] entidad base
   - [x] puerto `CampaignRepository`
   - [x] caso de uso `CreateCampaign`
-  - [ ] persistencia SQLite
-  - [ ] carga/apertura de campaña
-  - [ ] edición y archivado
-- [ ] World
-- [ ] Calendar / Time
-- [ ] Event Engine
-- [ ] State Manager
-- [ ] Persistencia y snapshots
+  - [x] persistencia SQLite
+  - [x] carga/apertura de campaña
+  - [x] edición y archivado
+  - [x] metadata y configuración por campaña
+- [x] World
+  - [x] mundos
+  - [x] regiones jerárquicas
+  - [x] localizaciones jerárquicas
+  - [x] persistencia SQLite
+- [x] Calendar / Time
+  - [x] calendarios personalizados
+  - [x] línea temporal de campaña
+  - [x] eventos temporales programados
+  - [x] persistencia SQLite
+- [x] Event Engine
+  - [x] eventos de dominio extensibles
+  - [x] bus en memoria
+  - [x] suscripciones filtrables
+  - [x] historial append-only SQLite
+- [x] State Manager
+  - [x] revisión autoritativa por campaña
+  - [x] validación previa y rollback lógico
+  - [x] optimistic revisioning
+  - [x] compare-and-swap persistente
+- [x] Persistencia y snapshots
+  - [x] esquema SQLite central versionado hasta v6
+  - [x] migraciones secuenciales
+  - [x] snapshots consistentes mediante SQLite backup
+  - [x] validación de integridad y claves foráneas
+  - [x] restauración segura
+  - [x] snapshot automático pre-restore para rollback
 
 ## Fase 2 — Dominio de juego
+
+Sprint activo siguiente: **Characters**.
 
 - [ ] Characters
 - [ ] NPCs
