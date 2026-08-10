@@ -185,20 +185,16 @@ final class SqliteNpcRepository implements NpcRepository {
           fieldName: 'tags_json',
         ),
       ),
-      placement: NpcPlacement(
-        worldId: worldId,
-        locationId: locationId,
-      ),
+      placement: NpcPlacement(worldId: worldId, locationId: locationId),
     );
   }
 
-  List<String> _decodeStrings(
-    String rawJson, {
-    required String fieldName,
-  }) {
+  List<String> _decodeStrings(String rawJson, {required String fieldName}) {
     final decoded = jsonDecode(rawJson);
     if (decoded is! List || decoded.any((value) => value is! String)) {
-      throw StateError('Invalid NPC $fieldName payload in Rolemaster database.');
+      throw StateError(
+        'Invalid NPC $fieldName payload in Rolemaster database.',
+      );
     }
     return decoded.cast<String>();
   }
