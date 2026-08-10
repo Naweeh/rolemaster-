@@ -1,3 +1,6 @@
+import 'campaign_configuration.dart';
+import 'campaign_metadata.dart';
+
 final class Campaign {
   Campaign({
     required String id,
@@ -5,11 +8,15 @@ final class Campaign {
     required DateTime createdAt,
     DateTime? updatedAt,
     DateTime? archivedAt,
+    CampaignMetadata? metadata,
+    CampaignConfiguration? configuration,
   })  : id = id.trim(),
         name = name.trim(),
         createdAt = createdAt.toUtc(),
         updatedAt = (updatedAt ?? createdAt).toUtc(),
-        archivedAt = archivedAt?.toUtc() {
+        archivedAt = archivedAt?.toUtc(),
+        metadata = metadata ?? CampaignMetadata(),
+        configuration = configuration ?? const CampaignConfiguration() {
     if (this.id.isEmpty) {
       throw ArgumentError.value(id, 'id', 'Campaign id cannot be empty.');
     }
@@ -37,12 +44,24 @@ final class Campaign {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? archivedAt;
+  final CampaignMetadata metadata;
+  final CampaignConfiguration configuration;
 
   bool get isArchived => archivedAt != null;
 
-  Campaign rename({required String name, required DateTime at}) {
+  Campaign update({
+    String? name,
+    CampaignMetadata? metadata,
+    CampaignConfiguration? configuration,
+    required DateTime at,
+  }) {
     if (isArchived) {
-      throw StateError('Archived campaigns cannot be renamed.');
+      throw StateError('Archived campaigns cannot be updated.');
+    }
+    if (name == null && metadata == null && configuration == null) {
+      throw ArgumentError(
+        'At least one Campaign field must be provided for update.',
+      );
     }
 
     final normalizedAt = at.toUtc();
@@ -56,10 +75,16 @@ final class Campaign {
 
     return Campaign(
       id: id,
-      name: name,
+      name: name ?? this.name,
       createdAt: createdAt,
       updatedAt: normalizedAt,
+      metadata: metadata ?? this.metadata,
+      configuration: configuration ?? this.configuration,
     );
+  }
+
+  Campaign rename({required String name, required DateTime at}) {
+    return update(name: name, at: at);
   }
 
   Campaign archive({required DateTime at}) {
@@ -82,6 +107,8 @@ final class Campaign {
       createdAt: createdAt,
       updatedAt: normalizedAt,
       archivedAt: normalizedAt,
+      metadata: metadata,
+      configuration: configuration,
     );
   }
 }
