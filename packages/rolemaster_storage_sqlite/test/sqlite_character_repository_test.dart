@@ -151,6 +151,7 @@ void main() {
         states.close();
 
         final legacy = sqlite3.open(fixture.path);
+        legacy.execute('DROP TABLE creatures');
         legacy.execute('DROP TABLE npcs');
         legacy.execute('DROP TABLE characters');
         legacy.execute('PRAGMA user_version = 6');
@@ -182,6 +183,10 @@ void main() {
           "SELECT name FROM sqlite_master "
           "WHERE type = 'table' AND name = 'npcs'",
         );
+        final creatureTables = migrated.select(
+          "SELECT name FROM sqlite_master "
+          "WHERE type = 'table' AND name = 'creatures'",
+        );
         migrated.close();
 
         expect(
@@ -190,6 +195,7 @@ void main() {
         );
         expect(characterRows.single['id'], 'character-new');
         expect(npcTables, hasLength(1));
+        expect(creatureTables, hasLength(1));
         expect(event, isNotNull);
         expect(state, isNotNull);
         expect(state!.revision, 1);
