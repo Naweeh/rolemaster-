@@ -77,7 +77,7 @@ final class SqliteCampaignRepository implements CampaignRepository {
   }
 
   void close() {
-    _database.dispose();
+    _database.close();
   }
 
   void _initializeSchema() {
