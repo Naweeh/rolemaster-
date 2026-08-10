@@ -7,7 +7,8 @@ final class Encounter {
     required String campaignId,
     required String name,
     EncounterStatus status = EncounterStatus.planned,
-    Iterable<EncounterParticipant> participants = const <EncounterParticipant>[],
+    Iterable<EncounterParticipant> participants =
+        const <EncounterParticipant>[],
     String? worldId,
     String? locationId,
     String? sceneMapId,
@@ -43,7 +44,8 @@ final class Encounter {
     }
     if (status == EncounterStatus.planned &&
         (this.startedAt != null || this.closedAt != null)) {
-      throw ArgumentError('Planned encounters cannot have start/close timestamps.');
+      throw ArgumentError(
+          'Planned encounters cannot have start/close timestamps.');
     }
     if (status == EncounterStatus.active && this.startedAt == null) {
       throw ArgumentError('Active encounters require startedAt.');
@@ -55,14 +57,17 @@ final class Encounter {
         (this.startedAt == null || this.closedAt == null)) {
       throw ArgumentError('Closed encounters require startedAt and closedAt.');
     }
-    if (this.startedAt != null && this.closedAt != null && this.closedAt!.isBefore(this.startedAt!)) {
+    if (this.startedAt != null &&
+        this.closedAt != null &&
+        this.closedAt!.isBefore(this.startedAt!)) {
       throw ArgumentError('Encounter closedAt cannot be before startedAt.');
     }
 
     final seen = <String>{};
     for (final participant in this.participants) {
       if (!seen.add(participant.key)) {
-        throw ArgumentError('Encounter participants must be unique by entityType/entityId.');
+        throw ArgumentError(
+            'Encounter participants must be unique by entityType/entityId.');
       }
     }
   }
@@ -89,7 +94,8 @@ final class Encounter {
       throw StateError('Closed encounters cannot change participants.');
     }
     if (participants.any((item) => item.key == participant.key)) {
-      throw StateError('Encounter participant already exists: ${participant.key}.');
+      throw StateError(
+          'Encounter participant already exists: ${participant.key}.');
     }
     return _copyWith(
       participants: <EncounterParticipant>[...participants, participant],
@@ -106,7 +112,8 @@ final class Encounter {
       throw StateError('Closed encounters cannot change participants.');
     }
     final key = '${entityType.trim().toLowerCase()}:${entityId.trim()}';
-    final updatedParticipants = participants.where((item) => item.key != key).toList();
+    final updatedParticipants =
+        participants.where((item) => item.key != key).toList();
     if (updatedParticipants.length == participants.length) {
       throw StateError('Encounter participant not found: $key.');
     }
