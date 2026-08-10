@@ -106,6 +106,8 @@ void main() {
       creatures.close();
 
       final legacy = sqlite3.open(fixture.path);
+      legacy.execute('DROP TABLE encounter_participants');
+      legacy.execute('DROP TABLE encounters');
       legacy.execute('DROP TABLE scene_entity_positions');
       legacy.execute('DROP TABLE scene_layers');
       legacy.execute('DROP TABLE scene_maps');
