@@ -37,6 +37,7 @@ void main() {
     events.close();
 
     final legacy = sqlite3.open(path);
+    legacy.execute('DROP TABLE characters');
     legacy.execute('DROP TABLE campaign_states');
     legacy.execute('PRAGMA user_version = 5');
     legacy.close();
@@ -69,6 +70,10 @@ void main() {
       "SELECT name FROM sqlite_master "
       "WHERE type = 'table' AND name = 'campaign_states'",
     );
+    final characterTables = migrated.select(
+      "SELECT name FROM sqlite_master "
+      "WHERE type = 'table' AND name = 'characters'",
+    );
     migrated.close();
 
     expect(
@@ -76,6 +81,7 @@ void main() {
       SqliteCampaignStateRepository.schemaVersion,
     );
     expect(tables, hasLength(1));
+    expect(characterTables, hasLength(1));
     expect(preserved, isNotNull);
     expect(preserved!.payload['source'], 'before-state-manager');
     expect(state, isNotNull);
