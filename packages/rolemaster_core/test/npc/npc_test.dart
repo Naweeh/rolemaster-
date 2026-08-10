@@ -72,7 +72,8 @@ void main() {
       final archived = npc.archive(at: DateTime.utc(2026, 8, 10, 11));
 
       expect(archived.isArchived, isTrue);
-      expect(archived.archive(at: DateTime.utc(2026, 8, 10, 12)), same(archived));
+      expect(
+          archived.archive(at: DateTime.utc(2026, 8, 10, 12)), same(archived));
       expect(
         () => archived.update(
           name: 'No permitido',
