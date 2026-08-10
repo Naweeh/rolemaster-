@@ -3,5 +3,8 @@ import 'campaign_state.dart';
 abstract interface class CampaignStateRepository {
   Future<CampaignState?> getByCampaignId(String campaignId);
 
-  Future<void> save(CampaignState state);
+  Future<bool> save(
+    CampaignState state, {
+    required int expectedRevision,
+  });
 }

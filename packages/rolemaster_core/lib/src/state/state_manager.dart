@@ -51,31 +51,66 @@ final class StateManager {
       }
 
       final invokedChanges = <StateChange>[];
-      try {
-        for (final change in transaction.changes) {
-          invokedChanges.add(change);
+      for (final change in transaction.changes) {
+        invokedChanges.add(change);
+        try {
           await change.apply();
+        } catch (cause) {
+          final rollbackFailures = await _rollback(invokedChanges);
+          throw StateTransactionException(
+            cause: cause,
+            rollbackFailures: rollbackFailures,
+          );
         }
+      }
 
-        final next = current.advance(transaction.changedAt);
-        await _repository.save(next);
-        return next;
+      final next = current.advance(transaction.changedAt);
+      late final bool saved;
+      try {
+        saved = await _repository.save(
+          next,
+          expectedRevision: current.revision,
+        );
       } catch (cause) {
-        final rollbackFailures = <Object>[];
-        for (final change in invokedChanges.reversed) {
-          try {
-            await change.rollback();
-          } catch (rollbackFailure) {
-            rollbackFailures.add(rollbackFailure);
-          }
-        }
+        final rollbackFailures = await _rollback(invokedChanges);
         throw StateTransactionException(
           cause: cause,
           rollbackFailures: rollbackFailures,
         );
       }
+
+      if (!saved) {
+        final actual = await getState(transaction.campaignId);
+        final conflict = StateRevisionConflictException(
+          campaignId: transaction.campaignId,
+          expectedRevision: current.revision,
+          actualRevision: actual.revision,
+        );
+        final rollbackFailures = await _rollback(invokedChanges);
+        if (rollbackFailures.isEmpty) {
+          throw conflict;
+        }
+        throw StateTransactionException(
+          cause: conflict,
+          rollbackFailures: rollbackFailures,
+        );
+      }
+
+      return next;
     } finally {
       _activeCampaigns.remove(transaction.campaignId);
     }
+  }
+
+  Future<List<Object>> _rollback(List<StateChange> changes) async {
+    final failures = <Object>[];
+    for (final change in changes.reversed) {
+      try {
+        await change.rollback();
+      } catch (failure) {
+        failures.add(failure);
+      }
+    }
+    return failures;
   }
 }

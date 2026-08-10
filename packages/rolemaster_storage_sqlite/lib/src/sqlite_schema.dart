@@ -5,54 +5,69 @@ const int rolemasterSqliteSchemaVersion = 5;
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
 
-  final versionRows = database.select('PRAGMA user_version');
-  final version = versionRows.single['user_version'] as int;
+  var version = _readSchemaVersion(database);
+  if (version < 0 || version > rolemasterSqliteSchemaVersion) {
+    throw StateError(
+      'Unsupported Rolemaster database schema: $version. '
+      'Expected <= $rolemasterSqliteSchemaVersion.',
+    );
+  }
 
-  switch (version) {
-    case 0:
-      _runMigration(database, () {
-        _createCampaignSchemaV2(database);
-        _createWorldSchemaV3(database);
-        _createCalendarSchemaV4(database);
-        _createEventSchemaV5(database);
-      });
-    case 1:
-      _runMigration(database, () {
-        _migrateCampaignV1ToV2(database);
-        _createWorldSchemaV3(database);
-        _createCalendarSchemaV4(database);
-        _createEventSchemaV5(database);
-      });
-    case 2:
-      _runMigration(database, () {
-        _createWorldSchemaV3(database);
-        _createCalendarSchemaV4(database);
-        _createEventSchemaV5(database);
-      });
-    case 3:
-      _runMigration(database, () {
-        _createCalendarSchemaV4(database);
-        _createEventSchemaV5(database);
-      });
-    case 4:
-      _runMigration(database, () {
-        _createEventSchemaV5(database);
-      });
-    case rolemasterSqliteSchemaVersion:
-      return;
-    default:
-      throw StateError(
-        'Unsupported Rolemaster database schema: $version. '
-        'Expected <= $rolemasterSqliteSchemaVersion.',
-      );
+  if (version == 0) {
+    _runMigration(database, targetVersion: 2, migrate: () {
+      _createCampaignSchemaV2(database);
+    });
+    version = 2;
+  } else if (version == 1) {
+    _runMigration(database, targetVersion: 2, migrate: () {
+      _migrateCampaignV1ToV2(database);
+    });
+    version = 2;
+  }
+
+  if (version == 2) {
+    _runMigration(database, targetVersion: 3, migrate: () {
+      _createWorldSchemaV3(database);
+    });
+    version = 3;
+  }
+
+  if (version == 3) {
+    _runMigration(database, targetVersion: 4, migrate: () {
+      _createCalendarSchemaV4(database);
+    });
+    version = 4;
+  }
+
+  if (version == 4) {
+    _runMigration(database, targetVersion: 5, migrate: () {
+      _createEventSchemaV5(database);
+    });
+    version = 5;
+  }
+
+  if (version != rolemasterSqliteSchemaVersion) {
+    throw StateError(
+      'Rolemaster database migration stopped at schema $version; '
+      'expected $rolemasterSqliteSchemaVersion.',
+    );
   }
 }
 
-void _runMigration(Database database, void Function() migrate) {
+int _readSchemaVersion(Database database) {
+  final rows = database.select('PRAGMA user_version');
+  return rows.single['user_version'] as int;
+}
+
+void _runMigration(
+  Database database, {
+  required int targetVersion,
+  required void Function() migrate,
+}) {
   database.execute('BEGIN IMMEDIATE');
   try {
     migrate();
-    database.execute('PRAGMA user_version = $rolemasterSqliteSchemaVersion');
+    database.execute('PRAGMA user_version = $targetVersion');
     database.execute('COMMIT');
   } catch (_) {
     database.execute('ROLLBACK');

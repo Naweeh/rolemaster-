@@ -147,7 +147,7 @@ void main() {
       expect(log, isEmpty);
     });
 
-    test('rejects concurrent transactions for the same campaign', () async {
+    test('rejects concurrent transactions for one manager instance', () async {
       final entered = Completer<void>();
       final release = Completer<void>();
       final repository = _MemoryStateRepository();
@@ -188,6 +188,63 @@ void main() {
       release.complete();
       final completed = await first;
       expect(completed.revision, 1);
+    });
+
+    test('CAS prevents lost updates across manager instances', () async {
+      final entered = Completer<void>();
+      final release = Completer<void>();
+      final firstLog = <String>[];
+      final repository = _MemoryStateRepository();
+      final firstManager = StateManager(repository: repository);
+      final secondManager = StateManager(repository: repository);
+
+      final firstFuture = firstManager.execute(
+        StateTransaction(
+          campaignId: 'campaign-1',
+          expectedRevision: 0,
+          changes: <StateChange>[
+            _RecordingChange(
+              name: 'first',
+              log: firstLog,
+              onApply: () async {
+                entered.complete();
+                await release.future;
+              },
+            ),
+          ],
+          changedAt: DateTime.utc(2026, 8, 10, 12),
+        ),
+      );
+      await entered.future;
+
+      final secondState = await secondManager.execute(
+        StateTransaction(
+          campaignId: 'campaign-1',
+          expectedRevision: 0,
+          changes: <StateChange>[
+            _RecordingChange(name: 'second', log: <String>[]),
+          ],
+          changedAt: DateTime.utc(2026, 8, 10, 13),
+        ),
+      );
+      expect(secondState.revision, 1);
+
+      release.complete();
+      await expectLater(
+        firstFuture,
+        throwsA(
+          isA<StateRevisionConflictException>()
+              .having((error) => error.expectedRevision, 'expected', 0)
+              .having((error) => error.actualRevision, 'actual', 1),
+        ),
+      );
+
+      expect(firstLog, <String>[
+        'validate:first',
+        'apply:first',
+        'rollback:first',
+      ]);
+      expect((await firstManager.getState('campaign-1')).revision, 1);
     });
 
     test('captures rollback failures without hiding original cause', () async {
@@ -286,10 +343,22 @@ final class _MemoryStateRepository implements CampaignStateRepository {
   }
 
   @override
-  Future<void> save(CampaignState state) async {
+  Future<bool> save(
+    CampaignState state, {
+    required int expectedRevision,
+  }) async {
     if (failSave) {
       throw StateError('state persistence failed');
     }
+    if (state.revision != expectedRevision + 1) {
+      throw ArgumentError('Saved state must advance exactly one revision.');
+    }
+
+    final actualRevision = _states[state.campaignId]?.revision ?? 0;
+    if (actualRevision != expectedRevision) {
+      return false;
+    }
     _states[state.campaignId] = state;
+    return true;
   }
 }
