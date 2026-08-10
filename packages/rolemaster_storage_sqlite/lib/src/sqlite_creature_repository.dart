@@ -181,9 +181,7 @@ final class SqliteCreatureRepository implements CreatureRepository {
   List<String> _decodeTags(String rawJson) {
     final decoded = jsonDecode(rawJson);
     if (decoded is! List || decoded.any((value) => value is! String)) {
-      throw StateError(
-        'Invalid Creature tags payload in Rolemaster database.',
-      );
+      throw StateError('Invalid Creature tags payload in Rolemaster database.');
     }
     return decoded.cast<String>();
   }
