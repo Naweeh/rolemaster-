@@ -3,7 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('Ruleset Foundation', () {
-    test('initializes a campaign with an exact version and clean overlay', () async {
+    test('initializes a campaign with an exact version and clean overlay',
+        () async {
       final campaigns = _MemoryCampaignRepository(<Campaign>[
         Campaign(
           id: 'campaign-1',
@@ -68,7 +69,8 @@ void main() {
       ]);
       final initialize = InitializeCampaignRuleset(
         campaignRepository: campaigns,
-        rulesetRepository: _MemoryRulesetRepository(<RulesetPackage>[_package()]),
+        rulesetRepository:
+            _MemoryRulesetRepository(<RulesetPackage>[_package()]),
         campaignRulesetRepository: _MemoryCampaignRulesetRepository(),
         clock: DateTime.now,
       );
@@ -93,7 +95,8 @@ void main() {
       );
     });
 
-    test('reset clears only campaign overrides and keeps the binding', () async {
+    test('reset clears only campaign overrides and keeps the binding',
+        () async {
       final repository = _MemoryCampaignRulesetRepository();
       final binding = CampaignRulesetBinding(
         campaignId: 'campaign-1',
@@ -137,7 +140,8 @@ void main() {
       final repository = _MemoryCampaignRulesetRepository();
       final initialize = InitializeCampaignRuleset(
         campaignRepository: campaigns,
-        rulesetRepository: _MemoryRulesetRepository(<RulesetPackage>[_package()]),
+        rulesetRepository:
+            _MemoryRulesetRepository(<RulesetPackage>[_package()]),
         campaignRulesetRepository: repository,
         clock: () => DateTime.utc(2026, 8, 10, 12),
       );
