@@ -1,0 +1,23 @@
+.dart_tool/
+.packages
+.pub/
+build/
+coverage/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flutter generated / local state
+**/android/.gradle/
+**/android/local.properties
+**/ios/Flutter/.last_build_id
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/macos/Flutter/ephemeral/

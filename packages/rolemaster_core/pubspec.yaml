@@ -1,0 +1,7 @@
+name: rolemaster_core
+description: Core de dominio y casos de uso de Rolemaster, sin dependencia de Flutter.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'

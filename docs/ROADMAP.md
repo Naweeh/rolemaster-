@@ -12,16 +12,25 @@ Objetivo: definir el producto antes de implementar lógica específica.
 - [x] Definir enfoque local-first y funcionamiento esencial offline
 - [x] Descartar clientes obligatorios para jugadores
 - [x] Prever pantalla secundaria opcional controlada por el GM
-- [ ] Elegir stack tecnológico
-- [ ] Definir estructura de persistencia
+- [x] Elegir stack tecnológico: Dart + Flutter, local-first, SQLite previsto
+- [x] Crear ADR inicial de stack y reglas de dependencia
+- [x] Separar `rolemaster_core` de la aplicación Flutter
+- [x] Crear bootstrap de UI adaptativa y dominio Campaign
+- [ ] Definir estructura de persistencia SQLite
 - [ ] Definir arquitectura de eventos
 - [ ] Definir comunicación local opcional entre dispositivos del GM
 - [ ] Definir estrategia de plugins/extensiones
-- [ ] Crear ADRs para decisiones técnicas importantes
+- [ ] Generar y validar runners Windows/Android con toolchain Flutter real
 
 ## Fase 1 — Core de campaña
 
 - [ ] Campaign
+  - [x] entidad base
+  - [x] puerto `CampaignRepository`
+  - [x] caso de uso `CreateCampaign`
+  - [ ] persistencia SQLite
+  - [ ] carga/apertura de campaña
+  - [ ] edición y archivado
 - [ ] World
 - [ ] Calendar / Time
 - [ ] Event Engine
@@ -51,7 +60,7 @@ Objetivo: definir el producto antes de implementar lógica específica.
 - [ ] Workspace completo del GM en escritorio
 - [ ] Layout táctil para tablet
 - [ ] Vista contextual para móvil
-- [ ] Sistema responsive/adaptativo compartido
+- [x] Base responsive/adaptativa compartida
 - [ ] Fichas
 - [ ] Mapa / escena
 - [ ] Panel contextual
