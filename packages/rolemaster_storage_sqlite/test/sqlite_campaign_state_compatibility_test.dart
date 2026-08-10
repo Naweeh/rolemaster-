@@ -7,7 +7,7 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('migrates v5 to v6 while preserving existing event history', () async {
+  test('migrates v5 to current schema preserving event history', () async {
     final directory = await Directory.systemTemp.createTemp(
       'rolemaster_state_compatibility_',
     );
@@ -37,6 +37,7 @@ void main() {
     events.close();
 
     final legacy = sqlite3.open(path);
+    legacy.execute('DROP TABLE npcs');
     legacy.execute('DROP TABLE characters');
     legacy.execute('DROP TABLE campaign_states');
     legacy.execute('PRAGMA user_version = 5');
@@ -66,7 +67,7 @@ void main() {
 
     final migrated = sqlite3.open(path);
     final version = migrated.select('PRAGMA user_version').single;
-    final tables = migrated.select(
+    final stateTables = migrated.select(
       "SELECT name FROM sqlite_master "
       "WHERE type = 'table' AND name = 'campaign_states'",
     );
@@ -74,14 +75,19 @@ void main() {
       "SELECT name FROM sqlite_master "
       "WHERE type = 'table' AND name = 'characters'",
     );
+    final npcTables = migrated.select(
+      "SELECT name FROM sqlite_master "
+      "WHERE type = 'table' AND name = 'npcs'",
+    );
     migrated.close();
 
     expect(
       version['user_version'],
       SqliteCampaignStateRepository.schemaVersion,
     );
-    expect(tables, hasLength(1));
+    expect(stateTables, hasLength(1));
     expect(characterTables, hasLength(1));
+    expect(npcTables, hasLength(1));
     expect(preserved, isNotNull);
     expect(preserved!.payload['source'], 'before-state-manager');
     expect(state, isNotNull);

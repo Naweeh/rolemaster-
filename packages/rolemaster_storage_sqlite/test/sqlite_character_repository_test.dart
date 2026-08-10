@@ -120,7 +120,7 @@ void main() {
     });
 
     test(
-      'migrates v6 to v7 while preserving event history and state',
+      'migrates v6 to current schema preserving event history and state',
       () async {
         final fixture = await _createFixture('character-migration');
         addTearDown(fixture.dispose);
@@ -151,6 +151,7 @@ void main() {
         states.close();
 
         final legacy = sqlite3.open(fixture.path);
+        legacy.execute('DROP TABLE npcs');
         legacy.execute('DROP TABLE characters');
         legacy.execute('PRAGMA user_version = 6');
         legacy.close();
@@ -177,6 +178,10 @@ void main() {
         final characterRows = migrated.select(
           "SELECT id FROM characters WHERE id = 'character-new'",
         );
+        final npcTables = migrated.select(
+          "SELECT name FROM sqlite_master "
+          "WHERE type = 'table' AND name = 'npcs'",
+        );
         migrated.close();
 
         expect(
@@ -184,6 +189,7 @@ void main() {
           SqliteCharacterRepository.schemaVersion,
         );
         expect(characterRows.single['id'], 'character-new');
+        expect(npcTables, hasLength(1));
         expect(event, isNotNull);
         expect(state, isNotNull);
         expect(state!.revision, 1);
