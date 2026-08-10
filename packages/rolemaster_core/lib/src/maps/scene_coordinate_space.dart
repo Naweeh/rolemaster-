@@ -4,7 +4,8 @@ final class SceneCoordinateSpace {
       throw ArgumentError.value(width, 'width', 'Map width must be positive.');
     }
     if (!height.isFinite || height <= 0) {
-      throw ArgumentError.value(height, 'height', 'Map height must be positive.');
+      throw ArgumentError.value(
+          height, 'height', 'Map height must be positive.');
     }
   }
 
