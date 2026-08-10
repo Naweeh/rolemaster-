@@ -18,7 +18,8 @@ final class DomainEvent {
       throw ArgumentError.value(id, 'id', 'Domain event id cannot be empty.');
     }
     if (this.type.isEmpty) {
-      throw ArgumentError.value(type, 'type', 'Domain event type cannot be empty.');
+      throw ArgumentError.value(
+          type, 'type', 'Domain event type cannot be empty.');
     }
     if (this.campaignId.isEmpty) {
       throw ArgumentError.value(
