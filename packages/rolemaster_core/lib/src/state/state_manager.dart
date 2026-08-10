@@ -1,5 +1,6 @@
 import 'campaign_state.dart';
 import 'campaign_state_repository.dart';
+import 'state_change.dart';
 import 'state_exceptions.dart';
 import 'state_transaction.dart';
 
