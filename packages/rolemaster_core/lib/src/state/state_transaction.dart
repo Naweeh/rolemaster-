@@ -24,7 +24,8 @@ final class StateTransaction {
       );
     }
     if (this.changes.isEmpty) {
-      throw ArgumentError('State transaction must contain at least one change.');
+      throw ArgumentError(
+          'State transaction must contain at least one change.');
     }
   }
 
