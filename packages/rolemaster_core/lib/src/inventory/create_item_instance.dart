@@ -74,7 +74,8 @@ final class CreateItemInstance {
     return item;
   }
 
-  Future<void> _validateDefinition(String campaignId, String definitionId) async {
+  Future<void> _validateDefinition(
+      String campaignId, String definitionId) async {
     final campaignRuleset =
         await _campaignRulesetRepository.getForCampaign(campaignId);
     if (campaignRuleset == null) {

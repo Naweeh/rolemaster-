@@ -70,7 +70,8 @@ void main() {
       );
     });
 
-    test('moves items into containers and rejects containment cycles', () async {
+    test('moves items into containers and rejects containment cycles',
+        () async {
       final fixtures = _Fixtures();
       final ids = <String>['bag', 'sword'].iterator;
       final create = CreateItemInstance(

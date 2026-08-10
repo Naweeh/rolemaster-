@@ -28,7 +28,8 @@ final class ItemInstance {
       );
     }
     if (quantity <= 0) {
-      throw ArgumentError.value(quantity, 'quantity', 'Quantity must be positive.');
+      throw ArgumentError.value(
+          quantity, 'quantity', 'Quantity must be positive.');
     }
     if (this.updatedAt.isBefore(this.createdAt)) {
       throw ArgumentError('updatedAt cannot be before createdAt.');
