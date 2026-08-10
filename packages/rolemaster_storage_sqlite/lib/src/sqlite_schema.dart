@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 4;
+const int rolemasterSqliteSchemaVersion = 5;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -14,21 +14,29 @@ void initializeRolemasterSqliteSchema(Database database) {
         _createCampaignSchemaV2(database);
         _createWorldSchemaV3(database);
         _createCalendarSchemaV4(database);
+        _createEventSchemaV5(database);
       });
     case 1:
       _runMigration(database, () {
         _migrateCampaignV1ToV2(database);
         _createWorldSchemaV3(database);
         _createCalendarSchemaV4(database);
+        _createEventSchemaV5(database);
       });
     case 2:
       _runMigration(database, () {
         _createWorldSchemaV3(database);
         _createCalendarSchemaV4(database);
+        _createEventSchemaV5(database);
       });
     case 3:
       _runMigration(database, () {
         _createCalendarSchemaV4(database);
+        _createEventSchemaV5(database);
+      });
+    case 4:
+      _runMigration(database, () {
+        _createEventSchemaV5(database);
       });
     case rolemasterSqliteSchemaVersion:
       return;
@@ -206,4 +214,29 @@ void _createCalendarSchemaV4(Database database) {
     'CREATE INDEX idx_temporal_events_calendar_id '
     'ON temporal_events(calendar_id)',
   );
+}
+
+void _createEventSchemaV5(Database database) {
+  database.execute('''
+    CREATE TABLE domain_events (
+      sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT NOT NULL UNIQUE,
+      type TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      occurred_at INTEGER NOT NULL,
+      entity_type TEXT,
+      entity_id TEXT,
+      payload_json TEXT NOT NULL,
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_domain_events_campaign_sequence '
+    'ON domain_events(campaign_id, sequence)',
+  );
+  database.execute(
+    'CREATE INDEX idx_domain_events_campaign_type_sequence '
+    'ON domain_events(campaign_id, type, sequence)',
+  );
+  database.execute('CREATE INDEX idx_domain_events_type ON domain_events(type)');
 }
