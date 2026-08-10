@@ -124,7 +124,7 @@ void main() {
 
       final next = await useCase(
         campaignId: 'campaign-1',
-        duration: const CampaignDuration(minutes: 20),
+        duration: const CampaignDuration(minutes: 60),
       );
 
       expect(next.month, 2);
