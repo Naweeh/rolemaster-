@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Ruleset Foundation + persistencia SQLite v10 + UI técnica provisional de selección de ruleset.
-- **Activo:** Fase 3.4 — Skills sobre definiciones versionadas del Ruleset.
-- **Siguiente:** Inventory / Items y luego Maps / Encounters.
+- **Último completado:** Fase 3.4 — Skills Foundation + persistencia SQLite v11 + build web técnico automatizado.
+- **Activo:** Fase 3.5 — Inventory / Items.
+- **Siguiente:** Maps / Locations y luego Encounters.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La UI actual es únicamente una herramienta funcional de validación.
 
 ---
@@ -41,11 +41,14 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] `dart test`.
 - [x] Flutter analyze.
 - [x] Job independiente para persistencia SQLite.
+- [x] Build web técnico automatizado en GitHub Actions.
+- [x] Artefacto descargable `rolemaster-web-preview`.
+- [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
 
 ## Persistencia
 
 - [x] SQLite multiplataforma seleccionado.
-- [x] Esquema central versionado.
+- [x] Esquema central versionado hasta v11.
 - [x] Migraciones secuenciales.
 - [x] Tests de migraciones históricas.
 - [x] Snapshots mediante backup SQLite.
@@ -160,7 +163,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Binding/overlay `campaign_rulesets`.
 - [x] Paquetes publicados inmutables por `(ruleset_id, version)`.
 - [x] Migración v9→v10.
-- [x] Fixtures históricos v5/v6/v7/v8 compatibles con schema actual.
+- [x] Fixtures históricos compatibles con schema actual.
 - [x] CI Core + SQLite + Flutter verde.
 
 ### Manuales / contenido
@@ -175,26 +178,43 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [ ] Snapshot automático antes de migrar Ruleset.
 - [ ] Conversión y resolución manual de campos incompatibles.
 
-## 3.4 Skills — ACTIVO
+## 3.4 Skills — COMPLETADO
 
 Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el valor/rango concreto pertenece al personaje/campaña.
 
-- [ ] `SkillDefinition` versionada dentro del Ruleset.
-- [ ] IDs estables de definición.
-- [ ] Categoría.
-- [ ] Atributos/estadísticas asociados por referencia.
-- [ ] Fórmulas/costes como datos del Ruleset donde corresponda.
-- [ ] `CharacterSkillState` separado de la definición.
-- [ ] Rango/valor/modificadores.
-- [ ] Validación contra el Ruleset activo de la campaña.
-- [ ] Persistencia.
-- [ ] Tests entre dos versiones de Ruleset con definiciones distintas.
+- [x] `SkillDefinition` versionada dentro del Ruleset.
+- [x] IDs estables de definición dentro de cada paquete/version.
+- [x] Categoría/descripcion/tags como metadata tipada.
+- [x] Asociación opcional a módulo del Ruleset.
+- [x] `RulesetSkillCatalog` desde `RulesetPackage.data['skills']`.
+- [x] Rechazo de IDs duplicados.
+- [x] Rechazo de módulos inexistentes.
+- [x] `CharacterSkillState` separado de la definición.
+- [x] Rangos.
+- [x] Modificadores nombrados.
+- [x] Notas.
+- [x] Validación contra Ruleset exacto y módulos activos de campaña.
+- [x] Bloqueo de modificación sobre personaje archivado.
+- [x] Listado que une definición activa + estado opcional del personaje.
+- [x] Persistencia SQLite v11.
+- [x] Migración v10→v11 preservando el binding de Ruleset.
+- [x] Reapertura y upsert verificados.
+- [x] Fixtures históricos v5–v9 saneados para schema v11.
+- [x] CI Core + SQLite + Flutter verde.
+- [x] Atributos derivados, fórmulas y costes diferidos al Rules Engine para evitar hardcodear reglas en el dominio.
 
-## 3.5 Inventory / Items
-- [ ] Item definitions dependientes de Ruleset cuando corresponda.
-- [ ] Item instances de campaña.
-- [ ] Cantidades/equipamiento/transferencias.
-- [ ] Persistencia/tests.
+## 3.5 Inventory / Items — ACTIVO
+- [ ] `ItemDefinition` dependiente de Ruleset cuando corresponda.
+- [ ] IDs estables de definición.
+- [ ] Categoría y metadata base.
+- [ ] `ItemInstance` perteneciente a campaña.
+- [ ] Propietario/contenedor opcional.
+- [ ] Cantidad.
+- [ ] Estado de equipamiento.
+- [ ] Transferencias entre entidades/contenedores.
+- [ ] Validación contra Ruleset activo cuando exista definición.
+- [ ] Persistencia SQLite.
+- [ ] Tests.
 
 ## 3.6 Maps / Locations
 - [ ] Modelo lógico de mapas/escenas.
@@ -217,6 +237,7 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 ## 4.1 Rules Engine
 - [ ] Resolver el Ruleset efectivo = base + módulos + overlay.
 - [ ] Definiciones de atributos/profesiones/tablas.
+- [ ] Fórmulas/costes de Skills y otras definiciones dependientes del sistema.
 - [ ] Validadores.
 - [ ] Consultas de reglas sin UI.
 
@@ -288,6 +309,9 @@ Regla arquitectónica: la definición de una habilidad pertenece al Ruleset; el 
 - [x] Mostrar que la campaña comienza con Ruleset limpio.
 - [x] Mostrar binding/versión de campañas creadas.
 - [x] Flutter analyze verde.
+- [x] Build Flutter Web release automatizado.
+- [x] Artefacto web descargable por GitHub Actions.
+- [ ] URL directa GitHub Pages — pendiente habilitar Pages en Settings.
 
 > Este prototipo es descartable/evolutivo y NO constituye el inicio de la UI final.
 
