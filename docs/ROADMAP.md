@@ -15,9 +15,9 @@ Objetivo: definir el producto antes de implementar lógica específica.
 - [x] Elegir stack tecnológico: Dart + Flutter, local-first, SQLite
 - [x] Crear ADR inicial de stack y reglas de dependencia
 - [x] Separar `rolemaster_core` de la aplicación Flutter
-- [x] Crear bootstrap de UI adaptativa y dominio Campaign
-- [x] Definir estructura de persistencia SQLite y migraciones secuenciales
-- [x] Definir arquitectura de eventos y registro append-only
+- [x] Definir persistencia SQLite y migraciones secuenciales
+- [x] Definir arquitectura de eventos append-only
+- [x] Definir Ruleset Foundation versionada e inmutable
 - [ ] Definir comunicación local opcional entre dispositivos del GM
 - [ ] Definir estrategia de plugins/extensiones
 - [ ] Generar y validar runners Windows/Android con toolchain Flutter real
@@ -27,12 +27,12 @@ Objetivo: definir el producto antes de implementar lógica específica.
 Estado: **completada**.
 
 - [x] Campaign
-- [x] World
+- [x] World / regiones / localizaciones
 - [x] Calendar / Time
 - [x] Event Engine
-- [x] State Manager
+- [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v8
+  - [x] esquema SQLite central versionado hasta v10
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -41,48 +41,77 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo: **Creatures**.
+Sprint activo: **Skills sobre Ruleset Foundation**.
 
 - [x] Characters
-  - [x] entidad y metadata narrativa
+  - [x] identidad y metadata narrativa
   - [x] asociación a campaña
-  - [x] casos de uso crear/cargar/listar/editar/archivar
-  - [x] persistencia SQLite
-  - [x] migración SQLite v6→v7
+  - [x] crear/cargar/listar/editar/archivar
+  - [x] persistencia SQLite v7
 - [x] NPCs
-  - [x] entidad y metadata narrativa
+  - [x] identidad y metadata narrativa
   - [x] idioma nativo e idiomas conocidos libres/extensibles
-  - [x] ubicación opcional en mundo/localización
-  - [x] validación de pertenencia Campaign/World/Location
-  - [x] casos de uso crear/cargar/listar/editar/archivar
-  - [x] persistencia SQLite
-  - [x] migración SQLite v7→v8
-  - [x] compatibilidad con Character, Event History, State Manager y snapshots
-- [ ] Creatures
+  - [x] ubicación opcional en World/Location
+  - [x] validación Campaign/World/Location
+  - [x] crear/cargar/listar/editar/archivar
+  - [x] persistencia SQLite v8
+- [x] Creatures
+  - [x] identidad, especie/categoría y metadata narrativa
+  - [x] ubicación opcional en World/Location
+  - [x] crear/cargar/listar/editar/archivar
+  - [x] persistencia SQLite v9
+  - [x] estadísticas de reglas explícitamente diferidas a Ruleset/Rules Engine
+- [x] Ruleset Foundation
+  - [x] `RulesetManifest`
+  - [x] `RulesetPackage` versionado e inmutable
+  - [x] módulos obligatorios/opcionales/default
+  - [x] `CampaignRulesetBinding` a versión exacta
+  - [x] `CampaignRulesOverlay` aislado por campaña
+  - [x] campaña nueva con overlay limpio por defecto
+  - [x] reset de house rules sin modificar paquete base
+  - [x] bloqueo de reemplazo silencioso de versión
+  - [x] catálogo y binding persistentes en SQLite v10
+  - [x] documentación `docs/RULESETS.md`
+- [ ] Ruleset Builder / importación de manuales
+  - [ ] importar PDF/manuales
+  - [ ] extraer y normalizar definiciones
+  - [ ] revisión del GM
+  - [ ] publicar nueva versión inmutable
+  - [ ] presets reutilizables separados de campañas
+  - [ ] migración controlada entre rulesets/versiones
 - [ ] Skills
+  - [ ] `SkillDefinition` perteneciente al Ruleset
+  - [ ] estado/rangos de skill pertenecientes a personaje/campaña
+  - [ ] modificadores y metadata
+  - [ ] persistencia y tests
 - [ ] Inventory / Items
 - [ ] Maps / Locations
 - [ ] Encounters
 
 ## Fase 3 — Reglas y combate
 
-- [ ] Rules Engine
+- [ ] Rules Engine que consume el Ruleset activo
 - [ ] Dice / resolution engine
+- [ ] Tablas versionadas
 - [ ] Combat state
 - [ ] Effects / conditions
 - [ ] Extensibilidad de reglas
+- [ ] Migración controlada entre ediciones/versiones
 
 ## Fase 4 — Interfaz multiplataforma
 
-- [ ] Workspace completo del GM en escritorio
-- [ ] Layout táctil para tablet
-- [ ] Vista contextual para móvil
 - [x] Base responsive/adaptativa compartida
+- [x] UI técnica provisional: crear campaña + seleccionar ruleset/versión/módulos
+- [ ] Workspace definitivo del GM en escritorio
+- [ ] Layout táctil definitivo para tablet
+- [ ] Vista contextual definitiva para móvil
 - [ ] Fichas
 - [ ] Mapa / escena
 - [ ] Panel contextual
 - [ ] Voz / tiradas / eventos / audio
 - [ ] Pantalla secundaria opcional para la mesa
+
+> La UI técnica provisional es una herramienta de validación y no abre la fase gráfica definitiva. La puerta sigue siendo el Backend/Core Freeze.
 
 ## Fase 5 — IA opcional
 
@@ -128,5 +157,7 @@ Esta fase es opcional para la primera versión estable y no implica clientes de 
 ## Criterio de desarrollo
 
 Rolemaster debe seguir siendo plenamente útil como soporte de una mesa presencial aunque estén desactivadas la IA, la voz, el audio avanzado y cualquier conexión a Internet.
+
+Cada campaña debe quedar asociada a una versión exacta e inmutable de Ruleset. Las modificaciones de campaña se almacenan en un overlay propio y nunca contaminan el paquete base ni otras campañas.
 
 Las interfaces de escritorio, tablet y móvil deben representar el mismo dominio y estado de campaña, pero cada una debe estar optimizada para su contexto de uso.
