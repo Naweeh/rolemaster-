@@ -7,8 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('SqliteCalendarRepository', () {
-    test('persists custom calendar, timeline and temporal events after reopening',
-        () async {
+    test('persists calendar state after reopening', () async {
       final directory = await Directory.systemTemp.createTemp(
         'rolemaster_calendar_sqlite_',
       );
@@ -75,7 +74,9 @@ void main() {
 
       final reader = SqliteCalendarRepository.open(databasePath);
       final loadedCalendar = await reader.getCalendarById('calendar-1');
-      final loadedTimeline = await reader.getTimelineForCampaign('campaign-1');
+      final loadedTimeline = await reader.getTimelineForCampaign(
+        'campaign-1',
+      );
       final events = await reader.getEventsForCampaign('campaign-1');
       final loadedEvent = await reader.getEventById('event-2');
       reader.close();
@@ -167,8 +168,7 @@ void main() {
       expect(events.single.scheduledAt.day, 3);
     });
 
-    test('migrates schema v3 to v4 without losing Campaign or World data',
-        () async {
+    test('migrates v3 to v4 without data loss', () async {
       final directory = await Directory.systemTemp.createTemp(
         'rolemaster_calendar_migration_',
       );
