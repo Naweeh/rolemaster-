@@ -1,4 +1,6 @@
 import 'campaign.dart';
+import 'campaign_configuration.dart';
+import 'campaign_metadata.dart';
 import 'campaign_repository.dart';
 
 typedef CampaignIdGenerator = String Function();
@@ -17,13 +19,19 @@ final class CreateCampaign {
   final CampaignIdGenerator _idGenerator;
   final Clock _clock;
 
-  Future<Campaign> call(String name) async {
+  Future<Campaign> call(
+    String name, {
+    CampaignMetadata? metadata,
+    CampaignConfiguration? configuration,
+  }) async {
     final now = _clock().toUtc();
     final campaign = Campaign(
       id: _idGenerator(),
       name: name,
       createdAt: now,
       updatedAt: now,
+      metadata: metadata,
+      configuration: configuration,
     );
 
     await _repository.save(campaign);
