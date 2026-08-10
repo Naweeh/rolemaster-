@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
-import '../features/campaign/campaign_home_page.dart';
+import '../features/visual_alpha/visual_alpha_landing_page.dart';
 
 final class RolemasterApp extends StatelessWidget {
   const RolemasterApp({
@@ -27,7 +27,7 @@ final class RolemasterApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: CampaignHomePage(
+      home: VisualAlphaLandingPage(
         campaignRepository: campaignRepository,
         rulesetRepository: rulesetRepository,
         campaignRulesetRepository: campaignRulesetRepository,
