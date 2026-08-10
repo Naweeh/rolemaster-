@@ -224,7 +224,8 @@ World _world(String id) {
 }
 
 final class _MemoryCampaignRepository implements CampaignRepository {
-  _MemoryCampaignRepository([Iterable<Campaign> campaigns = const <Campaign>[]]) {
+  _MemoryCampaignRepository(
+      [Iterable<Campaign> campaigns = const <Campaign>[]]) {
     for (final campaign in campaigns) {
       _campaigns[campaign.id] = campaign;
     }
