@@ -1,0 +1,1 @@
+typedef CalendarEntityIdGenerator = String Function();

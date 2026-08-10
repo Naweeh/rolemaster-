@@ -1,5 +1,16 @@
 library rolemaster_core;
 
+export 'src/calendar/advance_campaign_time.dart';
+export 'src/calendar/calendar_definition.dart';
+export 'src/calendar/calendar_engine.dart';
+export 'src/calendar/calendar_exceptions.dart';
+export 'src/calendar/calendar_repository.dart';
+export 'src/calendar/calendar_support.dart';
+export 'src/calendar/campaign_moment.dart';
+export 'src/calendar/campaign_timeline.dart';
+export 'src/calendar/initialize_campaign_timeline.dart';
+export 'src/calendar/schedule_temporal_event.dart';
+export 'src/calendar/temporal_event.dart';
 export 'src/campaign/archive_campaign.dart';
 export 'src/campaign/campaign.dart';
 export 'src/campaign/campaign_configuration.dart';
