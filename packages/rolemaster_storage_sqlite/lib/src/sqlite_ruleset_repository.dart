@@ -126,7 +126,9 @@ final class SqliteRulesetRepository
     final referencesRaw = jsonDecode(row['source_references_json'] as String);
     final dataRaw = jsonDecode(row['data_json'] as String);
     if (modulesRaw is! List || referencesRaw is! List || dataRaw is! Map) {
-      throw StateError('Invalid ruleset package payload in Rolemaster database.');
+      throw StateError(
+        'Invalid ruleset package payload in Rolemaster database.',
+      );
     }
 
     return RulesetPackage(
@@ -198,7 +200,9 @@ final class SqliteCampaignRulesetRepository
     final modulesRaw = jsonDecode(row['active_module_ids_json'] as String);
     final overlayRaw = jsonDecode(row['overlay_json'] as String);
     if (modulesRaw is! List || overlayRaw is! Map) {
-      throw StateError('Invalid campaign ruleset payload in Rolemaster database.');
+      throw StateError(
+        'Invalid campaign ruleset payload in Rolemaster database.',
+      );
     }
 
     return CampaignRulesetState(
