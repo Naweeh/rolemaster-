@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v13
+  - [x] esquema SQLite central versionado hasta v14
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -41,7 +41,7 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo excepcional: **Visual Alpha 0.1** para validar visualmente el Core con el primer manual real. Al terminar esta prueba, el siguiente sprint de dominio será **Encounters**.
+Estado: **completada para el alcance previo a Rules Engine**.
 
 - [x] Characters — SQLite v7
 - [x] NPCs — SQLite v8
@@ -50,34 +50,37 @@ Sprint activo excepcional: **Visual Alpha 0.1** para validar visualmente el Core
 - [x] Skills Foundation — SQLite v11
 - [x] Inventory / Items — SQLite v12
 - [x] Maps / Locations — SQLite v13
-  - [x] `World/Region/Location` reutilizado como geografía canónica
-  - [x] mapa/escena lógica vinculable a campaña, mundo y localización
-  - [x] espacio de coordenadas independiente del renderer
-  - [x] capas ordenadas y visibilidad GM/pública
-  - [x] posiciones opcionales de entidades
-  - [x] preparación para pantalla secundaria sin dependencia de UI
-  - [x] persistencia SQLite v13
-  - [x] migración v12→v13 preservando inventario
-  - [x] constraints y FK mapa/capa
-  - [x] fixtures históricos v5–v11 saneados
+- [x] Encounters — SQLite v14
+  - [x] Encounter pre-combate con estados planned / active / closed
+  - [x] participantes genéricos y únicos
+  - [x] contexto opcional World / Location / SceneMap
+  - [x] derivación y validación del contexto de mapa
+  - [x] persistencia transaccional del agregado
+  - [x] migración v13→v14 preservando Maps
+  - [x] fixtures históricos v5–v12 saneados
   - [x] CI Core + SQLite + Flutter verde
-- [ ] Encounters
 
-### Visual Alpha 0.1
+### Visual Alpha 0.1 — validación congelada por ahora
 
-- [ ] Cargar primer manual real de prueba
-- [ ] Identificar edición/versión/módulos
-- [ ] Generar un Ruleset de prueba controlado sin modificar el paquete base
-- [ ] Crear una campaña limpia ligada a esa versión
-- [ ] Mostrar datos reales en shell GM responsive
-- [ ] Validar Campaign + Ruleset + Characters/NPCs + Map/Scene
-- [ ] Generar build web técnico para revisión
+- [x] Primer manual real de prueba cargado
+- [x] Clasificación provisional y módulos de prueba identificados
+- [x] Ruleset de prueba controlado sin modificar paquete base
+- [x] Campaña limpia ligada a esa versión
+- [x] Shell GM responsive con datos reales
+- [x] Tiradas y creación/reapertura de personaje probadas
+- [x] Build web técnico y tester HTML autocontenido
+- [ ] Renderer real, NPCs visuales detallados y design system diferidos
 
-> La Visual Alpha es una herramienta de validación. No abre ni congela la fase gráfica definitiva.
+> La Visual Alpha fue suficiente para validar la dirección. Queda congelada mientras continúa el checklist técnico y no abre la fase gráfica definitiva.
 
 ## Fase 3 — Reglas y combate
 
-- [ ] Rules Engine que consume el Ruleset activo
+Sprint activo: **Rules Engine Foundation**.
+
+- [ ] Effective Ruleset = paquete exacto + módulos activos + overlay
+- [ ] validación de binding/versión/módulos obligatorios
+- [ ] overrides de campaña sin mutar el paquete base
+- [ ] aislamiento entre campañas
 - [ ] Dice / resolution engine
 - [ ] Tablas versionadas
 - [ ] Combat state
@@ -90,6 +93,7 @@ Sprint activo excepcional: **Visual Alpha 0.1** para validar visualmente el Core
 - [x] Base responsive/adaptativa compartida
 - [x] UI técnica provisional: crear campaña + seleccionar ruleset/versión/módulos
 - [x] Build web técnico automatizado como artefacto de GitHub Actions
+- [x] Visual Alpha funcional con primer manual real
 - [ ] Publicación directa de preview por GitHub Pages — pendiente habilitar Pages en el repositorio
 - [ ] Workspace definitivo del GM en escritorio
 - [ ] Layout táctil definitivo para tablet
