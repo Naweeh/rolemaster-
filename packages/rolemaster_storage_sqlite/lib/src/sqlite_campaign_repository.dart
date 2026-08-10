@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_schema.dart';
+
 final class SqliteCampaignRepository implements CampaignRepository {
   SqliteCampaignRepository._(this._database) {
-    _initializeSchema();
+    initializeRolemasterSqliteSchema(_database);
   }
 
   factory SqliteCampaignRepository.open(String path) {
@@ -16,7 +18,7 @@ final class SqliteCampaignRepository implements CampaignRepository {
     return SqliteCampaignRepository._(sqlite3.openInMemory());
   }
 
-  static const int schemaVersion = 2;
+  static const int schemaVersion = rolemasterSqliteSchemaVersion;
 
   final Database _database;
 
@@ -115,75 +117,6 @@ final class SqliteCampaignRepository implements CampaignRepository {
 
   void close() {
     _database.close();
-  }
-
-  void _initializeSchema() {
-    _database.execute('PRAGMA foreign_keys = ON');
-
-    final versionRows = _database.select('PRAGMA user_version');
-    final version = versionRows.single['user_version'] as int;
-
-    if (version == 0) {
-      _createSchemaV2();
-      _database.execute('PRAGMA user_version = $schemaVersion');
-      return;
-    }
-
-    if (version == 1) {
-      _migrateV1ToV2();
-      return;
-    }
-
-    if (version != schemaVersion) {
-      throw StateError(
-        'Unsupported Rolemaster database schema: $version. '
-        'Expected $schemaVersion.',
-      );
-    }
-  }
-
-  void _createSchemaV2() {
-    _database.execute('''
-      CREATE TABLE campaigns (
-        id TEXT NOT NULL PRIMARY KEY,
-        name TEXT NOT NULL,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL,
-        archived_at INTEGER,
-        description TEXT,
-        tags_json TEXT NOT NULL DEFAULT '[]',
-        ai_enabled INTEGER NOT NULL DEFAULT 1 CHECK (ai_enabled IN (0, 1)),
-        voice_enabled INTEGER NOT NULL DEFAULT 1 CHECK (voice_enabled IN (0, 1)),
-        audio_enabled INTEGER NOT NULL DEFAULT 1 CHECK (audio_enabled IN (0, 1))
-      ) STRICT
-    ''');
-  }
-
-  void _migrateV1ToV2() {
-    _database.execute('BEGIN IMMEDIATE');
-    try {
-      _database.execute('ALTER TABLE campaigns ADD COLUMN description TEXT');
-      _database.execute(
-        "ALTER TABLE campaigns ADD COLUMN tags_json TEXT NOT NULL DEFAULT '[]'",
-      );
-      _database.execute(
-        'ALTER TABLE campaigns ADD COLUMN ai_enabled INTEGER NOT NULL '
-        'DEFAULT 1 CHECK (ai_enabled IN (0, 1))',
-      );
-      _database.execute(
-        'ALTER TABLE campaigns ADD COLUMN voice_enabled INTEGER NOT NULL '
-        'DEFAULT 1 CHECK (voice_enabled IN (0, 1))',
-      );
-      _database.execute(
-        'ALTER TABLE campaigns ADD COLUMN audio_enabled INTEGER NOT NULL '
-        'DEFAULT 1 CHECK (audio_enabled IN (0, 1))',
-      );
-      _database.execute('PRAGMA user_version = $schemaVersion');
-      _database.execute('COMMIT');
-    } catch (_) {
-      _database.execute('ROLLBACK');
-      rethrow;
-    }
   }
 
   Campaign _campaignFromRow(Row row) {
