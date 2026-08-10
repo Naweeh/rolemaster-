@@ -238,5 +238,7 @@ void _createEventSchemaV5(Database database) {
     'CREATE INDEX idx_domain_events_campaign_type_sequence '
     'ON domain_events(campaign_id, type, sequence)',
   );
-  database.execute('CREATE INDEX idx_domain_events_type ON domain_events(type)');
+  database.execute(
+    'CREATE INDEX idx_domain_events_type ON domain_events(type)',
+  );
 }
