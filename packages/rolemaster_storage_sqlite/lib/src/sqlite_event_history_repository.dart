@@ -100,8 +100,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
     }
 
     if (limit == null) {
-      final rows = _database.select(
-        '''
+      final rows = _database.select('''
         SELECT
           id,
           type,
@@ -114,15 +113,12 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
         WHERE campaign_id = ?
         $whereType
         ORDER BY sequence ASC
-        ''',
-        parameters,
-      );
+        ''', parameters);
       return rows.map(_eventFromRow).toList(growable: false);
     }
 
     parameters.add(limit);
-    final rows = _database.select(
-      '''
+    final rows = _database.select('''
       SELECT
         id,
         type,
@@ -149,9 +145,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
         LIMIT ?
       )
       ORDER BY sequence ASC
-      ''',
-      parameters,
-    );
+      ''', parameters);
     return rows.map(_eventFromRow).toList(growable: false);
   }
 
