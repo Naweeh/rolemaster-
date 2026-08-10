@@ -8,7 +8,8 @@ final class DiceFormula {
       throw ArgumentError.value(count, 'count', 'Dice count must be positive.');
     }
     if (sides < 2) {
-      throw ArgumentError.value(sides, 'sides', 'Dice sides must be at least 2.');
+      throw ArgumentError.value(
+          sides, 'sides', 'Dice sides must be at least 2.');
     }
   }
 
