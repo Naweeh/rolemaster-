@@ -28,9 +28,31 @@ Los jugadores no necesitan una cuenta ni un cliente Rolemaster para participar.
 
 Proyecto iniciado el 10 de agosto de 2026.
 
-La etapa actual define las fundaciones técnicas antes de implementar el sistema de reglas y los módulos de juego.
+**Fase 1 — Fundaciones verificables: completada.**
+
+El proyecto ya dispone de:
+
+- Core Dart independiente de Flutter.
+- GitHub Actions para validar Core, almacenamiento SQLite y app Flutter.
+- tests de entidad y casos de uso de `Campaign`.
+- ciclo de vida inicial de Campaign: crear, obtener, listar, renombrar y archivar.
+- persistencia SQLite separada del Core, con esquema versionado v1.
+- test real de persistencia que guarda una campaña, cierra la base, la reabre y recupera los mismos datos.
+
+**Activo:** Fase 2.1 — completar el modelo y los casos de uso de `Campaign` antes de avanzar a `World`.
+
+## CI
+
+El workflow `.github/workflows/ci.yml` ejecuta en cada push y pull request a `main`:
+
+- `dart format`, `dart analyze --fatal-infos` y `dart test` para `rolemaster_core`.
+- formato, análisis y tests para `rolemaster_storage_sqlite`.
+- `flutter pub get` y `flutter analyze --fatal-infos` para la app Flutter.
+
+Un error de formato, análisis, test o warning tratado como fatal bloquea el job correspondiente.
 
 ## Documentación
 
 - `docs/ARCHITECTURE.md`: arquitectura y límites del sistema.
-- `docs/ROADMAP.md`: etapas iniciales de desarrollo.
+- `docs/ROADMAP.md`: etapas generales de desarrollo.
+- `docs/CHECKLIST_MASTER.md`: tablero operativo y posición actual del proyecto.
