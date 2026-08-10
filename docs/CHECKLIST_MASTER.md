@@ -4,10 +4,10 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 3.5 — Inventory / Items + persistencia SQLite v12.
-- **Activo:** Fase 3.6 — Maps / Locations.
+- **Último completado:** Fase 3.6 — Maps / Locations + persistencia SQLite v13.
+- **Activo:** Visual Alpha 0.1 — primera validación visual con Ruleset alimentado desde manual.
 - **Siguiente:** Fase 3.7 — Encounters.
-- **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La UI actual es únicamente una herramienta funcional de validación.
+- **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha es una herramienta funcional de validación y puede cambiar libremente.
 
 ---
 
@@ -37,7 +37,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-- [x] Esquema SQLite central versionado hasta v12.
+- [x] Esquema SQLite central versionado hasta v13.
 - [x] Migraciones secuenciales e históricas.
 - [x] Snapshots, integridad, restore y rollback pre-restore.
 
@@ -96,49 +96,54 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 Regla arquitectónica: las propiedades del tipo de objeto viven en el Ruleset; la campaña sólo persiste el estado mutable de cada instancia.
 
 - [x] `ItemDefinition` desde Ruleset.
-- [x] IDs estables, categoría, tags y propiedades JSON-safe e inmutables.
-- [x] Filtrado por módulos activos.
-- [x] `ItemInstance` perteneciente a campaña.
-- [x] Objetos custom sin definición de Ruleset.
-- [x] Cantidad positiva.
-- [x] Estado equipado.
-- [x] Propietario genérico mediante `InventoryHolderRef`.
-- [x] Contenedor opcional mediante otra instancia de item.
-- [x] Holder y contenedor mutuamente excluyentes.
-- [x] Transferencias entre holder/contenedor/desasignado.
-- [x] Des-equipado automático al contener/desasignar.
-- [x] Rechazo de contenedor inexistente.
-- [x] Rechazo de contenedor de otra campaña.
-- [x] Detección de ciclos de contención.
+- [x] catálogo tipado y filtrado por módulos activos.
+- [x] objetos de campaña definidos por Ruleset o manuales/custom.
+- [x] `ItemInstance` con cantidad, equipamiento, notas y timestamps.
+- [x] propietario genérico o contenedor opcional.
+- [x] transferencias y detección de ciclos de contención.
+- [x] propiedades de Ruleset no duplicadas en estado mutable.
 - [x] Persistencia SQLite v12.
-- [x] Reapertura y upsert.
 - [x] Migración v11→v12 preservando Skills y binding de Ruleset.
-- [x] Constraints SQLite de cantidad, holder/contenedor y autocontención.
-- [x] Fixtures históricos v5–v10 saneados.
 - [x] CI Core + SQLite + Flutter verde.
 
-## 3.6 Maps / Locations — ACTIVO
+## 3.6 Maps / Locations — COMPLETADO
 
-Regla arquitectónica: `World/Region/Location` sigue siendo la geografía canónica. Este sprint agrega representaciones visuales/lógicas de una localización, no una segunda jerarquía geográfica.
+Regla arquitectónica: `World/Region/Location` sigue siendo la geografía canónica. Maps agrega representaciones visuales/lógicas, no una segunda jerarquía geográfica.
 
-- [ ] `SceneMap` / mapa lógico perteneciente a campaña.
-- [ ] Vínculo opcional a `World` y `Location` existentes.
-- [ ] Validación de pertenencia Campaign/World/Location.
-- [ ] Espacio lógico de coordenadas independiente del renderer.
-- [ ] Capas lógicas ordenadas.
-- [ ] Metadata de visibilidad GM/pública.
-- [ ] Posiciones opcionales de entidades por referencia genérica.
-- [ ] Sin dependencia de Flutter/canvas/imágenes concretas en Core.
-- [ ] Preparación para pantalla secundaria futura.
-- [ ] Persistencia SQLite v13.
-- [ ] Migración v12→v13 preservando inventario y datos previos.
-- [ ] Tests.
+- [x] `SceneMap` / mapa lógico perteneciente a campaña.
+- [x] Vínculo opcional a `World` y `Location` existentes.
+- [x] Validación de pertenencia Campaign/World/Location.
+- [x] Espacio lógico de coordenadas independiente del renderer.
+- [x] Capas lógicas ordenadas.
+- [x] Metadata de visibilidad GM/pública.
+- [x] Posiciones opcionales de entidades por referencia genérica.
+- [x] Sin dependencia de Flutter/canvas/imágenes concretas en Core.
+- [x] Preparación para pantalla secundaria futura.
+- [x] Persistencia SQLite v13.
+- [x] Migración v12→v13 preservando inventario y datos previos.
+- [x] FK compuesta impide usar capas de otro mapa.
+- [x] Fixtures históricos v5–v11 compatibles con v13.
+- [x] CI Core + SQLite + Flutter verde.
+
+## Visual Alpha 0.1 — ACTIVO
+
+Objetivo: usar datos reales del Core y un manual real como primera fuente de Ruleset para empezar a validar la experiencia del GM sin abrir todavía la fase gráfica definitiva.
+
+- [ ] Cargar primer manual de prueba.
+- [ ] Identificar edición/versión/módulos del manual.
+- [ ] Extraer un subconjunto controlado de datos del Ruleset para la prueba.
+- [ ] Crear campaña de prueba con ruleset limpio.
+- [ ] Mostrar shell GM responsive con datos reales.
+- [ ] Mostrar al menos Campaign, Ruleset, Characters/NPCs y Map/Scene.
+- [ ] Generar nuevo build web técnico para revisión visual.
+- [ ] Registrar feedback sin congelar design system.
 
 ## 3.7 Encounters — SIGUIENTE
 - [ ] Encounter base.
 - [ ] Participantes.
 - [ ] Contexto/localización/mapa opcional.
 - [ ] Inicio/cierre/estado.
+- [ ] Persistencia.
 - [ ] Tests.
 
 ---
