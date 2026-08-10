@@ -1,7 +1,9 @@
 final class CalendarMonth {
-  CalendarMonth({required String name, required this.days}) : name = name.trim() {
+  CalendarMonth({required String name, required this.days})
+      : name = name.trim() {
     if (this.name.isEmpty) {
-      throw ArgumentError.value(name, 'name', 'Calendar month name cannot be empty.');
+      throw ArgumentError.value(
+          name, 'name', 'Calendar month name cannot be empty.');
     }
     if (days <= 0) {
       throw ArgumentError.value(days, 'days', 'Calendar month must have days.');
@@ -53,7 +55,8 @@ final class CalendarDefinition {
         'Calendar minutesPerHour must be positive.',
       );
     }
-    if (startingWeekdayIndex < 0 || startingWeekdayIndex >= this.weekdays.length) {
+    if (startingWeekdayIndex < 0 ||
+        startingWeekdayIndex >= this.weekdays.length) {
       throw ArgumentError.value(
         startingWeekdayIndex,
         'startingWeekdayIndex',

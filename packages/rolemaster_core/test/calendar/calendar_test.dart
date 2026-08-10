@@ -270,7 +270,8 @@ final class _MemoryCalendarRepository implements CalendarRepository {
   final Map<String, TemporalEvent> _events = <String, TemporalEvent>{};
 
   @override
-  Future<CalendarDefinition?> getCalendarById(String id) async => _calendars[id];
+  Future<CalendarDefinition?> getCalendarById(String id) async =>
+      _calendars[id];
 
   @override
   Future<TemporalEvent?> getEventById(String id) async => _events[id];
