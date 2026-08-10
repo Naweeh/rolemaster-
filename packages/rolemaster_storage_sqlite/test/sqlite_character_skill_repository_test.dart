@@ -68,7 +68,10 @@ void main() {
     });
 
     test('migrates v10 to v11 without losing ruleset binding', () async {
-      final fixture = await _createFixture('skill-migration', withRuleset: true);
+      final fixture = await _createFixture(
+        'skill-migration',
+        withRuleset: true,
+      );
       addTearDown(fixture.dispose);
 
       final legacy = sqlite3.open(fixture.path);
@@ -94,7 +97,10 @@ void main() {
       final version = database.select('PRAGMA user_version').single;
       database.close();
 
-      expect(version['user_version'], SqliteCharacterSkillRepository.schemaVersion);
+      expect(
+        version['user_version'],
+        SqliteCharacterSkillRepository.schemaVersion,
+      );
       expect(binding, isNotNull);
       expect(binding!.binding.rulesetId, 'rolemaster-demo');
       expect(binding.binding.rulesetVersion, '0.2.0');
