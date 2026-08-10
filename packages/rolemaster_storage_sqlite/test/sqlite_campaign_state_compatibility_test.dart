@@ -37,6 +37,7 @@ void main() {
     events.close();
 
     final legacy = sqlite3.open(path);
+    legacy.execute('DROP TABLE creatures');
     legacy.execute('DROP TABLE npcs');
     legacy.execute('DROP TABLE characters');
     legacy.execute('DROP TABLE campaign_states');
@@ -79,6 +80,10 @@ void main() {
       "SELECT name FROM sqlite_master "
       "WHERE type = 'table' AND name = 'npcs'",
     );
+    final creatureTables = migrated.select(
+      "SELECT name FROM sqlite_master "
+      "WHERE type = 'table' AND name = 'creatures'",
+    );
     migrated.close();
 
     expect(
@@ -88,6 +93,7 @@ void main() {
     expect(stateTables, hasLength(1));
     expect(characterTables, hasLength(1));
     expect(npcTables, hasLength(1));
+    expect(creatureTables, hasLength(1));
     expect(preserved, isNotNull);
     expect(preserved!.payload['source'], 'before-state-manager');
     expect(state, isNotNull);
