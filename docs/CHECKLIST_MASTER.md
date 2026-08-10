@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 3.7 — Encounters + persistencia SQLite v14.
-- **Activo:** Fase 4.1 — Rules Engine Foundation: resolver Ruleset efectivo = paquete exacto + módulos activos + overlay de campaña.
-- **Siguiente:** Fase 4.2 — Dice / Resolution Engine.
+- **Último completado:** Fase 4.2 — Dice / Resolution Engine genérico y data-driven.
+- **Activo:** Fase 4.3 — Tablas versionadas dentro del Ruleset efectivo.
+- **Siguiente:** Fase 4.4 — Combat Foundation sobre Encounter + Resolution Engine.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -165,23 +165,50 @@ Regla arquitectónica: Encounter modela contexto y ciclo de una escena/encuentro
 
 # Fase 4 — Reglas y combate
 
-## 4.1 Rules Engine Foundation — ACTIVO
-- [ ] `EffectiveRuleset` inmutable para una campaña.
-- [ ] Resolver paquete exacto + binding + módulos activos + overlay.
-- [ ] Validar que binding y paquete coincidan en ID/versión.
-- [ ] Validar módulos activos contra el manifest y módulos obligatorios.
-- [ ] Aplicar overrides de campaña sin mutar el paquete base.
-- [ ] Tests de aislamiento entre campañas y paquete base inmutable.
+## 4.1 Rules Engine Foundation — COMPLETADO
+- [x] `EffectiveRuleset` inmutable para una campaña.
+- [x] Resolver paquete exacto + binding + módulos activos + overlay.
+- [x] Validar que binding y paquete coincidan en ID/versión.
+- [x] Validar módulos activos contra el manifest y módulos obligatorios.
+- [x] Aplicar overrides de campaña con merge profundo sin mutar el paquete base.
+- [x] Datos efectivos congelados/inmutables.
+- [x] Tests de aislamiento entre campañas y paquete base inmutable.
+- [x] CI Core + SQLite + Flutter verde.
 
-## 4.2 Dice / Resolution Engine — SIGUIENTE
-- [ ] Contrato genérico de tiradas/resolución basado en Ruleset.
-- [ ] RNG inyectable/testeable.
-- [ ] Resultados trazables.
-- [ ] Reglas específicas suministradas por el Ruleset, no hardcodeadas en Core.
+## 4.2 Dice / Resolution Engine — COMPLETADO
 
-## 4.3+ Reglas avanzadas
-- [ ] Tablas versionadas.
-- [ ] Combat.
+Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las reglas concretas se describen en el `EffectiveRuleset` y se ejecutan mediante intérpretes por `kind`.
+
+- [x] `DiceFormula` genérica con cantidad, caras y modificador.
+- [x] RNG inyectable/testeable mediante `DiceRandomSource`.
+- [x] `DiceRollResult` inmutable y trazable por campaña + Ruleset/version.
+- [x] `DiceEngine` neutral al sistema.
+- [x] `resolutionRules` data-driven dentro del Ruleset efectivo.
+- [x] `ResolutionRequest`, `ResolutionEvaluation` y `ResolutionResult`.
+- [x] `ResolutionRuleInterpreter` intercambiable por `kind`.
+- [x] `ResolutionEngine` valida ruleId, módulo activo, intérprete y trazas de dados.
+- [x] Primer intérprete genérico `dice-threshold` configurable desde Ruleset.
+- [x] Target fijo o dinámico desde request, modificadores dinámicos y outcomes configurables.
+- [x] Ninguna regla específica de D&D/Rolemaster hardcodeada en el motor.
+- [x] CI Core + SQLite + Flutter verde.
+
+## 4.3 Tablas versionadas — ACTIVO
+- [ ] Definiciones de tabla dentro del Ruleset/EffectiveRuleset.
+- [ ] IDs estables y módulo opcional.
+- [ ] Entradas/rangos data-driven e inmutables.
+- [ ] Lookup neutral al sistema.
+- [ ] Validación de solapamientos/huecos según política declarada.
+- [ ] Referencias desde Resolution Engine sin hardcodear tablas concretas.
+- [ ] Tests de overlay/aislamiento por campaña.
+
+## 4.4 Combat Foundation — SIGUIENTE
+- [ ] Combat state asociado a Encounter activo.
+- [ ] Participantes resueltos contra Character/NPC/Creature.
+- [ ] Orden/turno/round sin asumir sistema específico.
+- [ ] Acciones resueltas mediante Resolution Engine.
+- [ ] HP/defensas/ataques sólo mediante definiciones del Ruleset.
+
+## 4.5+ Reglas avanzadas
 - [ ] Efectos/condiciones.
 - [ ] Migración controlada de Ruleset.
 
