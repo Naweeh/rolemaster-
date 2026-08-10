@@ -67,49 +67,51 @@ void main() {
       expect(loaded.updatedAt, DateTime.utc(2026, 8, 10, 12));
     });
 
-    test('advances only when stored revision matches expected revision',
-        () async {
-      final fixture = await _createFixture('state-update');
-      addTearDown(fixture.dispose);
-      final repository = SqliteCampaignStateRepository.open(fixture.path);
-      addTearDown(repository.close);
+    test(
+      'advances only when stored revision matches expected revision',
+      () async {
+        final fixture = await _createFixture('state-update');
+        addTearDown(fixture.dispose);
+        final repository = SqliteCampaignStateRepository.open(fixture.path);
+        addTearDown(repository.close);
 
-      await repository.save(
-        CampaignState(
-          campaignId: 'campaign-1',
-          revision: 1,
-          updatedAt: DateTime.utc(2026, 8, 10, 12),
-        ),
-        expectedRevision: 0,
-      );
-
-      expect(
         await repository.save(
           CampaignState(
             campaignId: 'campaign-1',
-            revision: 2,
-            updatedAt: DateTime.utc(2026, 8, 10, 13),
+            revision: 1,
+            updatedAt: DateTime.utc(2026, 8, 10, 12),
           ),
-          expectedRevision: 1,
-        ),
-        isTrue,
-      );
-      expect(
-        await repository.save(
-          CampaignState(
-            campaignId: 'campaign-1',
-            revision: 2,
-            updatedAt: DateTime.utc(2026, 8, 10, 14),
-          ),
-          expectedRevision: 1,
-        ),
-        isFalse,
-      );
+          expectedRevision: 0,
+        );
 
-      final loaded = await repository.getByCampaignId('campaign-1');
-      expect(loaded!.revision, 2);
-      expect(loaded.updatedAt, DateTime.utc(2026, 8, 10, 13));
-    });
+        expect(
+          await repository.save(
+            CampaignState(
+              campaignId: 'campaign-1',
+              revision: 2,
+              updatedAt: DateTime.utc(2026, 8, 10, 13),
+            ),
+            expectedRevision: 1,
+          ),
+          isTrue,
+        );
+        expect(
+          await repository.save(
+            CampaignState(
+              campaignId: 'campaign-1',
+              revision: 2,
+              updatedAt: DateTime.utc(2026, 8, 10, 14),
+            ),
+            expectedRevision: 1,
+          ),
+          isFalse,
+        );
+
+        final loaded = await repository.getByCampaignId('campaign-1');
+        expect(loaded!.revision, 2);
+        expect(loaded.updatedAt, DateTime.utc(2026, 8, 10, 13));
+      },
+    );
 
     test('two repository instances cannot both claim revision zero', () async {
       final fixture = await _createFixture('state-race');
