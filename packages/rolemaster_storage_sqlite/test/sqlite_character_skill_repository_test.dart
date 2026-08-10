@@ -75,6 +75,7 @@ void main() {
       addTearDown(fixture.dispose);
 
       final legacy = sqlite3.open(fixture.path);
+      legacy.execute('DROP TABLE item_instances');
       legacy.execute('DROP TABLE character_skills');
       legacy.execute('PRAGMA user_version = 10');
       legacy.close();
