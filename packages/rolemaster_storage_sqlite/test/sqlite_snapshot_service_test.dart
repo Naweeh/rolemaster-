@@ -8,132 +8,143 @@ import 'package:test/test.dart';
 
 void main() {
   group('SqliteSnapshotService', () {
-    test('creates an immutable validated snapshot of the full database',
-        () async {
-      final fixture = await _createFixture('snapshot-create');
-      addTearDown(fixture.dispose);
-      final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
-      final service = SqliteSnapshotService();
+    test(
+      'creates an immutable validated snapshot of the full database',
+      () async {
+        final fixture = await _createFixture('snapshot-create');
+        addTearDown(fixture.dispose);
+        final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
+        final service = SqliteSnapshotService();
 
-      final info = await service.createSnapshot(
-        sourcePath: fixture.path,
-        snapshotPath: snapshotPath,
-      );
+        final info = await service.createSnapshot(
+          sourcePath: fixture.path,
+          snapshotPath: snapshotPath,
+        );
 
-      final live = sqlite3.open(fixture.path);
-      live.execute(
-        "UPDATE campaigns SET name = 'Campaña mutada' WHERE id = 'campaign-1'",
-      );
-      live.close();
+        final live = sqlite3.open(fixture.path);
+        live.execute(
+          "UPDATE campaigns SET name = 'Campaña mutada' WHERE id = 'campaign-1'",
+        );
+        live.close();
 
-      final snapshotCampaigns = SqliteCampaignRepository.open(snapshotPath);
-      final campaign = await snapshotCampaigns.getById('campaign-1');
-      snapshotCampaigns.close();
-      final snapshotEvents = SqliteEventHistoryRepository.open(snapshotPath);
-      final events = await snapshotEvents.getForCampaign('campaign-1');
-      snapshotEvents.close();
-      final snapshotStates = SqliteCampaignStateRepository.open(snapshotPath);
-      final state = await snapshotStates.getByCampaignId('campaign-1');
-      snapshotStates.close();
+        final snapshotCampaigns = SqliteCampaignRepository.open(snapshotPath);
+        final campaign = await snapshotCampaigns.getById('campaign-1');
+        snapshotCampaigns.close();
+        final snapshotEvents = SqliteEventHistoryRepository.open(snapshotPath);
+        final events = await snapshotEvents.getForCampaign('campaign-1');
+        snapshotEvents.close();
+        final snapshotStates = SqliteCampaignStateRepository.open(snapshotPath);
+        final state = await snapshotStates.getByCampaignId('campaign-1');
+        snapshotStates.close();
 
-      expect(info.schemaVersion, SqliteCampaignStateRepository.schemaVersion);
-      expect(info.sizeBytes, greaterThan(0));
-      expect(campaign!.name, 'Campaña original');
-      expect(events.map((event) => event.id), <String>['event-1']);
-      expect(state!.revision, 1);
-    });
+        expect(info.schemaVersion, SqliteCampaignStateRepository.schemaVersion);
+        expect(info.sizeBytes, greaterThan(0));
+        expect(campaign!.name, 'Campaña original');
+        expect(events.map((event) => event.id), <String>['event-1']);
+        expect(state!.revision, 1);
+      },
+    );
 
-    test('restores snapshot and preserves a pre-restore rollback copy',
-        () async {
-      final fixture = await _createFixture('snapshot-restore');
-      addTearDown(fixture.dispose);
-      final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
-      final service = SqliteSnapshotService();
-      await service.createSnapshot(
-        sourcePath: fixture.path,
-        snapshotPath: snapshotPath,
-      );
+    test(
+      'restores snapshot and preserves a pre-restore rollback copy',
+      () async {
+        final fixture = await _createFixture('snapshot-restore');
+        addTearDown(fixture.dispose);
+        final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
+        final service = SqliteSnapshotService();
+        await service.createSnapshot(
+          sourcePath: fixture.path,
+          snapshotPath: snapshotPath,
+        );
 
-      final live = sqlite3.open(fixture.path);
-      live.execute(
-        "UPDATE campaigns SET name = 'Campaña mutada' WHERE id = 'campaign-1'",
-      );
-      live.close();
+        final live = sqlite3.open(fixture.path);
+        live.execute(
+          "UPDATE campaigns SET name = 'Campaña mutada' WHERE id = 'campaign-1'",
+        );
+        live.close();
 
-      final liveStates = SqliteCampaignStateRepository.open(fixture.path);
-      expect(
-        await liveStates.save(
-          CampaignState(
-            campaignId: 'campaign-1',
-            revision: 2,
-            updatedAt: DateTime.utc(2026, 8, 10, 13),
+        final liveStates = SqliteCampaignStateRepository.open(fixture.path);
+        expect(
+          await liveStates.save(
+            CampaignState(
+              campaignId: 'campaign-1',
+              revision: 2,
+              updatedAt: DateTime.utc(2026, 8, 10, 13),
+            ),
+            expectedRevision: 1,
           ),
-          expectedRevision: 1,
-        ),
-        isTrue,
-      );
-      liveStates.close();
+          isTrue,
+        );
+        liveStates.close();
 
-      final liveEvents = SqliteEventHistoryRepository.open(fixture.path);
-      await liveEvents.append(
-        DomainEvent(
-          id: 'event-2',
-          type: DomainEventTypes.worldCreated,
-          campaignId: 'campaign-1',
-          occurredAt: DateTime.utc(2026, 8, 10, 13),
-        ),
-      );
-      liveEvents.close();
+        final liveEvents = SqliteEventHistoryRepository.open(fixture.path);
+        await liveEvents.append(
+          DomainEvent(
+            id: 'event-2',
+            type: DomainEventTypes.worldCreated,
+            campaignId: 'campaign-1',
+            occurredAt: DateTime.utc(2026, 8, 10, 13),
+          ),
+        );
+        liveEvents.close();
 
-      final result = await service.restoreSnapshot(
-        snapshotPath: snapshotPath,
-        destinationPath: fixture.path,
-      );
+        final result = await service.restoreSnapshot(
+          snapshotPath: snapshotPath,
+          destinationPath: fixture.path,
+        );
 
-      final restoredCampaigns = SqliteCampaignRepository.open(fixture.path);
-      final restoredCampaign = await restoredCampaigns.getById('campaign-1');
-      restoredCampaigns.close();
-      final restoredStates = SqliteCampaignStateRepository.open(fixture.path);
-      final restoredState = await restoredStates.getByCampaignId('campaign-1');
-      restoredStates.close();
-      final restoredEvents = SqliteEventHistoryRepository.open(fixture.path);
-      final restoredHistory =
-          await restoredEvents.getForCampaign('campaign-1');
-      restoredEvents.close();
+        final restoredCampaigns = SqliteCampaignRepository.open(fixture.path);
+        final restoredCampaign = await restoredCampaigns.getById('campaign-1');
+        restoredCampaigns.close();
+        final restoredStates = SqliteCampaignStateRepository.open(fixture.path);
+        final restoredState = await restoredStates.getByCampaignId(
+          'campaign-1',
+        );
+        restoredStates.close();
+        final restoredEvents = SqliteEventHistoryRepository.open(fixture.path);
+        final restoredHistory = await restoredEvents.getForCampaign(
+          'campaign-1',
+        );
+        restoredEvents.close();
 
-      expect(restoredCampaign!.name, 'Campaña original');
-      expect(restoredState!.revision, 1);
-      expect(restoredHistory.map((event) => event.id), <String>['event-1']);
-      expect(result.schemaVersion, SqliteCampaignStateRepository.schemaVersion);
-      expect(result.rollbackPath, isNotNull);
-      expect(await File(result.rollbackPath!).exists(), isTrue);
+        expect(restoredCampaign!.name, 'Campaña original');
+        expect(restoredState!.revision, 1);
+        expect(restoredHistory.map((event) => event.id), <String>['event-1']);
+        expect(
+          result.schemaVersion,
+          SqliteCampaignStateRepository.schemaVersion,
+        );
+        expect(result.rollbackPath, isNotNull);
+        expect(await File(result.rollbackPath!).exists(), isTrue);
 
-      final rollbackCampaigns = SqliteCampaignRepository.open(
-        result.rollbackPath!,
-      );
-      final rollbackCampaign =
-          await rollbackCampaigns.getById('campaign-1');
-      rollbackCampaigns.close();
-      final rollbackStates = SqliteCampaignStateRepository.open(
-        result.rollbackPath!,
-      );
-      final rollbackState =
-          await rollbackStates.getByCampaignId('campaign-1');
-      rollbackStates.close();
-      final rollbackEvents = SqliteEventHistoryRepository.open(
-        result.rollbackPath!,
-      );
-      final rollbackHistory =
-          await rollbackEvents.getForCampaign('campaign-1');
-      rollbackEvents.close();
+        final rollbackCampaigns = SqliteCampaignRepository.open(
+          result.rollbackPath!,
+        );
+        final rollbackCampaign = await rollbackCampaigns.getById('campaign-1');
+        rollbackCampaigns.close();
+        final rollbackStates = SqliteCampaignStateRepository.open(
+          result.rollbackPath!,
+        );
+        final rollbackState = await rollbackStates.getByCampaignId(
+          'campaign-1',
+        );
+        rollbackStates.close();
+        final rollbackEvents = SqliteEventHistoryRepository.open(
+          result.rollbackPath!,
+        );
+        final rollbackHistory = await rollbackEvents.getForCampaign(
+          'campaign-1',
+        );
+        rollbackEvents.close();
 
-      expect(rollbackCampaign!.name, 'Campaña mutada');
-      expect(rollbackState!.revision, 2);
-      expect(
-        rollbackHistory.map((event) => event.id),
-        <String>['event-1', 'event-2'],
-      );
-    });
+        expect(rollbackCampaign!.name, 'Campaña mutada');
+        expect(rollbackState!.revision, 2);
+        expect(rollbackHistory.map((event) => event.id), <String>[
+          'event-1',
+          'event-2',
+        ]);
+      },
+    );
 
     test('rejects invalid snapshots without touching live database', () async {
       final fixture = await _createFixture('snapshot-invalid');
