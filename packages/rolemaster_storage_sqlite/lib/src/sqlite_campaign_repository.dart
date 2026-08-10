@@ -39,14 +39,12 @@ final class SqliteCampaignRepository implements CampaignRepository {
   @override
   Future<List<Campaign>> getAll({bool includeArchived = false}) async {
     final whereClause = includeArchived ? '' : 'WHERE archived_at IS NULL';
-    final rows = _database.select(
-      '''
+    final rows = _database.select('''
       SELECT id, name, created_at, updated_at, archived_at
       FROM campaigns
       $whereClause
       ORDER BY updated_at DESC, id ASC
-      ''',
-    );
+      ''');
 
     return rows.map(_campaignFromRow).toList(growable: false);
   }
