@@ -297,10 +297,10 @@ final class _WorldRepo implements WorldRepository {
   Future<World?> getWorldById(String id) async => _worlds[id];
 
   @override
-  Future<List<World>> getWorldsForCampaign(String campaignId) async => _worlds
-      .values
-      .where((item) => item.campaignId == campaignId)
-      .toList(growable: false);
+  Future<List<World>> getWorldsForCampaign(String campaignId) async =>
+      _worlds.values
+          .where((item) => item.campaignId == campaignId)
+          .toList(growable: false);
 
   @override
   Future<void> saveWorld(World world) async => _worlds[world.id] = world;
@@ -309,10 +309,10 @@ final class _WorldRepo implements WorldRepository {
   Future<Region?> getRegionById(String id) async => _regions[id];
 
   @override
-  Future<List<Region>> getRegionsForWorld(String worldId) async => _regions
-      .values
-      .where((item) => item.worldId == worldId)
-      .toList(growable: false);
+  Future<List<Region>> getRegionsForWorld(String worldId) async =>
+      _regions.values
+          .where((item) => item.worldId == worldId)
+          .toList(growable: false);
 
   @override
   Future<void> saveRegion(Region region) async => _regions[region.id] = region;
@@ -344,10 +344,10 @@ final class _SceneMapRepo implements SceneMapRepository {
   Future<SceneMap?> getMapById(String id) async => _maps[id];
 
   @override
-  Future<List<SceneMap>> getMapsForCampaign(String campaignId) async => _maps
-      .values
-      .where((item) => item.campaignId == campaignId)
-      .toList(growable: false);
+  Future<List<SceneMap>> getMapsForCampaign(String campaignId) async =>
+      _maps.values
+          .where((item) => item.campaignId == campaignId)
+          .toList(growable: false);
 
   @override
   Future<void> saveMap(SceneMap map) async => _maps[map.id] = map;
@@ -356,10 +356,10 @@ final class _SceneMapRepo implements SceneMapRepository {
   Future<SceneLayer?> getLayerById(String id) async => _layers[id];
 
   @override
-  Future<List<SceneLayer>> getLayersForMap(String sceneMapId) async => _layers
-      .values
-      .where((item) => item.sceneMapId == sceneMapId)
-      .toList(growable: false);
+  Future<List<SceneLayer>> getLayersForMap(String sceneMapId) async =>
+      _layers.values
+          .where((item) => item.sceneMapId == sceneMapId)
+          .toList(growable: false);
 
   @override
   Future<void> saveLayer(SceneLayer layer) async => _layers[layer.id] = layer;
