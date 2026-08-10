@@ -1,7 +1,9 @@
 import 'campaign.dart';
 
 abstract interface class CampaignRepository {
-  Future<List<Campaign>> getAll();
+  Future<Campaign?> getById(String id);
+
+  Future<List<Campaign>> getAll({bool includeArchived = false});
 
   Future<void> save(Campaign campaign);
 }

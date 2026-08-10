@@ -17,6 +17,7 @@ void main() {
       expect(campaign.id, 'generated-id');
       expect(campaign.name, 'La Corona Perdida');
       expect(campaign.createdAt, localTime.toUtc());
+      expect(campaign.updatedAt, localTime.toUtc());
       expect(repository.savedCampaigns, hasLength(1));
       expect(repository.savedCampaigns.single, same(campaign));
     });
@@ -39,8 +40,22 @@ final class _RecordingCampaignRepository implements CampaignRepository {
   final List<Campaign> savedCampaigns = <Campaign>[];
 
   @override
-  Future<List<Campaign>> getAll() async =>
-      List<Campaign>.unmodifiable(savedCampaigns);
+  Future<Campaign?> getById(String id) async {
+    for (final campaign in savedCampaigns) {
+      if (campaign.id == id) {
+        return campaign;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<List<Campaign>> getAll({bool includeArchived = false}) async {
+    final campaigns = includeArchived
+        ? savedCampaigns
+        : savedCampaigns.where((campaign) => !campaign.isArchived);
+    return List<Campaign>.unmodifiable(campaigns);
+  }
 
   @override
   Future<void> save(Campaign campaign) async {

@@ -4,8 +4,21 @@ final class InMemoryCampaignRepository implements CampaignRepository {
   final List<Campaign> _campaigns = <Campaign>[];
 
   @override
-  Future<List<Campaign>> getAll() async {
-    return List<Campaign>.unmodifiable(_campaigns);
+  Future<Campaign?> getById(String id) async {
+    for (final campaign in _campaigns) {
+      if (campaign.id == id) {
+        return campaign;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<List<Campaign>> getAll({bool includeArchived = false}) async {
+    final campaigns = includeArchived
+        ? _campaigns
+        : _campaigns.where((campaign) => !campaign.isArchived);
+    return List<Campaign>.unmodifiable(campaigns);
   }
 
   @override
