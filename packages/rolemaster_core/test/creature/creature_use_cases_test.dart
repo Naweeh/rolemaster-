@@ -151,7 +151,8 @@ void main() {
       );
       final list = ListCreatures(repository: repository);
 
-      expect((await GetCreature(repository: repository)('creature-1')).name, 'Lobo');
+      expect((await GetCreature(repository: repository)('creature-1')).name,
+          'Lobo');
       final updated = await update(
         'creature-1',
         name: 'Lobo Alfa',
@@ -260,9 +261,10 @@ final class _MemoryWorldRepository implements WorldRepository {
   Future<World?> getWorldById(String id) async => _worlds[id];
 
   @override
-  Future<List<World>> getWorldsForCampaign(String campaignId) async => _worlds.values
-      .where((world) => world.campaignId == campaignId)
-      .toList(growable: false);
+  Future<List<World>> getWorldsForCampaign(String campaignId) async =>
+      _worlds.values
+          .where((world) => world.campaignId == campaignId)
+          .toList(growable: false);
 
   @override
   Future<void> saveWorld(World world) async => _worlds[world.id] = world;
@@ -271,9 +273,10 @@ final class _MemoryWorldRepository implements WorldRepository {
   Future<Region?> getRegionById(String id) async => _regions[id];
 
   @override
-  Future<List<Region>> getRegionsForWorld(String worldId) async => _regions.values
-      .where((region) => region.worldId == worldId)
-      .toList(growable: false);
+  Future<List<Region>> getRegionsForWorld(String worldId) async =>
+      _regions.values
+          .where((region) => region.worldId == worldId)
+          .toList(growable: false);
 
   @override
   Future<void> saveRegion(Region region) async => _regions[region.id] = region;
@@ -282,10 +285,12 @@ final class _MemoryWorldRepository implements WorldRepository {
   Future<Location?> getLocationById(String id) async => _locations[id];
 
   @override
-  Future<List<Location>> getLocationsForWorld(String worldId) async => _locations.values
-      .where((location) => location.worldId == worldId)
-      .toList(growable: false);
+  Future<List<Location>> getLocationsForWorld(String worldId) async =>
+      _locations.values
+          .where((location) => location.worldId == worldId)
+          .toList(growable: false);
 
   @override
-  Future<void> saveLocation(Location location) async => _locations[location.id] = location;
+  Future<void> saveLocation(Location location) async =>
+      _locations[location.id] = location;
 }
