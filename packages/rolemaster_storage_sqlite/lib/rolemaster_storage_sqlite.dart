@@ -9,5 +9,6 @@ export 'src/sqlite_event_history_repository.dart';
 export 'src/sqlite_item_instance_repository.dart';
 export 'src/sqlite_npc_repository.dart';
 export 'src/sqlite_ruleset_repository.dart';
+export 'src/sqlite_scene_map_repository.dart';
 export 'src/sqlite_snapshot_service.dart';
 export 'src/sqlite_world_repository.dart';

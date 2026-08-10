@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 12;
+const int rolemasterSqliteSchemaVersion = 13;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -141,6 +141,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 12;
+  }
+
+  if (version == 12) {
+    _runMigration(
+      database,
+      targetVersion: 13,
+      migrate: () {
+        _createSceneMapSchemaV13(database);
+      },
+    );
+    version = 13;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -550,5 +561,69 @@ void _createItemInstanceSchemaV12(Database database) {
   database.execute(
     'CREATE INDEX idx_item_instances_container '
     'ON item_instances(container_item_id)',
+  );
+}
+
+void _createSceneMapSchemaV13(Database database) {
+  database.execute('''
+    CREATE TABLE scene_maps (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      world_id TEXT,
+      location_id TEXT,
+      logical_width REAL NOT NULL CHECK (logical_width > 0),
+      logical_height REAL NOT NULL CHECK (logical_height > 0),
+      notes TEXT,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      CHECK (location_id IS NULL OR world_id IS NOT NULL),
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE SET NULL,
+      FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_scene_maps_campaign ON scene_maps(campaign_id, created_at, id)',
+  );
+  database.execute(
+    'CREATE INDEX idx_scene_maps_world_location ON scene_maps(world_id, location_id)',
+  );
+
+  database.execute('''
+    CREATE TABLE scene_layers (
+      id TEXT NOT NULL PRIMARY KEY,
+      scene_map_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      order_index INTEGER NOT NULL CHECK (order_index >= 0),
+      visibility TEXT NOT NULL CHECK (visibility IN ('gmOnly', 'shared')),
+      UNIQUE (scene_map_id, order_index),
+      UNIQUE (scene_map_id, id),
+      FOREIGN KEY (scene_map_id) REFERENCES scene_maps(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_scene_layers_map_order '
+    'ON scene_layers(scene_map_id, order_index)',
+  );
+
+  database.execute('''
+    CREATE TABLE scene_entity_positions (
+      scene_map_id TEXT NOT NULL,
+      entity_type TEXT NOT NULL,
+      entity_id TEXT NOT NULL,
+      x REAL NOT NULL,
+      y REAL NOT NULL,
+      layer_id TEXT,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (scene_map_id, entity_type, entity_id),
+      FOREIGN KEY (scene_map_id) REFERENCES scene_maps(id) ON DELETE CASCADE,
+      FOREIGN KEY (scene_map_id, layer_id)
+        REFERENCES scene_layers(scene_map_id, id) ON DELETE SET NULL
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_scene_positions_map_layer '
+    'ON scene_entity_positions(scene_map_id, layer_id)',
   );
 }
