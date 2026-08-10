@@ -93,6 +93,7 @@ export 'src/npc/npc_placement.dart';
 export 'src/npc/npc_repository.dart';
 export 'src/npc/npc_support.dart';
 export 'src/npc/update_npc.dart';
+export 'src/resolution/dice_threshold_resolution_interpreter.dart';
 export 'src/resolution/resolution_engine.dart';
 export 'src/resolution/resolution_evaluation.dart';
 export 'src/resolution/resolution_exceptions.dart';
