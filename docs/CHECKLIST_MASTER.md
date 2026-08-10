@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 1 — fundaciones verificables: CI remoto, tests del Core y persistencia SQLite real para Campaign.
-- **Activo:** Fase 2.1 — completar `Campaign`.
-- **Siguiente:** metadata/configuración y edición general de Campaign; luego `World`.
+- **Último completado:** Fase 2.3 — Calendar / Time: calendario personalizado, timeline, eventos temporales y persistencia SQLite v4.
+- **Activo:** Fase 2.4 — Event Engine.
+- **Siguiente:** Fase 2.5 — State Manager.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze.
 
 ---
@@ -65,7 +65,7 @@ Objetivo: que cada cambio pueda validarse automáticamente sin depender de una P
 - [x] Seleccionar librería SQLite compatible con Windows/Android/iOS.
 - [x] Crear esquema inicial y versión de base de datos.
 - [x] Implementar `SqliteCampaignRepository`.
-- [x] Crear migración/bootstrap inicial v0 → v1.
+- [x] Crear bootstrap inicial y migraciones versionadas.
 - [x] Guardar Campaign.
 - [x] Listar Campaigns.
 - [x] Cargar Campaign por ID.
@@ -89,33 +89,41 @@ Objetivo: que cada cambio pueda validarse automáticamente sin depender de una P
 - [x] `GetCampaign`.
 - [x] `ListCampaigns`.
 - [x] `RenameCampaign`.
-- [ ] `UpdateCampaign` para edición general.
+- [x] `UpdateCampaign` para edición general.
 - [x] `ArchiveCampaign`.
-- [ ] Metadata de campaña.
-- [ ] Configuración propia de campaña.
+- [x] Metadata de campaña.
+- [x] Configuración propia de campaña.
 - [x] Estado activa/archivada.
 - [x] Tests del ciclo de vida inicial.
-- [ ] Tests completos de Campaign.
+- [x] Tests completos de Campaign.
+
+**Cierre Fase 2.1:** COMPLETADO.
 
 ## 2.2 World
 
-- [ ] Entidad `World`.
-- [ ] Regiones.
-- [ ] Lugares/localizaciones.
-- [ ] Relaciones jerárquicas entre lugares.
-- [ ] Estado persistente del mundo.
-- [ ] Metadata extensible.
-- [ ] Tests.
+- [x] Entidad `World`.
+- [x] Regiones.
+- [x] Lugares/localizaciones.
+- [x] Relaciones jerárquicas entre lugares.
+- [x] Estado persistente del mundo.
+- [x] Metadata extensible.
+- [x] Tests.
+
+**Cierre Fase 2.2:** COMPLETADO.
 
 ## 2.3 Calendar / Time
 
-- [ ] Modelo de calendario desacoplado de calendario gregoriano.
-- [ ] Fecha y hora de campaña.
-- [ ] Avance manual del tiempo.
-- [ ] Duraciones.
-- [ ] Eventos temporales.
-- [ ] Calendarios personalizados.
-- [ ] Tests de bordes/cambios de fecha.
+- [x] Modelo de calendario desacoplado de calendario gregoriano.
+- [x] Fecha y hora de campaña.
+- [x] Avance manual del tiempo.
+- [x] Duraciones.
+- [x] Eventos temporales.
+- [x] Calendarios personalizados.
+- [x] Tests de bordes/cambios de fecha.
+- [x] Persistencia SQLite de calendario, timeline y eventos.
+- [x] Migración central SQLite v3 → v4 sin pérdida de Campaign/World.
+
+**Cierre Fase 2.3:** COMPLETADO.
 
 ## 2.4 Event Engine
 
