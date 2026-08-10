@@ -1,8 +1,8 @@
 import 'calendar_engine.dart';
 import 'calendar_exceptions.dart';
 import 'calendar_repository.dart';
-import 'campaign_moment.dart';
 import 'calendar_support.dart';
+import 'campaign_moment.dart';
 import 'temporal_event.dart';
 
 final class ScheduleTemporalEvent {
