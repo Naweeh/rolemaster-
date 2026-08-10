@@ -37,7 +37,8 @@ final class SetSceneEntityPosition {
         throw SceneLayerNotFoundException(normalizedLayerId);
       }
       if (layer.sceneMapId != map.id) {
-        throw StateError('Position layer must belong to the selected scene map.');
+        throw StateError(
+            'Position layer must belong to the selected scene map.');
       }
     }
 
