@@ -54,46 +54,49 @@ void main() {
       expect(position.x, 22.5);
     });
 
-    test('database rejects a position using a layer from another map', () async {
-      final fixture = await _fixture('map-layer-fk');
-      addTearDown(fixture.dispose);
-      final repository = SqliteSceneMapRepository.open(fixture.path);
-      addTearDown(repository.close);
+    test(
+      'database rejects a position using a layer from another map',
+      () async {
+        final fixture = await _fixture('map-layer-fk');
+        addTearDown(fixture.dispose);
+        final repository = SqliteSceneMapRepository.open(fixture.path);
+        addTearDown(repository.close);
 
-      await repository.saveMap(_map());
-      await repository.saveMap(
-        SceneMap(
-          id: 'map-2',
-          campaignId: 'campaign-1',
-          name: 'Segundo',
-          coordinateSpace: SceneCoordinateSpace(width: 50, height: 50),
-          createdAt: DateTime.utc(2026, 8, 10, 19),
-        ),
-      );
-      await repository.saveLayer(
-        SceneLayer(
-          id: 'layer-2',
-          sceneMapId: 'map-2',
-          name: 'Otra',
-          orderIndex: 0,
-        ),
-      );
-
-      await expectLater(
-        repository.saveEntityPosition(
-          SceneEntityPosition(
-            sceneMapId: 'map-1',
-            entityType: 'character',
-            entityId: 'character-1',
-            x: 10,
-            y: 10,
-            layerId: 'layer-2',
-            updatedAt: DateTime.utc(2026, 8, 10, 20),
+        await repository.saveMap(_map());
+        await repository.saveMap(
+          SceneMap(
+            id: 'map-2',
+            campaignId: 'campaign-1',
+            name: 'Segundo',
+            coordinateSpace: SceneCoordinateSpace(width: 50, height: 50),
+            createdAt: DateTime.utc(2026, 8, 10, 19),
           ),
-        ),
-        throwsA(isA<SqliteException>()),
-      );
-    });
+        );
+        await repository.saveLayer(
+          SceneLayer(
+            id: 'layer-2',
+            sceneMapId: 'map-2',
+            name: 'Otra',
+            orderIndex: 0,
+          ),
+        );
+
+        await expectLater(
+          repository.saveEntityPosition(
+            SceneEntityPosition(
+              sceneMapId: 'map-1',
+              entityType: 'character',
+              entityId: 'character-1',
+              x: 10,
+              y: 10,
+              layerId: 'layer-2',
+              updatedAt: DateTime.utc(2026, 8, 10, 20),
+            ),
+          ),
+          throwsA(isA<SqliteException>()),
+        );
+      },
+    );
 
     test('migrates v12 to v13 without losing inventory', () async {
       final fixture = await _fixture('map-migration', withItem: true);
@@ -125,14 +128,14 @@ void main() {
 }
 
 SceneMap _map({bool world = false}) => SceneMap(
-      id: 'map-1',
-      campaignId: 'campaign-1',
-      name: 'Escena',
-      worldId: world ? 'world-1' : null,
-      locationId: world ? 'location-1' : null,
-      coordinateSpace: SceneCoordinateSpace(width: 100, height: 80),
-      createdAt: DateTime.utc(2026, 8, 10, 18),
-    );
+  id: 'map-1',
+  campaignId: 'campaign-1',
+  name: 'Escena',
+  worldId: world ? 'world-1' : null,
+  locationId: world ? 'location-1' : null,
+  coordinateSpace: SceneCoordinateSpace(width: 100, height: 80),
+  createdAt: DateTime.utc(2026, 8, 10, 18),
+);
 
 Future<_Fixture> _fixture(
   String prefix, {
