@@ -53,8 +53,8 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-infos
 
-      - name: Build web
-        run: flutter build web --release --base-href "/rolemaster-/"
+      - name: Build local web preview
+        run: flutter build web --release --base-href "/"
 
       - name: Upload downloadable preview
         uses: actions/upload-artifact@v4
@@ -63,6 +63,9 @@ jobs:
           path: apps/rolemaster_app/build/web
           if-no-files-found: error
           retention-days: 14
+
+      - name: Build GitHub Pages preview
+        run: flutter build web --release --base-href "/rolemaster-/"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
