@@ -52,7 +52,8 @@ void main() {
     final effective = await resolver('campaign-1');
     final effectiveResolution =
         effective.data['resolution']! as Map<String, Object?>;
-    final packageResolution = package.data['resolution']! as Map<String, Object?>;
+    final packageResolution =
+        package.data['resolution']! as Map<String, Object?>;
 
     expect(effectiveResolution['openEnded'], isFalse);
     expect(packageResolution['openEnded'], isTrue);
