@@ -40,6 +40,13 @@ jobs:
       - name: Generate web runner
         run: flutter create . --platforms=web --project-name rolemaster_app --org app.rolemaster
 
+      - name: Remove generated sample files
+        run: |
+          rm -f analysis_options.yaml
+          rm -f test/widget_test.dart
+          rm -f rolemaster_app.iml
+          rm -rf .idea
+
       - name: Dependencies
         run: flutter pub get
 
