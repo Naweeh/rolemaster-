@@ -27,7 +27,8 @@ final class Character {
       );
     }
     if (this.name.isEmpty) {
-      throw ArgumentError.value(name, 'name', 'Character name cannot be empty.');
+      throw ArgumentError.value(
+          name, 'name', 'Character name cannot be empty.');
     }
     if (this.updatedAt.isBefore(this.createdAt)) {
       throw ArgumentError.value(
