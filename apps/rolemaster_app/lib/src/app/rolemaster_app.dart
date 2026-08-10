@@ -6,10 +6,14 @@ import '../features/campaign/campaign_home_page.dart';
 final class RolemasterApp extends StatelessWidget {
   const RolemasterApp({
     required this.campaignRepository,
+    required this.rulesetRepository,
+    required this.campaignRulesetRepository,
     super.key,
   });
 
   final CampaignRepository campaignRepository;
+  final RulesetRepository rulesetRepository;
+  final CampaignRulesetRepository campaignRulesetRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +29,8 @@ final class RolemasterApp extends StatelessWidget {
       ),
       home: CampaignHomePage(
         campaignRepository: campaignRepository,
+        rulesetRepository: rulesetRepository,
+        campaignRulesetRepository: campaignRulesetRepository,
       ),
     );
   }
