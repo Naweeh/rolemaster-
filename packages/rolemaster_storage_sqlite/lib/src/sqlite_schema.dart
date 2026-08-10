@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 13;
+const int rolemasterSqliteSchemaVersion = 14;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -152,6 +152,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 13;
+  }
+
+  if (version == 13) {
+    _runMigration(
+      database,
+      targetVersion: 14,
+      migrate: () {
+        _createEncounterSchemaV14(database);
+      },
+    );
+    version = 14;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -625,5 +636,58 @@ void _createSceneMapSchemaV13(Database database) {
   database.execute(
     'CREATE INDEX idx_scene_positions_map_layer '
     'ON scene_entity_positions(scene_map_id, layer_id)',
+  );
+}
+
+void _createEncounterSchemaV14(Database database) {
+  database.execute('''
+    CREATE TABLE encounters (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      status TEXT NOT NULL CHECK (status IN ('planned', 'active', 'closed')),
+      world_id TEXT,
+      location_id TEXT,
+      scene_map_id TEXT,
+      notes TEXT,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      started_at INTEGER,
+      closed_at INTEGER,
+      CHECK (location_id IS NULL OR world_id IS NOT NULL),
+      CHECK (
+        (status = 'planned' AND started_at IS NULL AND closed_at IS NULL) OR
+        (status = 'active' AND started_at IS NOT NULL AND closed_at IS NULL) OR
+        (status = 'closed' AND started_at IS NOT NULL AND closed_at IS NOT NULL)
+      ),
+      CHECK (closed_at IS NULL OR closed_at >= started_at),
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE SET NULL,
+      FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL,
+      FOREIGN KEY (scene_map_id) REFERENCES scene_maps(id) ON DELETE SET NULL
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_encounters_campaign_status '
+    'ON encounters(campaign_id, status, created_at, id)',
+  );
+  database.execute(
+    'CREATE INDEX idx_encounters_context '
+    'ON encounters(world_id, location_id, scene_map_id)',
+  );
+
+  database.execute('''
+    CREATE TABLE encounter_participants (
+      encounter_id TEXT NOT NULL,
+      entity_type TEXT NOT NULL,
+      entity_id TEXT NOT NULL,
+      label TEXT,
+      PRIMARY KEY (encounter_id, entity_type, entity_id),
+      FOREIGN KEY (encounter_id) REFERENCES encounters(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_encounter_participants_entity '
+    'ON encounter_participants(entity_type, entity_id)',
   );
 }
