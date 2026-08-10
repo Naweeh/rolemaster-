@@ -60,7 +60,8 @@ final class CreateSceneMap {
       }
     }
     if (normalizedLocationId != null) {
-      final location = await _worldRepository.getLocationById(normalizedLocationId);
+      final location =
+          await _worldRepository.getLocationById(normalizedLocationId);
       if (location == null) {
         throw LocationNotFoundException(normalizedLocationId);
       }
