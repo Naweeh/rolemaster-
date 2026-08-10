@@ -60,7 +60,8 @@ final class ListCharacterSkills {
     final available = catalog.availableForModules(
       campaignRuleset.binding.activeModuleIds,
     );
-    final states = await _characterSkillRepository.getForCharacter(character.id);
+    final states =
+        await _characterSkillRepository.getForCharacter(character.id);
     final stateBySkill = <String, CharacterSkillState>{
       for (final state in states) state.skillId: state,
     };

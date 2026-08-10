@@ -51,5 +51,6 @@ final class ArchivedCharacterSkillChangeException implements Exception {
   final String characterId;
 
   @override
-  String toString() => 'Archived character skills cannot be changed: $characterId';
+  String toString() =>
+      'Archived character skills cannot be changed: $characterId';
 }

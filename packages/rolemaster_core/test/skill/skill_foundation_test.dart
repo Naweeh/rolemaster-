@@ -9,9 +9,8 @@ void main() {
       expect(catalog.definitions, hasLength(3));
       expect(catalog.getById('perception')!.category, 'General');
       expect(
-        catalog
-            .availableForModules(<String>['core', 'arms-law'])
-            .map((skill) => skill.id),
+        catalog.availableForModules(<String>['core', 'arms-law']).map(
+            (skill) => skill.id),
         <String>['perception', 'weapon-blades'],
       );
     });

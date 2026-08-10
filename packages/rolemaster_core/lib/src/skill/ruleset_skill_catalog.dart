@@ -24,7 +24,8 @@ final class RulesetSkillCatalog {
       );
     }
 
-    final knownModules = package.manifest.modules.map((module) => module.id).toSet();
+    final knownModules =
+        package.manifest.modules.map((module) => module.id).toSet();
     final definitions = <SkillDefinition>[];
     for (final value in raw) {
       if (value is! Map) {
