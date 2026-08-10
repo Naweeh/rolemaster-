@@ -171,6 +171,8 @@ void main() {
       states.close();
 
       final legacy = sqlite3.open(fixture.path);
+      legacy.execute('DROP TABLE campaign_rulesets');
+      legacy.execute('DROP TABLE ruleset_packages');
       legacy.execute('DROP TABLE creatures');
       legacy.execute('DROP TABLE npcs');
       legacy.execute('PRAGMA user_version = 7');
