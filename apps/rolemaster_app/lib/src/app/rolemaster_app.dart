@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
 import '../features/visual_alpha/visual_alpha_character_profile.dart';
@@ -22,15 +23,19 @@ final class RolemasterApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF59452F),
+        brightness: Brightness.dark,
+      ),
+    );
+
     return MaterialApp(
       title: 'Rolemaster',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF59452F),
-          brightness: Brightness.dark,
-        ),
+      theme: baseTheme.copyWith(
+        textTheme: GoogleFonts.alegreyaTextTheme(baseTheme.textTheme),
       ),
       home: VisualAlphaLandingPage(
         campaignRepository: campaignRepository,
