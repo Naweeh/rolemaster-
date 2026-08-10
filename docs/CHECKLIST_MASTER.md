@@ -4,10 +4,10 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 3.6 — Maps / Locations + persistencia SQLite v13.
-- **Activo:** Visual Alpha 0.1 — primera validación visual con Ruleset alimentado desde manual.
-- **Siguiente:** Fase 3.7 — Encounters.
-- **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha es una herramienta funcional de validación y puede cambiar libremente.
+- **Último completado:** Fase 3.7 — Encounters + persistencia SQLite v14.
+- **Activo:** Fase 4.1 — Rules Engine Foundation: resolver Ruleset efectivo = paquete exacto + módulos activos + overlay de campaña.
+- **Siguiente:** Fase 4.2 — Dice / Resolution Engine.
+- **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
 
@@ -37,7 +37,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-- [x] Esquema SQLite central versionado hasta v13.
+- [x] Esquema SQLite central versionado hasta v14.
 - [x] Migraciones secuenciales e históricas.
 - [x] Snapshots, integridad, restore y rollback pre-restore.
 
@@ -80,7 +80,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Overlay aislado y limpio por defecto.
 - [x] Persistencia SQLite v10.
 - [x] Reemplazo silencioso de versión bloqueado.
-- [ ] Ruleset Builder / importación de manuales.
+- [ ] Ruleset Builder / importación de manuales completa.
 - [ ] Migración controlada entre ediciones/versiones.
 
 ## 3.4 Skills — COMPLETADO
@@ -125,36 +125,65 @@ Regla arquitectónica: `World/Region/Location` sigue siendo la geografía canón
 - [x] Fixtures históricos v5–v11 compatibles con v13.
 - [x] CI Core + SQLite + Flutter verde.
 
-## Visual Alpha 0.1 — ACTIVO
+## Visual Alpha 0.1 — VALIDACIÓN CERRADA / CONGELADA POR AHORA
 
-Objetivo: usar datos reales del Core y un manual real como primera fuente de Ruleset para empezar a validar la experiencia del GM sin abrir todavía la fase gráfica definitiva.
+Objetivo cumplido: validar que un manual real puede alimentar un Ruleset de prueba y mostrarse en una experiencia GM antes de abrir la fase gráfica definitiva.
 
-- [ ] Cargar primer manual de prueba.
-- [ ] Identificar edición/versión/módulos del manual.
-- [ ] Extraer un subconjunto controlado de datos del Ruleset para la prueba.
-- [ ] Crear campaña de prueba con ruleset limpio.
-- [ ] Mostrar shell GM responsive con datos reales.
-- [ ] Mostrar al menos Campaign, Ruleset, Characters/NPCs y Map/Scene.
-- [ ] Generar nuevo build web técnico para revisión visual.
-- [ ] Registrar feedback sin congelar design system.
+- [x] Cargar primer manual real de prueba: `DUNGEONS & DRAGONS.pdf`.
+- [x] Identificarlo provisionalmente como compilación personalizada derivada de B/X.
+- [x] Extraer un subconjunto controlado: atributos, clases, alineamiento y creación básica.
+- [x] Crear campaña de prueba con Ruleset limpio.
+- [x] Mostrar shell GM responsive con datos reales del Ruleset.
+- [x] Probar tiradas y creación/reapertura de personaje en la alpha.
+- [x] Generar build Flutter Web técnico.
+- [x] Generar tester HTML autocontenido para validación en PC restringida.
+- [x] Registrar decisión: congelar cambios visuales y retomar el checklist técnico.
+- [ ] NPCs visuales detallados, renderer real de mapa y design system diferidos a la fase gráfica.
+- [ ] Alegreya / tipografía final a resolver desde la PC central.
 
-## 3.7 Encounters — SIGUIENTE
-- [ ] Encounter base.
-- [ ] Participantes.
-- [ ] Contexto/localización/mapa opcional.
-- [ ] Inicio/cierre/estado.
-- [ ] Persistencia.
-- [ ] Tests.
+## 3.7 Encounters — COMPLETADO
+
+Regla arquitectónica: Encounter modela contexto y ciclo de una escena/encuentro; no contiene todavía iniciativa, daño, HP ni resolución de combate.
+
+- [x] `Encounter` base con `planned / active / closed`.
+- [x] Participantes genéricos por `entityType + entityId` y etiqueta opcional.
+- [x] Detección de participantes duplicados.
+- [x] Contexto opcional World / Location / SceneMap.
+- [x] Derivación de World/Location desde SceneMap cuando corresponde.
+- [x] Validación de pertenencia a campaña/mundo/localización.
+- [x] Agregar/quitar participantes mientras el Encounter no esté cerrado.
+- [x] Inicio/cierre y consistencia temporal.
+- [x] Repositorio y casos de uso Core.
+- [x] Persistencia SQLite v14 para Encounter + participantes.
+- [x] Guardado transaccional del agregado y reapertura completa.
+- [x] Migración v13→v14 preservando Maps.
+- [x] Fixtures históricos v5–v12 compatibles con v14.
+- [x] CI Core + SQLite + Flutter verde.
+- [ ] Resolver/validar existencia concreta de participantes contra Character/NPC/Creature — diferido hasta integración con Rules/Combat.
 
 ---
 
 # Fase 4 — Reglas y combate
 
-- [ ] Rules Engine efectivo = base + módulos + overlay.
-- [ ] Dice / Resolution Engine.
+## 4.1 Rules Engine Foundation — ACTIVO
+- [ ] `EffectiveRuleset` inmutable para una campaña.
+- [ ] Resolver paquete exacto + binding + módulos activos + overlay.
+- [ ] Validar que binding y paquete coincidan en ID/versión.
+- [ ] Validar módulos activos contra el manifest y módulos obligatorios.
+- [ ] Aplicar overrides de campaña sin mutar el paquete base.
+- [ ] Tests de aislamiento entre campañas y paquete base inmutable.
+
+## 4.2 Dice / Resolution Engine — SIGUIENTE
+- [ ] Contrato genérico de tiradas/resolución basado en Ruleset.
+- [ ] RNG inyectable/testeable.
+- [ ] Resultados trazables.
+- [ ] Reglas específicas suministradas por el Ruleset, no hardcodeadas en Core.
+
+## 4.3+ Reglas avanzadas
+- [ ] Tablas versionadas.
 - [ ] Combat.
 - [ ] Efectos/condiciones.
-- [ ] Migración de Ruleset.
+- [ ] Migración controlada de Ruleset.
 
 ---
 
@@ -188,6 +217,8 @@ Objetivo: usar datos reales del Core y un manual real como primera fuente de Rul
 - [x] Crear campaña y seleccionar Ruleset/módulos.
 - [x] Build Flutter Web automatizado.
 - [x] Artefacto descargable.
+- [x] Visual Alpha con Ruleset alimentado por primer manual real.
+- [x] Tiradas y creación de personaje como pruebas funcionales.
 - [ ] URL directa GitHub Pages — pendiente habilitar Pages.
 
 ## UI definitiva
