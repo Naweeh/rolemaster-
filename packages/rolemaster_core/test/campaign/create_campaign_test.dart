@@ -39,7 +39,8 @@ final class _RecordingCampaignRepository implements CampaignRepository {
   final List<Campaign> savedCampaigns = <Campaign>[];
 
   @override
-  Future<List<Campaign>> getAll() async => List<Campaign>.unmodifiable(savedCampaigns);
+  Future<List<Campaign>> getAll() async =>
+      List<Campaign>.unmodifiable(savedCampaigns);
 
   @override
   Future<void> save(Campaign campaign) async {
