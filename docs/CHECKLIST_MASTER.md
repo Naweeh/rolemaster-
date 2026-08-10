@@ -4,8 +4,8 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.2 — Dice / Resolution Engine genérico y data-driven.
-- **Activo:** Fase 4.3 — Tablas versionadas dentro del Ruleset efectivo.
+- **Último completado:** Fase 4.3A — Table Foundation versionada dentro del `EffectiveRuleset`.
+- **Activo:** Fase 4.3B — integración Resolution Engine → lookup de tabla por ID.
 - **Siguiente:** Fase 4.4 — Combat Foundation sobre Encounter + Resolution Engine.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
@@ -192,14 +192,24 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Ninguna regla específica de D&D/Rolemaster hardcodeada en el motor.
 - [x] CI Core + SQLite + Flutter verde.
 
-## 4.3 Tablas versionadas — ACTIVO
-- [ ] Definiciones de tabla dentro del Ruleset/EffectiveRuleset.
-- [ ] IDs estables y módulo opcional.
-- [ ] Entradas/rangos data-driven e inmutables.
-- [ ] Lookup neutral al sistema.
-- [ ] Validación de solapamientos/huecos según política declarada.
-- [ ] Referencias desde Resolution Engine sin hardcodear tablas concretas.
-- [ ] Tests de overlay/aislamiento por campaña.
+## 4.3 Tablas versionadas — EN CURSO
+
+### 4.3A Table Foundation — COMPLETADO
+- [x] Definiciones de tabla dentro del Ruleset/EffectiveRuleset.
+- [x] IDs estables y módulo opcional.
+- [x] Entradas/rangos data-driven e inmutables.
+- [x] Lookup neutral al sistema con rangos inclusivos.
+- [x] Política declarada `contiguous` / `sparse`.
+- [x] Rechazo de rangos solapados y de huecos cuando la política es contiguous.
+- [x] Gate de módulo activo antes del lookup.
+- [x] Tests de overlay sin mutar el paquete base.
+- [x] CI Core + SQLite + Flutter verde.
+
+### 4.3B Integración con Resolution — ACTIVO
+- [ ] Intérprete genérico de Resolution que consulte una tabla por ID.
+- [ ] Input de lookup configurable desde request/Ruleset.
+- [ ] Resultado de tabla incorporado a la traza de Resolution.
+- [ ] Tests de tabla inexistente, módulo inactivo y lookup sparse sin coincidencia.
 
 ## 4.4 Combat Foundation — SIGUIENTE
 - [ ] Combat state asociado a Encounter activo.
