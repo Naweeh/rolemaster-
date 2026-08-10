@@ -84,8 +84,9 @@ void main() {
       );
 
       expect(
-        (await repository.getForCampaign('campaign-1'))
-            .map((creature) => creature.id),
+        (await repository.getForCampaign(
+          'campaign-1',
+        )).map((creature) => creature.id),
         <String>['active-1'],
       );
       expect(
