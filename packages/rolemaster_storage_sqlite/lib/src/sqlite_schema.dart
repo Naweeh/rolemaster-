@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 10;
+const int rolemasterSqliteSchemaVersion = 11;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -119,6 +119,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 10;
+  }
+
+  if (version == 10) {
+    _runMigration(
+      database,
+      targetVersion: 11,
+      migrate: () {
+        _createCharacterSkillSchemaV11(database);
+      },
+    );
+    version = 11;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -466,5 +477,24 @@ void _createRulesetSchemaV10(Database database) {
   database.execute(
     'CREATE INDEX idx_campaign_rulesets_package '
     'ON campaign_rulesets(ruleset_id, ruleset_version)',
+  );
+}
+
+void _createCharacterSkillSchemaV11(Database database) {
+  database.execute('''
+    CREATE TABLE character_skills (
+      character_id TEXT NOT NULL,
+      skill_id TEXT NOT NULL,
+      ranks INTEGER NOT NULL CHECK (ranks >= 0),
+      modifiers_json TEXT NOT NULL DEFAULT '{}',
+      notes TEXT,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (character_id, skill_id),
+      FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_character_skills_character '
+    'ON character_skills(character_id)',
   );
 }
