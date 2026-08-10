@@ -67,7 +67,8 @@ void main() {
       expect(loaded!.binding.rulesetVersion, '1.0.0');
       expect(loaded.binding.activeModuleIds, <String>['core', 'arms-law']);
       expect(loaded.overlay.isClean, isFalse);
-      final houseRules = loaded.overlay.overrides['houseRules']! as Map<String, Object?>;
+      final houseRules =
+          loaded.overlay.overrides['houseRules']! as Map<String, Object?>;
       expect(houseRules['openEndedRoll'], isFalse);
     });
 
