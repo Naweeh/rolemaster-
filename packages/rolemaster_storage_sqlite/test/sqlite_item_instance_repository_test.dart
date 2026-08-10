@@ -130,7 +130,10 @@ void main() {
       final version = database.select('PRAGMA user_version').single;
       database.close();
 
-      expect(version['user_version'], SqliteItemInstanceRepository.schemaVersion);
+      expect(
+        version['user_version'],
+        SqliteItemInstanceRepository.schemaVersion,
+      );
       expect(skill, isNotNull);
       expect(skill!.ranks, 3);
       expect(binding, isNotNull);

@@ -133,10 +133,7 @@ final class SqliteItemInstanceRepository implements ItemInstanceRepository {
       placement = ItemPlacement(containerItemId: containerItemId);
     } else if (holderType != null && holderId != null) {
       placement = ItemPlacement(
-        holder: InventoryHolderRef(
-          entityType: holderType,
-          entityId: holderId,
-        ),
+        holder: InventoryHolderRef(entityType: holderType, entityId: holderId),
       );
     } else {
       placement = ItemPlacement.unassigned();
