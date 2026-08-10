@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** bootstrap técnico Dart + Flutter, separación `rolemaster_core` / UI y definición del producto.
-- **Activo:** Fase 1 — Fundaciones verificables del Core.
-- **Siguiente:** CI remoto + tests del Core + persistencia SQLite de Campaign.
+- **Último completado:** Fase 1 — fundaciones verificables: CI remoto, tests del Core y persistencia SQLite real para Campaign.
+- **Activo:** Fase 2.1 — completar `Campaign`.
+- **Siguiente:** metadata/configuración y edición general de Campaign; luego `World`.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze.
 
 ---
@@ -44,36 +44,38 @@ Objetivo: que cada cambio pueda validarse automáticamente sin depender de una P
 
 ## 1.1 CI remoto
 
-- [ ] Crear GitHub Actions para Dart/Flutter.
-- [ ] Ejecutar `dart analyze` sobre `rolemaster_core`.
-- [ ] Ejecutar tests del Core.
-- [ ] Ejecutar `flutter analyze` sobre la app.
-- [ ] Fallar CI ante warnings/errores relevantes.
-- [ ] Documentar estado de CI en README.
+- [x] Crear GitHub Actions para Dart/Flutter.
+- [x] Ejecutar `dart analyze` sobre `rolemaster_core`.
+- [x] Ejecutar tests del Core.
+- [x] Ejecutar `flutter analyze` sobre la app.
+- [x] Fallar CI ante warnings/errores relevantes.
+- [x] Documentar estado de CI en README.
 
 ## 1.2 Base de tests
 
-- [ ] Agregar framework y estructura de tests del Core.
-- [ ] Test de creación válida de Campaign.
-- [ ] Test de nombre vacío/inválido.
-- [ ] Test de generación de ID.
-- [ ] Test de timestamps.
-- [ ] Test del contrato `CampaignRepository`.
+- [x] Agregar framework y estructura de tests del Core.
+- [x] Test de creación válida de Campaign.
+- [x] Test de nombre vacío/inválido.
+- [x] Test de generación de ID.
+- [x] Test de timestamps.
+- [x] Test del contrato `CampaignRepository` mediante implementaciones de prueba y SQLite.
 
 ## 1.3 Persistencia base
 
-- [ ] Seleccionar librería SQLite compatible con Windows/Android/iOS.
-- [ ] Crear esquema inicial y versión de base de datos.
-- [ ] Implementar `SqliteCampaignRepository`.
-- [ ] Crear migración inicial.
-- [ ] Guardar Campaign.
-- [ ] Listar Campaigns.
-- [ ] Cargar Campaign por ID.
-- [ ] Editar Campaign.
-- [ ] Archivar Campaign sin borrado destructivo.
-- [ ] Tests de persistencia reales.
+- [x] Seleccionar librería SQLite compatible con Windows/Android/iOS.
+- [x] Crear esquema inicial y versión de base de datos.
+- [x] Implementar `SqliteCampaignRepository`.
+- [x] Crear migración/bootstrap inicial v0 → v1.
+- [x] Guardar Campaign.
+- [x] Listar Campaigns.
+- [x] Cargar Campaign por ID.
+- [x] Editar datos base de Campaign mediante upsert.
+- [x] Archivar Campaign sin borrado destructivo.
+- [x] Tests de persistencia reales.
 
 **Criterio de cierre:** crear → guardar → cerrar contexto → reabrir repositorio → recuperar la misma campaña, cubierto por tests.
+
+**Cierre Fase 1:** COMPLETADO.
 
 ---
 
@@ -84,14 +86,16 @@ Objetivo: que cada cambio pueda validarse automáticamente sin depender de una P
 - [x] Entidad base `Campaign`.
 - [x] Puerto `CampaignRepository`.
 - [x] Caso de uso `CreateCampaign`.
-- [ ] `GetCampaign`.
-- [ ] `ListCampaigns`.
-- [ ] `UpdateCampaign`.
-- [ ] `ArchiveCampaign`.
+- [x] `GetCampaign`.
+- [x] `ListCampaigns`.
+- [x] `RenameCampaign`.
+- [ ] `UpdateCampaign` para edición general.
+- [x] `ArchiveCampaign`.
 - [ ] Metadata de campaña.
 - [ ] Configuración propia de campaña.
-- [ ] Estado activa/archivada.
-- [ ] Tests completos.
+- [x] Estado activa/archivada.
+- [x] Tests del ciclo de vida inicial.
+- [ ] Tests completos de Campaign.
 
 ## 2.2 World
 
