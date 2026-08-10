@@ -72,7 +72,8 @@ void main() {
       bus.subscribe(handler: (_) => published = true);
       final dispatcher = DomainEventDispatcher(history: history, bus: bus);
 
-      await expectLater(dispatcher.dispatch(_event('event-1')), throwsStateError);
+      await expectLater(
+          dispatcher.dispatch(_event('event-1')), throwsStateError);
 
       expect(published, isFalse);
     });
