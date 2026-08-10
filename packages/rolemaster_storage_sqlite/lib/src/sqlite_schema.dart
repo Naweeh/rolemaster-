@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 8;
+const int rolemasterSqliteSchemaVersion = 9;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -97,6 +97,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 8;
+  }
+
+  if (version == 8) {
+    _runMigration(
+      database,
+      targetVersion: 9,
+      migrate: () {
+        _createCreatureSchemaV9(database);
+      },
+    );
+    version = 9;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -373,5 +384,37 @@ void _createNpcSchemaV8(Database database) {
   );
   database.execute(
     'CREATE INDEX idx_npcs_world_location ON npcs(world_id, location_id)',
+  );
+}
+
+void _createCreatureSchemaV9(Database database) {
+  database.execute('''
+    CREATE TABLE creatures (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      archived_at INTEGER,
+      world_id TEXT,
+      location_id TEXT,
+      species TEXT NOT NULL,
+      category TEXT,
+      description TEXT,
+      notes TEXT,
+      tags_json TEXT NOT NULL DEFAULT '[]',
+      CHECK (location_id IS NULL OR world_id IS NOT NULL),
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE SET NULL,
+      FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_creatures_campaign_archived '
+    'ON creatures(campaign_id, archived_at)',
+  );
+  database.execute(
+    'CREATE INDEX idx_creatures_world_location '
+    'ON creatures(world_id, location_id)',
   );
 }
