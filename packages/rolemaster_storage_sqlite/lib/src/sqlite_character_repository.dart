@@ -161,7 +161,9 @@ final class SqliteCharacterRepository implements CharacterRepository {
   List<String> _decodeTags(String rawJson) {
     final decoded = jsonDecode(rawJson);
     if (decoded is! List || decoded.any((value) => value is! String)) {
-      throw StateError('Invalid Character tags payload in Rolemaster database.');
+      throw StateError(
+        'Invalid Character tags payload in Rolemaster database.',
+      );
     }
     return decoded.cast<String>();
   }
