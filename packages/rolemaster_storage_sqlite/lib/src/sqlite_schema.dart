@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 6;
+const int rolemasterSqliteSchemaVersion = 7;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -75,6 +75,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 6;
+  }
+
+  if (version == 6) {
+    _runMigration(
+      database,
+      targetVersion: 7,
+      migrate: () {
+        _createCharacterSchemaV7(database);
+      },
+    );
+    version = 7;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -298,4 +309,26 @@ void _createCampaignStateSchemaV6(Database database) {
       FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
     ) STRICT
   ''');
+}
+
+void _createCharacterSchemaV7(Database database) {
+  database.execute('''
+    CREATE TABLE characters (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      archived_at INTEGER,
+      player_name TEXT,
+      description TEXT,
+      notes TEXT,
+      tags_json TEXT NOT NULL DEFAULT '[]',
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_characters_campaign_archived '
+    'ON characters(campaign_id, archived_at)',
+  );
 }
