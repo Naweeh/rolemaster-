@@ -42,6 +42,36 @@ jobs:
       - name: Test
         run: dart test
 
+  storage:
+    name: SQLite storage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/rolemaster_storage_sqlite
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1.7.2
+        with:
+          sdk: stable
+
+      - name: Dependencies
+        run: dart pub get
+
+      - name: Format
+        run: |
+          dart format .
+          git diff --exit-code
+
+      - name: Analyze
+        run: dart analyze --fatal-infos
+
+      - name: Test
+        run: dart test
+
   app:
     name: Flutter app
     runs-on: ubuntu-latest
