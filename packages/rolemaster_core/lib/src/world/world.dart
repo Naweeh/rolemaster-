@@ -49,7 +49,8 @@ final class World {
     required DateTime at,
   }) {
     if (name == null && metadata == null) {
-      throw ArgumentError('At least one World field must be provided for update.');
+      throw ArgumentError(
+          'At least one World field must be provided for update.');
     }
 
     final normalizedAt = at.toUtc();
