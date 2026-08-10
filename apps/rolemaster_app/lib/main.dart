@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
 import 'src/app/rolemaster_app.dart';
+import 'src/features/visual_alpha/visual_alpha_character_profile.dart';
 import 'src/infrastructure/in_memory_campaign_repository.dart';
+import 'src/infrastructure/in_memory_character_repository.dart';
 import 'src/infrastructure/in_memory_ruleset_repository.dart';
 import 'src/infrastructure/manual_alpha_rulesets.dart';
 
@@ -10,6 +12,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final CampaignRepository campaignRepository = InMemoryCampaignRepository();
+  final CharacterRepository characterRepository = InMemoryCharacterRepository();
+  final VisualAlphaCharacterProfileRepository characterProfileRepository =
+      InMemoryVisualAlphaCharacterProfileRepository();
   final manualRulesets = buildManualAlphaRulesets();
   final RulesetRepository rulesetRepository =
       InMemoryRulesetRepository(manualRulesets);
@@ -40,6 +45,8 @@ Future<void> main() async {
   runApp(
     RolemasterApp(
       campaignRepository: campaignRepository,
+      characterRepository: characterRepository,
+      characterProfileRepository: characterProfileRepository,
       rulesetRepository: rulesetRepository,
       campaignRulesetRepository: campaignRulesetRepository,
     ),
