@@ -279,10 +279,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
     return jsonEncode(
       months
           .map(
-            (month) => <String, Object>{
-              'name': month.name,
-              'days': month.days,
-            },
+            (month) => <String, Object>{'name': month.name, 'days': month.days},
           )
           .toList(growable: false),
     );
@@ -291,24 +288,28 @@ final class SqliteCalendarRepository implements CalendarRepository {
   List<CalendarMonth> _decodeMonths(String rawJson) {
     final decoded = jsonDecode(rawJson);
     if (decoded is! List) {
-      throw StateError('Invalid Calendar months payload in Rolemaster database.');
+      throw StateError(
+        'Invalid Calendar months payload in Rolemaster database.',
+      );
     }
 
-    return decoded.map((value) {
-      if (value is! Map) {
-        throw StateError(
-          'Invalid Calendar month entry in Rolemaster database.',
-        );
-      }
-      final name = value['name'];
-      final days = value['days'];
-      if (name is! String || days is! int) {
-        throw StateError(
-          'Invalid Calendar month entry in Rolemaster database.',
-        );
-      }
-      return CalendarMonth(name: name, days: days);
-    }).toList(growable: false);
+    return decoded
+        .map((value) {
+          if (value is! Map) {
+            throw StateError(
+              'Invalid Calendar month entry in Rolemaster database.',
+            );
+          }
+          final name = value['name'];
+          final days = value['days'];
+          if (name is! String || days is! int) {
+            throw StateError(
+              'Invalid Calendar month entry in Rolemaster database.',
+            );
+          }
+          return CalendarMonth(name: name, days: days);
+        })
+        .toList(growable: false);
   }
 
   List<String> _decodeWeekdays(String rawJson) {
