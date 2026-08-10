@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v11
+  - [x] esquema SQLite central versionado hasta v12
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -41,57 +41,37 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo: **Inventory / Items**.
+Sprint activo: **Maps / Locations**.
 
-- [x] Characters
-  - [x] identidad y metadata narrativa
-  - [x] asociación a campaña
-  - [x] crear/cargar/listar/editar/archivar
-  - [x] persistencia SQLite v7
-- [x] NPCs
-  - [x] identidad y metadata narrativa
-  - [x] idioma nativo e idiomas conocidos libres/extensibles
-  - [x] ubicación opcional en World/Location
-  - [x] validación Campaign/World/Location
-  - [x] crear/cargar/listar/editar/archivar
-  - [x] persistencia SQLite v8
-- [x] Creatures
-  - [x] identidad, especie/categoría y metadata narrativa
-  - [x] ubicación opcional en World/Location
-  - [x] crear/cargar/listar/editar/archivar
-  - [x] persistencia SQLite v9
-  - [x] estadísticas de reglas explícitamente diferidas a Ruleset/Rules Engine
-- [x] Ruleset Foundation
-  - [x] `RulesetManifest`
-  - [x] `RulesetPackage` versionado e inmutable
-  - [x] módulos obligatorios/opcionales/default
-  - [x] `CampaignRulesetBinding` a versión exacta
-  - [x] `CampaignRulesOverlay` aislado por campaña
-  - [x] campaña nueva con overlay limpio por defecto
-  - [x] reset de house rules sin modificar paquete base
-  - [x] bloqueo de reemplazo silencioso de versión
-  - [x] catálogo y binding persistentes en SQLite v10
-  - [x] documentación `docs/RULESETS.md`
-- [ ] Ruleset Builder / importación de manuales
-  - [ ] importar PDF/manuales
-  - [ ] extraer y normalizar definiciones
-  - [ ] revisión del GM
-  - [ ] publicar nueva versión inmutable
-  - [ ] presets reutilizables separados de campañas
-  - [ ] migración controlada entre rulesets/versiones
-- [x] Skills Foundation
-  - [x] `SkillDefinition` perteneciente al Ruleset
-  - [x] catálogo tipado desde `RulesetPackage.data['skills']`
-  - [x] activación condicionada por módulos del Ruleset
-  - [x] `CharacterSkillState` separado de la definición
-  - [x] rangos, modificadores nombrados y notas
-  - [x] validación contra el Ruleset exacto de la campaña
-  - [x] persistencia SQLite v11
-  - [x] migración v10→v11 preservando binding de Ruleset
-  - [x] tests Core y SQLite
-  - [x] fórmulas/costes/estadísticas asociadas diferidas al Rules Engine
-- [ ] Inventory / Items
+- [x] Characters — SQLite v7
+- [x] NPCs — SQLite v8
+- [x] Creatures — SQLite v9
+- [x] Ruleset Foundation — SQLite v10
+- [x] Skills Foundation — SQLite v11
+- [x] Inventory / Items — SQLite v12
+  - [x] `ItemDefinition` dependiente de Ruleset
+  - [x] catálogo tipado y filtrado por módulos activos
+  - [x] objetos de campaña definidos por Ruleset o manuales/custom
+  - [x] `ItemInstance` con cantidad, equipamiento, notas y timestamps
+  - [x] propietario genérico o contenedor opcional
+  - [x] transferencias y des-equipado automático al contener/desasignar
+  - [x] rechazo de contenedores de otra campaña
+  - [x] detección de ciclos de contención
+  - [x] propiedades de Ruleset no duplicadas en estado mutable
+  - [x] persistencia SQLite v12
+  - [x] migración v11→v12 preservando Skills y binding de Ruleset
+  - [x] constraints de base para cantidad, holder/contenedor y autocontención
+  - [x] fixtures históricos v5–v10 saneados
+  - [x] CI Core + SQLite + Flutter verde
 - [ ] Maps / Locations
+  - [ ] reutilizar `World/Region/Location` como geografía canónica
+  - [ ] mapa/escena lógica vinculable a campaña, mundo y localización
+  - [ ] espacio de coordenadas independiente del renderer
+  - [ ] capas y metadata de visibilidad
+  - [ ] posiciones opcionales de entidades
+  - [ ] preparación para pantalla secundaria sin dependencia de UI
+  - [ ] persistencia SQLite
+  - [ ] tests
 - [ ] Encounters
 
 ## Fase 3 — Reglas y combate
@@ -153,8 +133,6 @@ Sprint activo: **Inventory / Items**.
 - [ ] Eventos de audio sincronizados con el estado de campaña
 
 ## Fase 8 — Dispositivos del GM
-
-Esta fase es opcional para la primera versión estable y no implica clientes de jugador.
 
 - [ ] Descubrimiento en red local
 - [ ] Sincronización entre dispositivos del mismo GM
