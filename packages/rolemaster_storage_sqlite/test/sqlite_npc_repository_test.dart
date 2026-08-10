@@ -27,10 +27,7 @@ void main() {
             notes: 'Confía en los elfos.',
             tags: <String>['aliado', 'elfo'],
           ),
-          placement: NpcPlacement(
-            worldId: 'world-1',
-            locationId: 'location-1',
-          ),
+          placement: NpcPlacement(worldId: 'world-1', locationId: 'location-1'),
         ),
       );
       writer.close();
@@ -111,10 +108,7 @@ void main() {
         name: 'Guardián',
         createdAt: DateTime.utc(2026, 8, 10, 10),
         metadata: NpcMetadata(nativeLanguage: 'Común'),
-        placement: NpcPlacement(
-          worldId: 'world-1',
-          locationId: 'location-1',
-        ),
+        placement: NpcPlacement(worldId: 'world-1', locationId: 'location-1'),
       );
       await repository.save(original);
       await repository.save(
