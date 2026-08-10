@@ -11,8 +11,7 @@ void main() {
       final directory = await Directory.systemTemp.createTemp(
         'rolemaster_world_sqlite_',
       );
-      final databasePath =
-          '${directory.path}${Platform.pathSeparator}world.db';
+      final databasePath = '${directory.path}${Platform.pathSeparator}world.db';
       addTearDown(() => directory.delete(recursive: true));
 
       final campaignRepository = SqliteCampaignRepository.open(databasePath);
@@ -90,7 +89,9 @@ void main() {
       );
       expect(locations, hasLength(2));
       expect(
-        locations.singleWhere((item) => item.id == 'location-2').parentLocationId,
+        locations
+            .singleWhere((item) => item.id == 'location-2')
+            .parentLocationId,
         'location-1',
       );
       expect(
@@ -148,17 +149,18 @@ void main() {
       expect(worlds.map((world) => world.id), <String>['world-1']);
     });
 
-    test('migrates schema v2 to current schema without losing campaign data',
-        () async {
-      final directory = await Directory.systemTemp.createTemp(
-        'rolemaster_world_migration_',
-      );
-      final databasePath =
-          '${directory.path}${Platform.pathSeparator}legacy-v2.db';
-      addTearDown(() => directory.delete(recursive: true));
+    test(
+      'migrates schema v2 to current schema without losing campaign data',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'rolemaster_world_migration_',
+        );
+        final databasePath =
+            '${directory.path}${Platform.pathSeparator}legacy-v2.db';
+        addTearDown(() => directory.delete(recursive: true));
 
-      final legacy = sqlite3.open(databasePath);
-      legacy.execute('''
+        final legacy = sqlite3.open(databasePath);
+        legacy.execute('''
         CREATE TABLE campaigns (
           id TEXT NOT NULL PRIMARY KEY,
           name TEXT NOT NULL,
@@ -172,56 +174,57 @@ void main() {
           audio_enabled INTEGER NOT NULL DEFAULT 1 CHECK (audio_enabled IN (0, 1))
         ) STRICT
       ''');
-      legacy.execute(
-        '''
+        legacy.execute(
+          '''
         INSERT INTO campaigns (
           id, name, created_at, updated_at, archived_at,
           description, tags_json, ai_enabled, voice_enabled, audio_enabled
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
-        <Object?>[
-          'campaign-legacy',
-          'Anterior',
-          DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
-          DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
-          null,
-          'Conservar',
-          '["legacy"]',
-          1,
-          1,
-          1,
-        ],
-      );
-      legacy.execute('PRAGMA user_version = 2');
-      legacy.close();
+          <Object?>[
+            'campaign-legacy',
+            'Anterior',
+            DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
+            DateTime.utc(2026, 8, 10, 10).millisecondsSinceEpoch,
+            null,
+            'Conservar',
+            '["legacy"]',
+            1,
+            1,
+            1,
+          ],
+        );
+        legacy.execute('PRAGMA user_version = 2');
+        legacy.close();
 
-      final worldRepository = SqliteWorldRepository.open(databasePath);
-      await worldRepository.saveWorld(
-        World(
-          id: 'world-new',
-          campaignId: 'campaign-legacy',
-          name: 'Mundo nuevo',
-          createdAt: DateTime.utc(2026, 8, 10, 12),
-        ),
-      );
-      worldRepository.close();
+        final worldRepository = SqliteWorldRepository.open(databasePath);
+        await worldRepository.saveWorld(
+          World(
+            id: 'world-new',
+            campaignId: 'campaign-legacy',
+            name: 'Mundo nuevo',
+            createdAt: DateTime.utc(2026, 8, 10, 12),
+          ),
+        );
+        worldRepository.close();
 
-      final campaignRepository = SqliteCampaignRepository.open(databasePath);
-      final campaign = await campaignRepository.getById('campaign-legacy');
-      campaignRepository.close();
+        final campaignRepository = SqliteCampaignRepository.open(databasePath);
+        final campaign = await campaignRepository.getById('campaign-legacy');
+        campaignRepository.close();
 
-      expect(campaign, isNotNull);
-      expect(campaign!.name, 'Anterior');
-      expect(campaign.metadata.description, 'Conservar');
-      expect(campaign.metadata.tags, <String>['legacy']);
+        expect(campaign, isNotNull);
+        expect(campaign!.name, 'Anterior');
+        expect(campaign.metadata.description, 'Conservar');
+        expect(campaign.metadata.tags, <String>['legacy']);
 
-      final migrated = sqlite3.open(databasePath);
-      final version = migrated.select('PRAGMA user_version').single;
-      final worlds = migrated.select('SELECT id FROM worlds');
-      migrated.close();
+        final migrated = sqlite3.open(databasePath);
+        final version = migrated.select('PRAGMA user_version').single;
+        final worlds = migrated.select('SELECT id FROM worlds');
+        migrated.close();
 
-      expect(version['user_version'], SqliteWorldRepository.schemaVersion);
-      expect(worlds.single['id'], 'world-new');
-    });
+        expect(version['user_version'], SqliteWorldRepository.schemaVersion);
+        expect(worlds.single['id'], 'world-new');
+      },
+    );
   });
 }

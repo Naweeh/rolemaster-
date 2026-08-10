@@ -283,10 +283,7 @@ final class SqliteWorldRepository implements WorldRepository {
   }
 
   DateTime _dateFromRow(Row row, String column) {
-    return DateTime.fromMillisecondsSinceEpoch(
-      row[column] as int,
-      isUtc: true,
-    );
+    return DateTime.fromMillisecondsSinceEpoch(row[column] as int, isUtc: true);
   }
 
   WorldMetadata _metadataFromRow(Row row) {

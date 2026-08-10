@@ -37,9 +37,7 @@ void _runMigration(Database database, void Function() migrate) {
   database.execute('BEGIN IMMEDIATE');
   try {
     migrate();
-    database.execute(
-      'PRAGMA user_version = $rolemasterSqliteSchemaVersion',
-    );
+    database.execute('PRAGMA user_version = $rolemasterSqliteSchemaVersion');
     database.execute('COMMIT');
   } catch (_) {
     database.execute('ROLLBACK');
@@ -114,9 +112,7 @@ void _createWorldSchemaV3(Database database) {
       FOREIGN KEY (parent_region_id) REFERENCES regions(id) ON DELETE RESTRICT
     ) STRICT
   ''');
-  database.execute(
-    'CREATE INDEX idx_regions_world_id ON regions(world_id)',
-  );
+  database.execute('CREATE INDEX idx_regions_world_id ON regions(world_id)');
   database.execute(
     'CREATE INDEX idx_regions_parent_id ON regions(parent_region_id)',
   );
