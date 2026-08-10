@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:rolemaster_storage_sqlite/rolemaster_state_sqlite.dart';
 import 'package:rolemaster_storage_sqlite/rolemaster_storage_sqlite.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('adding campaign state preserves existing v5 event history', () async {
+  test('migrates v5 to v6 while preserving existing event history', () async {
     final directory = await Directory.systemTemp.createTemp(
       'rolemaster_state_compatibility_',
     );
@@ -35,6 +36,11 @@ void main() {
     );
     events.close();
 
+    final legacy = sqlite3.open(path);
+    legacy.execute('DROP TABLE campaign_states');
+    legacy.execute('PRAGMA user_version = 5');
+    legacy.close();
+
     final states = SqliteCampaignStateRepository.open(path);
     expect(
       await states.save(
@@ -57,6 +63,19 @@ void main() {
     final state = await reopenedStates.getByCampaignId('campaign-1');
     reopenedStates.close();
 
+    final migrated = sqlite3.open(path);
+    final version = migrated.select('PRAGMA user_version').single;
+    final tables = migrated.select(
+      "SELECT name FROM sqlite_master "
+      "WHERE type = 'table' AND name = 'campaign_states'",
+    );
+    migrated.close();
+
+    expect(
+      version['user_version'],
+      SqliteCampaignStateRepository.schemaVersion,
+    );
+    expect(tables, hasLength(1));
     expect(preserved, isNotNull);
     expect(preserved!.payload['source'], 'before-state-manager');
     expect(state, isNotNull);

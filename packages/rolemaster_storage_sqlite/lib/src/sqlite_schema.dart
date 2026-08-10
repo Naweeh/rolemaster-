@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 5;
+const int rolemasterSqliteSchemaVersion = 6;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -64,6 +64,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 5;
+  }
+
+  if (version == 5) {
+    _runMigration(
+      database,
+      targetVersion: 6,
+      migrate: () {
+        _createCampaignStateSchemaV6(database);
+      },
+    );
+    version = 6;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -276,4 +287,15 @@ void _createEventSchemaV5(Database database) {
   database.execute(
     'CREATE INDEX idx_domain_events_type ON domain_events(type)',
   );
+}
+
+void _createCampaignStateSchemaV6(Database database) {
+  database.execute('''
+    CREATE TABLE campaign_states (
+      campaign_id TEXT NOT NULL PRIMARY KEY,
+      revision INTEGER NOT NULL CHECK (revision > 0),
+      updated_at INTEGER NOT NULL,
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
 }

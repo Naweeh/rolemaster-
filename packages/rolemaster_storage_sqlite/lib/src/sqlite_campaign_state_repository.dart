@@ -6,7 +6,6 @@ import 'sqlite_schema.dart';
 final class SqliteCampaignStateRepository implements CampaignStateRepository {
   SqliteCampaignStateRepository._(this._database) {
     initializeRolemasterSqliteSchema(_database);
-    _ensureSchema();
   }
 
   factory SqliteCampaignStateRepository.open(String path) {
@@ -16,6 +15,8 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
   factory SqliteCampaignStateRepository.inMemory() {
     return SqliteCampaignStateRepository._(sqlite3.openInMemory());
   }
+
+  static const int schemaVersion = rolemasterSqliteSchemaVersion;
 
   final Database _database;
 
@@ -118,16 +119,5 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
 
   int _changedRows() {
     return _database.select('SELECT changes() AS count').single['count'] as int;
-  }
-
-  void _ensureSchema() {
-    _database.execute('''
-      CREATE TABLE IF NOT EXISTS campaign_states (
-        campaign_id TEXT NOT NULL PRIMARY KEY,
-        revision INTEGER NOT NULL CHECK (revision > 0),
-        updated_at INTEGER NOT NULL,
-        FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
-      ) STRICT
-    ''');
   }
 }
