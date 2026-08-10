@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
 import '../campaign/campaign_home_page.dart';
+import 'visual_alpha_dice_panel.dart';
 import 'visual_alpha_workspace.dart';
 
 final class VisualAlphaLandingPage extends StatefulWidget {
@@ -81,6 +82,12 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
     );
   }
 
+  Future<void> _openDicePanel() async {
+    final package = _package;
+    if (package == null) return;
+    await showVisualAlphaDicePanel(context, rulesetPackage: package);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +103,13 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
         ],
       ),
       body: _buildBody(context),
+      floatingActionButton: _package == null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _openDicePanel,
+              icon: const Icon(Icons.casino_outlined),
+              label: const Text('Tiradas'),
+            ),
     );
   }
 
@@ -159,6 +173,7 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
           rulesetState: state,
           rulesetPackage: package,
         ),
+        const SizedBox(height: 72),
       ],
     );
   }
