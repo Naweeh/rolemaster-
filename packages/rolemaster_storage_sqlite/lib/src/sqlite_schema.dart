@@ -14,35 +14,55 @@ void initializeRolemasterSqliteSchema(Database database) {
   }
 
   if (version == 0) {
-    _runMigration(database, targetVersion: 2, migrate: () {
-      _createCampaignSchemaV2(database);
-    });
+    _runMigration(
+      database,
+      targetVersion: 2,
+      migrate: () {
+        _createCampaignSchemaV2(database);
+      },
+    );
     version = 2;
   } else if (version == 1) {
-    _runMigration(database, targetVersion: 2, migrate: () {
-      _migrateCampaignV1ToV2(database);
-    });
+    _runMigration(
+      database,
+      targetVersion: 2,
+      migrate: () {
+        _migrateCampaignV1ToV2(database);
+      },
+    );
     version = 2;
   }
 
   if (version == 2) {
-    _runMigration(database, targetVersion: 3, migrate: () {
-      _createWorldSchemaV3(database);
-    });
+    _runMigration(
+      database,
+      targetVersion: 3,
+      migrate: () {
+        _createWorldSchemaV3(database);
+      },
+    );
     version = 3;
   }
 
   if (version == 3) {
-    _runMigration(database, targetVersion: 4, migrate: () {
-      _createCalendarSchemaV4(database);
-    });
+    _runMigration(
+      database,
+      targetVersion: 4,
+      migrate: () {
+        _createCalendarSchemaV4(database);
+      },
+    );
     version = 4;
   }
 
   if (version == 4) {
-    _runMigration(database, targetVersion: 5, migrate: () {
-      _createEventSchemaV5(database);
-    });
+    _runMigration(
+      database,
+      targetVersion: 5,
+      migrate: () {
+        _createEventSchemaV5(database);
+      },
+    );
     version = 5;
   }
 
