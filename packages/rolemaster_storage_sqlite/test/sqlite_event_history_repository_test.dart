@@ -56,7 +56,10 @@ void main() {
       );
       await repository.append(event);
 
-      await expectLater(repository.append(event), throwsA(isA<SqliteException>()));
+      await expectLater(
+        repository.append(event),
+        throwsA(isA<SqliteException>()),
+      );
       final events = await repository.getForCampaign('campaign-1');
       expect(events, hasLength(1));
     });
@@ -109,19 +112,22 @@ void main() {
 
       final database = sqlite3.open(databasePath);
       final version = database.select('PRAGMA user_version').single;
-      final campaign = database.select(
-        "SELECT name FROM campaigns WHERE id = 'campaign-1'",
-      ).single;
-      final world = database.select(
-        "SELECT name FROM worlds WHERE id = 'world-1'",
-      ).single;
-      final calendar = database.select(
-        "SELECT name FROM calendars WHERE id = 'calendar-1'",
-      ).single;
+      final campaign = database
+          .select("SELECT name FROM campaigns WHERE id = 'campaign-1'")
+          .single;
+      final world = database
+          .select("SELECT name FROM worlds WHERE id = 'world-1'")
+          .single;
+      final calendar = database
+          .select("SELECT name FROM calendars WHERE id = 'calendar-1'")
+          .single;
       final events = database.select('SELECT id FROM domain_events');
       database.close();
 
-      expect(version['user_version'], SqliteEventHistoryRepository.schemaVersion);
+      expect(
+        version['user_version'],
+        SqliteEventHistoryRepository.schemaVersion,
+      );
       expect(campaign['name'], 'Campaña anterior');
       expect(world['name'], 'Mundo anterior');
       expect(calendar['name'], 'Calendario anterior');
