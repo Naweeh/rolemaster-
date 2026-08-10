@@ -55,6 +55,54 @@ void main() {
       expect((await repository.getById('campaign-1'))?.name, 'Nueva');
     });
 
+    test('UpdateCampaign persists metadata and configuration', () async {
+      final repository = _MemoryCampaignRepository(<Campaign>[
+        _campaign(id: 'campaign-1', name: 'Original'),
+      ]);
+      final useCase = UpdateCampaign(
+        repository: repository,
+        clock: () => DateTime.utc(2026, 8, 10, 14),
+      );
+      final metadata = CampaignMetadata(
+        description: 'Campaña de prueba',
+        tags: <String>['principal', 'presencial'],
+      );
+      const configuration = CampaignConfiguration(
+        aiEnabled: false,
+        voiceEnabled: true,
+        audioEnabled: false,
+      );
+
+      final updated = await useCase(
+        id: ' campaign-1 ',
+        metadata: metadata,
+        configuration: configuration,
+      );
+
+      expect(updated.metadata.description, 'Campaña de prueba');
+      expect(updated.metadata.tags, <String>['principal', 'presencial']);
+      expect(updated.configuration.aiEnabled, isFalse);
+      expect(updated.configuration.voiceEnabled, isTrue);
+      expect(updated.configuration.audioEnabled, isFalse);
+
+      final persisted = await repository.getById('campaign-1');
+      expect(persisted?.metadata.description, 'Campaña de prueba');
+      expect(persisted?.configuration.aiEnabled, isFalse);
+    });
+
+    test('UpdateCampaign throws when campaign does not exist', () async {
+      final repository = _MemoryCampaignRepository();
+      final useCase = UpdateCampaign(
+        repository: repository,
+        clock: () => DateTime.utc(2026, 8, 10, 14),
+      );
+
+      await expectLater(
+        useCase(id: 'missing', name: 'Nueva'),
+        throwsA(isA<CampaignNotFoundException>()),
+      );
+    });
+
     test('ArchiveCampaign persists archived state', () async {
       final repository = _MemoryCampaignRepository(<Campaign>[
         _campaign(id: 'campaign-1', name: 'Campaign'),
