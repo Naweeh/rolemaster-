@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v12
+  - [x] esquema SQLite central versionado hasta v13
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -41,7 +41,7 @@ Estado: **completada**.
 
 ## Fase 2 — Dominio de juego
 
-Sprint activo: **Maps / Locations**.
+Sprint activo excepcional: **Visual Alpha 0.1** para validar visualmente el Core con el primer manual real. Al terminar esta prueba, el siguiente sprint de dominio será **Encounters**.
 
 - [x] Characters — SQLite v7
 - [x] NPCs — SQLite v8
@@ -49,30 +49,31 @@ Sprint activo: **Maps / Locations**.
 - [x] Ruleset Foundation — SQLite v10
 - [x] Skills Foundation — SQLite v11
 - [x] Inventory / Items — SQLite v12
-  - [x] `ItemDefinition` dependiente de Ruleset
-  - [x] catálogo tipado y filtrado por módulos activos
-  - [x] objetos de campaña definidos por Ruleset o manuales/custom
-  - [x] `ItemInstance` con cantidad, equipamiento, notas y timestamps
-  - [x] propietario genérico o contenedor opcional
-  - [x] transferencias y des-equipado automático al contener/desasignar
-  - [x] rechazo de contenedores de otra campaña
-  - [x] detección de ciclos de contención
-  - [x] propiedades de Ruleset no duplicadas en estado mutable
-  - [x] persistencia SQLite v12
-  - [x] migración v11→v12 preservando Skills y binding de Ruleset
-  - [x] constraints de base para cantidad, holder/contenedor y autocontención
-  - [x] fixtures históricos v5–v10 saneados
+- [x] Maps / Locations — SQLite v13
+  - [x] `World/Region/Location` reutilizado como geografía canónica
+  - [x] mapa/escena lógica vinculable a campaña, mundo y localización
+  - [x] espacio de coordenadas independiente del renderer
+  - [x] capas ordenadas y visibilidad GM/pública
+  - [x] posiciones opcionales de entidades
+  - [x] preparación para pantalla secundaria sin dependencia de UI
+  - [x] persistencia SQLite v13
+  - [x] migración v12→v13 preservando inventario
+  - [x] constraints y FK mapa/capa
+  - [x] fixtures históricos v5–v11 saneados
   - [x] CI Core + SQLite + Flutter verde
-- [ ] Maps / Locations
-  - [ ] reutilizar `World/Region/Location` como geografía canónica
-  - [ ] mapa/escena lógica vinculable a campaña, mundo y localización
-  - [ ] espacio de coordenadas independiente del renderer
-  - [ ] capas y metadata de visibilidad
-  - [ ] posiciones opcionales de entidades
-  - [ ] preparación para pantalla secundaria sin dependencia de UI
-  - [ ] persistencia SQLite
-  - [ ] tests
 - [ ] Encounters
+
+### Visual Alpha 0.1
+
+- [ ] Cargar primer manual real de prueba
+- [ ] Identificar edición/versión/módulos
+- [ ] Generar un Ruleset de prueba controlado sin modificar el paquete base
+- [ ] Crear una campaña limpia ligada a esa versión
+- [ ] Mostrar datos reales en shell GM responsive
+- [ ] Validar Campaign + Ruleset + Characters/NPCs + Map/Scene
+- [ ] Generar build web técnico para revisión
+
+> La Visual Alpha es una herramienta de validación. No abre ni congela la fase gráfica definitiva.
 
 ## Fase 3 — Reglas y combate
 
