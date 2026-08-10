@@ -9,6 +9,10 @@ abstract interface class RulesetRepository {
   Future<List<RulesetPackage>> getAvailablePackages();
 }
 
+abstract interface class RulesetPublisher {
+  Future<void> publish(RulesetPackage package);
+}
+
 abstract interface class CampaignRulesetRepository {
   Future<CampaignRulesetState?> getForCampaign(String campaignId);
 
