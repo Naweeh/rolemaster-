@@ -5,7 +5,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('StateManager', () {
-    test('validates all changes before applying and advances revision', () async {
+    test('validates all changes before applying and advances revision',
+        () async {
       final log = <String>[];
       final repository = _MemoryStateRepository();
       final manager = StateManager(repository: repository);
