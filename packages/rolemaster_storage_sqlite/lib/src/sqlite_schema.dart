@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 11;
+const int rolemasterSqliteSchemaVersion = 12;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -130,6 +130,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 11;
+  }
+
+  if (version == 11) {
+    _runMigration(
+      database,
+      targetVersion: 12,
+      migrate: () {
+        _createItemInstanceSchemaV12(database);
+      },
+    );
+    version = 12;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -496,5 +507,48 @@ void _createCharacterSkillSchemaV11(Database database) {
   database.execute(
     'CREATE INDEX idx_character_skills_character '
     'ON character_skills(character_id)',
+  );
+}
+
+void _createItemInstanceSchemaV12(Database database) {
+  database.execute('''
+    CREATE TABLE item_instances (
+      id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      definition_id TEXT,
+      custom_name TEXT,
+      quantity INTEGER NOT NULL CHECK (quantity > 0),
+      equipped INTEGER NOT NULL DEFAULT 0 CHECK (equipped IN (0, 1)),
+      holder_entity_type TEXT,
+      holder_entity_id TEXT,
+      container_item_id TEXT,
+      notes TEXT,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      CHECK (definition_id IS NOT NULL OR custom_name IS NOT NULL),
+      CHECK (
+        (holder_entity_type IS NULL AND holder_entity_id IS NULL) OR
+        (holder_entity_type IS NOT NULL AND holder_entity_id IS NOT NULL)
+      ),
+      CHECK (
+        container_item_id IS NULL OR
+        (holder_entity_type IS NULL AND holder_entity_id IS NULL)
+      ),
+      CHECK (container_item_id IS NULL OR container_item_id <> id),
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (container_item_id) REFERENCES item_instances(id) ON DELETE RESTRICT
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_item_instances_campaign '
+    'ON item_instances(campaign_id, created_at, id)',
+  );
+  database.execute(
+    'CREATE INDEX idx_item_instances_holder '
+    'ON item_instances(holder_entity_type, holder_entity_id)',
+  );
+  database.execute(
+    'CREATE INDEX idx_item_instances_container '
+    'ON item_instances(container_item_id)',
   );
 }
