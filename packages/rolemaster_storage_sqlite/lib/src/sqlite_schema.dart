@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 9;
+const int rolemasterSqliteSchemaVersion = 10;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -108,6 +108,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 9;
+  }
+
+  if (version == 9) {
+    _runMigration(
+      database,
+      targetVersion: 10,
+      migrate: () {
+        _createRulesetSchemaV10(database);
+      },
+    );
+    version = 10;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -416,5 +427,44 @@ void _createCreatureSchemaV9(Database database) {
   database.execute(
     'CREATE INDEX idx_creatures_world_location '
     'ON creatures(world_id, location_id)',
+  );
+}
+
+void _createRulesetSchemaV10(Database database) {
+  database.execute('''
+    CREATE TABLE ruleset_packages (
+      ruleset_id TEXT NOT NULL,
+      version TEXT NOT NULL,
+      system_id TEXT NOT NULL,
+      edition TEXT NOT NULL,
+      display_name TEXT NOT NULL,
+      modules_json TEXT NOT NULL,
+      source_references_json TEXT NOT NULL,
+      data_json TEXT NOT NULL,
+      PRIMARY KEY (ruleset_id, version)
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_ruleset_packages_system_edition '
+    'ON ruleset_packages(system_id, edition)',
+  );
+
+  database.execute('''
+    CREATE TABLE campaign_rulesets (
+      campaign_id TEXT NOT NULL PRIMARY KEY,
+      ruleset_id TEXT NOT NULL,
+      ruleset_version TEXT NOT NULL,
+      active_module_ids_json TEXT NOT NULL,
+      bound_at INTEGER NOT NULL,
+      overlay_json TEXT NOT NULL DEFAULT '{}',
+      overlay_updated_at INTEGER NOT NULL,
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE,
+      FOREIGN KEY (ruleset_id, ruleset_version)
+        REFERENCES ruleset_packages(ruleset_id, version) ON DELETE RESTRICT
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_campaign_rulesets_package '
+    'ON campaign_rulesets(ruleset_id, ruleset_version)',
   );
 }
