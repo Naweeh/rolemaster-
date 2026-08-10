@@ -1,0 +1,16 @@
+import 'ruleset_models.dart';
+
+abstract interface class RulesetRepository {
+  Future<RulesetPackage?> getPackage({
+    required String rulesetId,
+    required String version,
+  });
+
+  Future<List<RulesetPackage>> getAvailablePackages();
+}
+
+abstract interface class CampaignRulesetRepository {
+  Future<CampaignRulesetState?> getForCampaign(String campaignId);
+
+  Future<void> save(CampaignRulesetState state);
+}
