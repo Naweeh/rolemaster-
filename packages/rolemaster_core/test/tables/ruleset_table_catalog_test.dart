@@ -58,7 +58,8 @@ void main() {
     expect(table.lookup(9), isNotNull);
   });
 
-  test('catalog parses tables from EffectiveRuleset and enforces module gate', () {
+  test('catalog parses tables from EffectiveRuleset and enforces module gate',
+      () {
     final ruleset = _ruleset(
       activeModules: <String>['core'],
       tables: const <Object?>[
@@ -89,7 +90,8 @@ void main() {
     );
     final catalog = RulesetTableCatalog(ruleset);
 
-    expect(catalog.lookup(tableId: 'core-table', value: 4)?.result['value'], 'core');
+    expect(catalog.lookup(tableId: 'core-table', value: 4)?.result['value'],
+        'core');
     expect(
       () => catalog.lookup(tableId: 'magic-table', value: 2),
       throwsA(isA<RulesetTableModuleInactiveException>()),
@@ -100,7 +102,8 @@ void main() {
     );
   });
 
-  test('overlay can replace table definitions without mutating base package', () {
+  test('overlay can replace table definitions without mutating base package',
+      () {
     const baseTables = <Object?>[
       <String, Object?>{
         'id': 'table-1',
@@ -149,7 +152,7 @@ void main() {
     );
     expect(
       ((((package.data['tables']! as List).first as Map)['entries'] as List)
-              .first as Map)['result']['value'],
+          .first as Map)['result']['value'],
       'base',
     );
   });
