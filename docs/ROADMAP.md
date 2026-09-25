@@ -95,9 +95,9 @@ Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las i
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
 - [x] Effects: modificadores automáticos con traza (CI `36148253242`)
 - [ ] Extensibilidad de reglas
-- [x] Migración atómica de referencias de habilidades y definiciones de objetos, con mapeos explícitos y rollback verificado en SQLite.
-- [ ] Migrar referencias de estadísticas y condiciones entre versiones.
-- [x] Fundamento de migración atómica del binding (CI `36150283531`); 4.5C sigue activa hasta cerrar todos los tipos de referencia.
+- [x] Migración atómica de IDs de habilidades y definiciones de objetos con mapeos explícitos; pruebas SQLite cubren migración y rollback.
+- [x] Preservar estadísticas, condiciones y acciones de combates cerrados como historial ligado a su versión exacta del Ruleset; no se reescriben al migrar la campaña.
+- [x] Migración atómica del binding y auditoría de referencias persistidas (CI `36150283531`).
 
 ## Fase 4 — Interfaz multiplataforma
 
