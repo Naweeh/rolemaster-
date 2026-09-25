@@ -74,16 +74,18 @@ void main() {
 
     final encounters = SqliteEncounterRepository.open(path);
     final stored = (await encounters.getById('enc-1'))!;
-    await encounters.save(stored.removeParticipant(
-      entityType: 'npc',
-      entityId: 'guide-1',
-      at: DateTime.utc(2026, 9, 25, 12),
-    ));
+    await encounters.save(
+      stored.removeParticipant(
+        entityType: 'npc',
+        entityId: 'guide-1',
+        at: DateTime.utc(2026, 9, 25, 12),
+      ),
+    );
     await expectLater(combat.save(_state().advanceTurn()), throwsStateError);
     await encounters.save(
-      (await encounters.getById('enc-1'))!.close(
-        at: DateTime.utc(2026, 9, 25, 13),
-      ),
+      (await encounters.getById(
+        'enc-1',
+      ))!.close(at: DateTime.utc(2026, 9, 25, 13)),
     );
     await expectLater(combat.save(_state().advanceTurn()), throwsStateError);
     expect((await combat.getByEncounterId('enc-1'))!.revision, 0);
@@ -115,25 +117,29 @@ void main() {
 
 Future<void> _seedEncounter(String path) async {
   final campaigns = SqliteCampaignRepository.open(path);
-  await campaigns.save(Campaign(
-    id: 'campaign-1',
-    name: 'Campaign',
-    createdAt: DateTime.utc(2026, 9, 25, 10),
-  ));
+  await campaigns.save(
+    Campaign(
+      id: 'campaign-1',
+      name: 'Campaign',
+      createdAt: DateTime.utc(2026, 9, 25, 10),
+    ),
+  );
   campaigns.close();
   final encounters = SqliteEncounterRepository.open(path);
-  await encounters.save(Encounter(
-    id: 'enc-1',
-    campaignId: 'campaign-1',
-    name: 'Road fight',
-    status: EncounterStatus.active,
-    participants: <EncounterParticipant>[
-      EncounterParticipant(entityType: 'character', entityId: 'hero-1'),
-      EncounterParticipant(entityType: 'npc', entityId: 'guide-1'),
-    ],
-    createdAt: DateTime.utc(2026, 9, 25, 10),
-    startedAt: DateTime.utc(2026, 9, 25, 11),
-  ));
+  await encounters.save(
+    Encounter(
+      id: 'enc-1',
+      campaignId: 'campaign-1',
+      name: 'Road fight',
+      status: EncounterStatus.active,
+      participants: <EncounterParticipant>[
+        EncounterParticipant(entityType: 'character', entityId: 'hero-1'),
+        EncounterParticipant(entityType: 'npc', entityId: 'guide-1'),
+      ],
+      createdAt: DateTime.utc(2026, 9, 25, 10),
+      startedAt: DateTime.utc(2026, 9, 25, 11),
+    ),
+  );
   encounters.close();
 }
 
