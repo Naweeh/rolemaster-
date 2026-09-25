@@ -270,6 +270,7 @@ final class SqliteCampaignRulesetRepository
   Future<void> migrate({
     required CampaignRulesetState expected,
     required CampaignRulesetState next,
+    required RulesetContentMigration contentMigration,
   }) async {
     if (expected.binding.campaignId != next.binding.campaignId ||
         expected.binding.rulesetId != next.binding.rulesetId ||
@@ -292,6 +293,77 @@ final class SqliteCampaignRulesetRepository
       if (target.isEmpty) {
         throw StateError('Target ruleset package is not published.');
       }
+      final skillRows = _database.select(
+        '''SELECT cs.rowid, cs.character_id, cs.skill_id
+           FROM character_skills cs
+           JOIN characters c ON c.id = cs.character_id
+           WHERE c.campaign_id = ?
+           ORDER BY cs.character_id, cs.skill_id''',
+        <Object?>[expected.binding.campaignId],
+      );
+      final skillMoves = <int, String>{};
+      final finalSkillKeys = <String>{};
+      final existingSkillIds = <String>{};
+      for (final row in skillRows) {
+        final rowId = row['rowid'] as int;
+        final characterId = row['character_id'] as String;
+        final sourceId = row['skill_id'] as String;
+        existingSkillIds.add(sourceId);
+        final targetId = contentMigration.skillId(sourceId);
+        if (!contentMigration.availableTargetSkillIds.contains(targetId)) {
+          throw StateError(
+            'Campaign skill $sourceId has no active target definition.',
+          );
+        }
+        if (!finalSkillKeys.add('$characterId::$targetId')) {
+          throw StateError(
+            'Skill migration creates a duplicate for character $characterId.',
+          );
+        }
+        skillMoves[rowId] = targetId;
+      }
+
+      final itemRows = _database.select(
+        '''SELECT id, definition_id FROM item_instances
+           WHERE campaign_id = ? AND definition_id IS NOT NULL''',
+        <Object?>[expected.binding.campaignId],
+      );
+      final itemMoves = <String, String>{};
+      for (final row in itemRows) {
+        final instanceId = row['id'] as String;
+        final sourceId = row['definition_id'] as String;
+        final targetId = contentMigration.itemDefinitionId(sourceId);
+        if (!contentMigration.availableTargetItemIds.contains(targetId)) {
+          throw StateError(
+            'Campaign item $sourceId has no active target definition.',
+          );
+        }
+        itemMoves[instanceId] = targetId;
+      }
+
+      var temporaryPrefix = '__rolemaster_migrating__';
+      while (existingSkillIds.any((id) => id.startsWith(temporaryPrefix))) {
+        temporaryPrefix = '_$temporaryPrefix';
+      }
+      for (final rowId in skillMoves.keys) {
+        _database.execute(
+          'UPDATE character_skills SET skill_id = ? WHERE rowid = ?',
+          <Object?>['$temporaryPrefix$rowId', rowId],
+        );
+      }
+      for (final entry in skillMoves.entries) {
+        _database.execute(
+          'UPDATE character_skills SET skill_id = ? WHERE rowid = ?',
+          <Object?>[entry.value, entry.key],
+        );
+      }
+      for (final entry in itemMoves.entries) {
+        _database.execute(
+          'UPDATE item_instances SET definition_id = ? WHERE id = ?',
+          <Object?>[entry.value, entry.key],
+        );
+      }
+
       final changed = _database.select(
         '''UPDATE campaign_rulesets
            SET ruleset_version = ?, active_module_ids_json = ?,
