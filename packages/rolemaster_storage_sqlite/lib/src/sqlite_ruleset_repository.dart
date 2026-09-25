@@ -266,6 +266,61 @@ final class SqliteCampaignRulesetRepository
     );
   }
 
+  @override
+  Future<void> migrate({
+    required CampaignRulesetBinding expected,
+    required CampaignRulesetState next,
+  }) async {
+    if (expected.campaignId != next.binding.campaignId ||
+        expected.rulesetId != next.binding.rulesetId ||
+        expected.rulesetVersion == next.binding.rulesetVersion) {
+      throw StateError('Invalid campaign ruleset migration.');
+    }
+    _database.execute('BEGIN IMMEDIATE');
+    try {
+      final active = _database.select(
+        "SELECT 1 FROM encounters WHERE campaign_id = ? AND status = 'active' LIMIT 1",
+        <Object?>[expected.campaignId],
+      );
+      if (active.isNotEmpty) {
+        throw StateError('Close active encounters before migrating rulesets.');
+      }
+      final target = _database.select(
+        'SELECT 1 FROM ruleset_packages WHERE ruleset_id = ? AND version = ?',
+        <Object?>[next.binding.rulesetId, next.binding.rulesetVersion],
+      );
+      if (target.isEmpty) {
+        throw StateError('Target ruleset package is not published.');
+      }
+      final changed = _database.select(
+        '''UPDATE campaign_rulesets
+           SET ruleset_version = ?, active_module_ids_json = ?,
+               bound_at = ?, overlay_json = ?, overlay_updated_at = ?
+           WHERE campaign_id = ? AND ruleset_id = ?
+             AND ruleset_version = ? AND bound_at = ?
+           RETURNING campaign_id''',
+        <Object?>[
+          next.binding.rulesetVersion,
+          jsonEncode(next.binding.activeModuleIds),
+          next.binding.boundAt.millisecondsSinceEpoch,
+          jsonEncode(next.overlay.overrides),
+          next.overlay.updatedAt.millisecondsSinceEpoch,
+          expected.campaignId,
+          expected.rulesetId,
+          expected.rulesetVersion,
+          expected.boundAt.millisecondsSinceEpoch,
+        ],
+      );
+      if (changed.length != 1) {
+        throw StateError('Campaign ruleset changed during migration.');
+      }
+      _database.execute('COMMIT');
+    } catch (_) {
+      _database.execute('ROLLBACK');
+      rethrow;
+    }
+  }
+
   void close() {
     _database.close();
   }
