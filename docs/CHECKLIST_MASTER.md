@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.5C — migración controlada de Ruleset.
-- **Activo:** Fase 5 — contratos y servicios opcionales.
-- **Siguiente:** Fase 6 — Hardening y Backend/Core Freeze.
+- **Último completado:** Fase 5 — contratos de servicios opcionales y modo desactivado.
+- **Activo:** Fase 6 — Hardening y Backend/Core Freeze.
+- **Siguiente:** Fase 7 — fase gráfica, tras completar la puerta de freeze.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -258,12 +258,15 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 
 ---
 
-# Fase 5 — Servicios opcionales
+# Fase 5 — Servicios opcionales: contratos completados
 
-- [ ] AI Service.
-- [ ] NPC Intelligence.
-- [ ] STT/TTS.
-- [ ] Audio Director.
+- [x] Contrato de AI Service y proveedor desactivado.
+- [x] Contrato de NPC Intelligence y proveedor desactivado.
+- [x] Contratos STT/TTS y proveedor desactivado.
+- [x] Contrato de Audio Director y proveedor desactivado.
+- [x] Core permanece utilizable sin red, credenciales ni audio.
+- [x] CI Core + SQLite + Flutter verde (run `36150856950`).
+- [ ] Proveedores funcionales de IA, voz y audio; integración optativa posterior a Backend/Core Freeze.
 
 ---
 
