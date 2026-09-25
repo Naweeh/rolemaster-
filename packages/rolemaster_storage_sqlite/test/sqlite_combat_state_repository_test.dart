@@ -27,12 +27,24 @@ void main() {
       value: 3,
     );
     await repository.save(updated);
+    updated = updated.applyCondition(
+      CombatCondition(
+        participantKey: 'npc:guide-1',
+        conditionId: 'fatigue',
+        remainingRounds: 2,
+        sourceKey: 'character:hero-1',
+      ),
+    );
+    await repository.save(updated);
     repository.close();
 
     repository = SqliteCombatStateRepository.open(path);
     final loaded = await repository.getByEncounterId('enc-1');
     expect(loaded, isNotNull);
-    expect(loaded!.revision, 3);
+    expect(loaded!.revision, 4);
+    expect(loaded.conditions.single.conditionId, 'fatigue');
+    expect(loaded.conditions.single.remainingRounds, 2);
+    expect(loaded.conditions.single.sourceKey, 'character:hero-1');
     expect(loaded.stats['npc:guide-1']!['stamina'], 3);
     expect(loaded.stats['character:hero-1']!['stamina'], 10);
     expect(loaded.round, 1);
@@ -112,7 +124,7 @@ void main() {
     database.close();
 
     final combat = SqliteCombatStateRepository.open(path);
-    expect(SqliteCombatStateRepository.schemaVersion, 16);
+    expect(SqliteCombatStateRepository.schemaVersion, 17);
     expect(await combat.getByEncounterId('enc-1'), isNull);
     await combat.save(_state());
     combat.close();
@@ -120,6 +132,35 @@ void main() {
     final encounters = SqliteEncounterRepository.open(path);
     expect((await encounters.getById('enc-1'))!.participants, hasLength(2));
     encounters.close();
+  });
+  test('migration v16 to v17 preserves prior combat snapshots', () async {
+    final temp = await Directory.systemTemp.createTemp('rolemaster-combat-');
+    final path = '${temp.path}/combat.sqlite';
+    addTearDown(() async => temp.delete(recursive: true));
+    await _seedEncounter(path);
+    final combat = SqliteCombatStateRepository.open(path);
+    await combat.save(_state());
+    combat.close();
+
+    final database = sqlite3.open(path);
+    database.execute('ALTER TABLE combat_states DROP COLUMN conditions_json');
+    database.execute('PRAGMA user_version = 16');
+    database.close();
+
+    final reopened = SqliteCombatStateRepository.open(path);
+    final state = await reopened.getByEncounterId('enc-1');
+    expect(state!.conditions, isEmpty);
+    expect(state.stats['npc:guide-1']!['stamina'], 10);
+    await reopened.save(
+      state.applyCondition(
+        CombatCondition(participantKey: 'npc:guide-1', conditionId: 'marked'),
+      ),
+    );
+    expect(
+      (await reopened.getByEncounterId('enc-1'))!.conditions,
+      hasLength(1),
+    );
+    reopened.close();
   });
 }
 

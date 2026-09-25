@@ -6,6 +6,7 @@ import '../ruleset/effective_ruleset.dart';
 import 'combat_participant.dart';
 import 'combat_state.dart';
 import 'ruleset_combat_stat_catalog.dart';
+import 'ruleset_condition_catalog.dart';
 
 final class CombatEngine {
   CombatEngine({
@@ -108,6 +109,40 @@ final class CombatEngine {
       participantKey: participantKey,
       statId: definition.id,
       value: value,
+    );
+  }
+
+  CombatState applyCondition({
+    required Encounter encounter,
+    required EffectiveRuleset ruleset,
+    required CombatState state,
+    required String participantKey,
+    required String conditionId,
+    int? durationRounds,
+    String? sourceKey,
+  }) {
+    _validateState(encounter, ruleset, state);
+    final definition =
+        RulesetConditionCatalog(ruleset).requireActive(conditionId);
+    return state.applyCondition(CombatCondition(
+      participantKey: participantKey,
+      conditionId: definition.id,
+      remainingRounds: durationRounds ?? definition.durationRounds,
+      sourceKey: sourceKey,
+    ));
+  }
+
+  CombatState removeCondition({
+    required Encounter encounter,
+    required EffectiveRuleset ruleset,
+    required CombatState state,
+    required String participantKey,
+    required String conditionId,
+  }) {
+    _validateState(encounter, ruleset, state);
+    return state.removeCondition(
+      participantKey: participantKey,
+      conditionId: conditionId,
     );
   }
 

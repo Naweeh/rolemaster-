@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 16;
+const int rolemasterSqliteSchemaVersion = 17;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -185,6 +185,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 16;
+  }
+
+  if (version == 16) {
+    _runMigration(
+      database,
+      targetVersion: 17,
+      migrate: () {
+        _addCombatConditionsSchemaV17(database);
+      },
+    );
+    version = 17;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -743,5 +754,15 @@ void _addCombatStatsSchemaV16(Database database) {
   }
   database.execute(
     "ALTER TABLE combat_states ADD COLUMN stats_json TEXT NOT NULL DEFAULT '{}'",
+  );
+}
+
+void _addCombatConditionsSchemaV17(Database database) {
+  final columns = database.select('PRAGMA table_info(combat_states)');
+  if (columns.any((column) => column['name'] == 'conditions_json')) {
+    return;
+  }
+  database.execute(
+    "ALTER TABLE combat_states ADD COLUMN conditions_json TEXT NOT NULL DEFAULT '[]'",
   );
 }
