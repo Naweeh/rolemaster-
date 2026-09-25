@@ -57,7 +57,7 @@ final class InMemoryCampaignRulesetRepository
 
   @override
   Future<void> migrate({
-    required CampaignRulesetBinding expected,
+    required CampaignRulesetState expected,
     required CampaignRulesetState next,
   }) async {
     final current = _states[expected.campaignId];
