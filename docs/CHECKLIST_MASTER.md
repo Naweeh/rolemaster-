@@ -276,8 +276,8 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
 - [ ] Logging estructurado de aplicación; el diagnóstico SQLite cubre estado de la base, no logging general.
-- [ ] Benchmarks.
-- [ ] Auditoría de contratos.
+- [x] Benchmark reproducible de lectura/escritura del repositorio SQLite, ejecutado en CI con salida JSON informativa y sin umbral arbitrario.
+- [ ] Auditoría final de contratos (incluye revisión de límites/concurrencia y deuda nativa).
 - [ ] Tag Backend/Core Freeze.
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
