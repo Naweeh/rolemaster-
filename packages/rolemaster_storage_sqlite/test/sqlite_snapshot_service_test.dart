@@ -160,7 +160,10 @@ void main() {
         <String>['snapshot.create.started', 'snapshot.create.completed'],
       );
       final completion = logger.events.last.$2;
-      expect(completion['schemaVersion'], SqliteCampaignRepository.schemaVersion);
+      expect(
+        completion['schemaVersion'],
+        SqliteCampaignRepository.schemaVersion,
+      );
       expect(completion.containsKey('campaignId'), isFalse);
       expect(completion.containsKey('campaignName'), isFalse);
     });
