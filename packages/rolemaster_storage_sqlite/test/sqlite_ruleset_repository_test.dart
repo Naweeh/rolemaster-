@@ -267,9 +267,7 @@ void main() {
         expectedSourceVersion: '1.0.0',
         preserveOverlay: false,
         skillIdMappings: const <String, String>{'climb-old': 'climb'},
-        itemDefinitionIdMappings: const <String, String>{
-          'sword-old': 'sword',
-        },
+        itemDefinitionIdMappings: const <String, String>{'sword-old': 'sword'},
       );
 
       final database = sqlite3.open(fixture.path);
@@ -289,9 +287,7 @@ void main() {
         'sword',
       );
       expect(
-        (await bindings.getForCampaign('campaign-1'))!
-            .binding
-            .rulesetVersion,
+        (await bindings.getForCampaign('campaign-1'))!.binding.rulesetVersion,
         '2.0.0',
       );
 
@@ -320,9 +316,9 @@ void main() {
         'sword-old',
       );
       expect(
-        (await bindings.getForCampaign('campaign-rollback'))!
-            .binding
-            .rulesetVersion,
+        (await bindings.getForCampaign(
+          'campaign-rollback',
+        ))!.binding.rulesetVersion,
         '1.0.0',
       );
     });
