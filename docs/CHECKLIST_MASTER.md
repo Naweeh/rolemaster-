@@ -272,10 +272,10 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 
 # Fase 6 — Hardening y Backend/Core Freeze
 
-- [ ] Suite completa verde.
-- [ ] Migraciones verificadas.
-- [ ] Corrupción/recuperación.
-- [ ] Logging/diagnóstico.
+- [x] Suite completa verde: CI Core + SQLite + Flutter verde (validación de servicios opcionales y diagnóstico).
+- [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
+- [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
+- [ ] Logging estructurado de aplicación; el diagnóstico SQLite cubre estado de la base, no logging general.
 - [ ] Benchmarks.
 - [ ] Auditoría de contratos.
 - [ ] Tag Backend/Core Freeze.
