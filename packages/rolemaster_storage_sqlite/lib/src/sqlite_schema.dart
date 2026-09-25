@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 15;
+const int rolemasterSqliteSchemaVersion = 16;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -174,6 +174,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 15;
+  }
+
+  if (version == 15) {
+    _runMigration(
+      database,
+      targetVersion: 16,
+      migrate: () {
+        _addCombatStatsSchemaV16(database);
+      },
+    );
+    version = 16;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -722,5 +733,15 @@ void _createCombatSchemaV15(Database database) {
   database.execute(
     'CREATE INDEX IF NOT EXISTS idx_combat_states_campaign '
     'ON combat_states(campaign_id)',
+  );
+}
+
+void _addCombatStatsSchemaV16(Database database) {
+  final columns = database.select('PRAGMA table_info(combat_states)');
+  if (columns.any((column) => column['name'] == 'stats_json')) {
+    return;
+  }
+  database.execute(
+    "ALTER TABLE combat_states ADD COLUMN stats_json TEXT NOT NULL DEFAULT '{}'",
   );
 }
