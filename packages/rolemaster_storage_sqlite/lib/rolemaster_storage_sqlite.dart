@@ -6,6 +6,7 @@ export 'src/sqlite_character_repository.dart';
 export 'src/sqlite_character_skill_repository.dart';
 export 'src/sqlite_combat_state_repository.dart';
 export 'src/sqlite_creature_repository.dart';
+export 'src/sqlite_database_diagnostics.dart';
 export 'src/sqlite_encounter_repository.dart';
 export 'src/sqlite_event_history_repository.dart';
 export 'src/sqlite_item_instance_repository.dart';
