@@ -17,4 +17,9 @@ abstract interface class CampaignRulesetRepository {
   Future<CampaignRulesetState?> getForCampaign(String campaignId);
 
   Future<void> save(CampaignRulesetState state);
+
+  Future<void> migrate({
+    required CampaignRulesetState expected,
+    required CampaignRulesetState next,
+  });
 }

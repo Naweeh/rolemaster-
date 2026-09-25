@@ -90,6 +90,60 @@ void main() {
       );
     });
 
+    test(
+      'controlled migration is atomic and requires closed encounters',
+      () async {
+        final fixture = await _createFixture('ruleset-controlled-migration');
+        addTearDown(fixture.dispose);
+        final packages = SqliteRulesetRepository.open(fixture.path);
+        await packages.publish(_package());
+        await packages.publish(_package(version: '2.0.0'));
+        addTearDown(packages.close);
+        final bindings = SqliteCampaignRulesetRepository.open(fixture.path);
+        addTearDown(bindings.close);
+        await bindings.save(_cleanState(version: '1.0.0'));
+        final campaigns = SqliteCampaignRepository.open(fixture.path);
+        addTearDown(campaigns.close);
+        final migrate = MigrateCampaignRuleset(
+          campaignRepository: campaigns,
+          rulesetRepository: packages,
+          campaignRulesetRepository: bindings,
+          clock: () => DateTime.utc(2026, 8, 11),
+        );
+        final database = sqlite3.open(fixture.path);
+        addTearDown(database.close);
+        database.execute('''INSERT INTO encounters
+           (id, campaign_id, name, status, created_at, updated_at, started_at)
+           VALUES ('enc-1', 'campaign-1', 'Fight', 'active', 1, 1, 1)''');
+        Future<CampaignRulesetState> execute() => migrate(
+          campaignId: 'campaign-1',
+          targetRulesetId: 'rolemaster-rm2',
+          targetVersion: '2.0.0',
+          expectedSourceVersion: '1.0.0',
+          preserveOverlay: false,
+        );
+        await expectLater(execute(), throwsStateError);
+        expect(
+          (await bindings.getForCampaign('campaign-1'))!.binding.rulesetVersion,
+          '1.0.0',
+        );
+        database.execute(
+          "UPDATE encounters SET status = 'closed', closed_at = 2 WHERE id = 'enc-1'",
+        );
+        final result = await execute();
+        expect(result.binding.rulesetVersion, '2.0.0');
+        expect(
+          (await bindings.getForCampaign('campaign-1'))!.binding.rulesetVersion,
+          '2.0.0',
+        );
+        await expectLater(execute(), throwsStateError);
+        await expectLater(
+          bindings.save(_cleanState(version: '1.0.0')),
+          throwsStateError,
+        );
+      },
+    );
+
     test('migrates v9 to v10 without losing creature data', () async {
       final fixture = await _createFixture('ruleset-migration');
       addTearDown(fixture.dispose);

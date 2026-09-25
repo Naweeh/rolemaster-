@@ -264,6 +264,20 @@ final class _CampaignRulesetRepo implements CampaignRulesetRepository {
   }
 
   @override
+  Future<void> migrate({
+    required CampaignRulesetState expected,
+    required CampaignRulesetState next,
+  }) async {
+    final current = _states[expected.binding.campaignId];
+    if (current == null ||
+        current.binding.rulesetVersion != expected.binding.rulesetVersion ||
+        current.overlay.updatedAt != expected.overlay.updatedAt) {
+      throw StateError('Campaign ruleset changed during migration.');
+    }
+    _states[expected.binding.campaignId] = next;
+  }
+
+  @override
   Future<void> save(CampaignRulesetState state) async {
     _states[state.binding.campaignId] = state;
   }

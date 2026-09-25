@@ -56,6 +56,22 @@ final class InMemoryCampaignRulesetRepository
   }
 
   @override
+  Future<void> migrate({
+    required CampaignRulesetState expected,
+    required CampaignRulesetState next,
+  }) async {
+    final current = _states[expected.binding.campaignId];
+    if (current == null ||
+        current.binding.rulesetId != expected.binding.rulesetId ||
+        current.binding.rulesetVersion != expected.binding.rulesetVersion ||
+        current.binding.boundAt != expected.binding.boundAt ||
+        current.overlay.updatedAt != expected.overlay.updatedAt) {
+      throw StateError('Campaign ruleset changed during migration.');
+    }
+    _states[expected.binding.campaignId] = next;
+  }
+
+  @override
   Future<void> save(CampaignRulesetState state) async {
     final current = _states[state.binding.campaignId];
     if (current != null &&
