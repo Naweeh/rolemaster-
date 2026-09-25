@@ -105,7 +105,7 @@ final class MigrateCampaignRuleset {
       ),
     );
     await campaignRulesetRepository.migrate(
-      expected: current.binding,
+      expected: current,
       next: next,
     );
     return next;
