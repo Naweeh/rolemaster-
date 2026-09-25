@@ -24,12 +24,17 @@ final class CombatState {
     this.round = 1,
     this.turnIndex = 0,
     Iterable<CombatAction> actions = const <CombatAction>[],
+    Map<String, Map<String, int>> stats = const <String, Map<String, int>>{},
   })  : encounterId = encounterId.trim(),
         campaignId = campaignId.trim(),
         rulesetId = rulesetId.trim(),
         rulesetVersion = rulesetVersion.trim(),
         turnOrder = List<CombatParticipant>.unmodifiable(turnOrder),
-        actions = List<CombatAction>.unmodifiable(actions) {
+        actions = List<CombatAction>.unmodifiable(actions),
+        stats = Map<String, Map<String, int>>.unmodifiable(
+          stats.map((key, value) =>
+              MapEntry(key, Map<String, int>.unmodifiable(value))),
+        ) {
     if (this.encounterId.isEmpty ||
         this.campaignId.isEmpty ||
         this.rulesetId.isEmpty ||
@@ -47,6 +52,11 @@ final class CombatState {
         this.turnOrder.length) {
       throw ArgumentError(
           'Combat turn order must contain unique participants.');
+    }
+    for (final key in this.stats.keys) {
+      if (!this.turnOrder.any((item) => item.key == key)) {
+        throw ArgumentError('Combat stats belong to an unknown participant.');
+      }
     }
     for (final action in this.actions) {
       if (!this.turnOrder.any((item) => item.key == action.actorKey) ||
@@ -67,6 +77,7 @@ final class CombatState {
   final int round;
   final int turnIndex;
   final List<CombatAction> actions;
+  final Map<String, Map<String, int>> stats;
 
   CombatParticipant get currentParticipant => turnOrder[turnIndex];
 
@@ -82,6 +93,7 @@ final class CombatState {
       round: next == turnOrder.length ? round + 1 : round,
       turnIndex: next % turnOrder.length,
       actions: actions,
+      stats: stats,
     );
   }
 
@@ -99,6 +111,34 @@ final class CombatState {
       round: round,
       turnIndex: turnIndex,
       actions: <CombatAction>[...actions, action],
+      stats: stats,
     );
   }
+  CombatState setStat({
+    required String participantKey,
+    required String statId,
+    required int value,
+  }) {
+    final key = participantKey.trim().toLowerCase();
+    if (!turnOrder.any((item) => item.key == key)) {
+      throw StateError('Combat participant not found: $key.');
+    }
+    final updated = <String, Map<String, int>>{
+      for (final entry in stats.entries) entry.key: Map<String, int>.of(entry.value),
+    };
+    updated.putIfAbsent(key, () => <String, int>{})[statId] = value;
+    return CombatState(
+      encounterId: encounterId,
+      campaignId: campaignId,
+      rulesetId: rulesetId,
+      rulesetVersion: rulesetVersion,
+      revision: revision + 1,
+      turnOrder: turnOrder,
+      round: round,
+      turnIndex: turnIndex,
+      actions: actions,
+      stats: updated,
+    );
+  }
+
 }
