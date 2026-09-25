@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.4B — estado de combate persistido en SQLite v15 con revisión optimista.
-- **Activo:** Fase 4.4C — integrar estadísticas de combate exclusivamente desde el Ruleset.
-- **Siguiente:** Fase 4.5+ — efectos/condiciones y reglas avanzadas, tras cerrar Combat Foundation.
+- **Último completado:** Fase 4.4 — Combat Foundation con estadísticas por Ruleset y SQLite v16.
+- **Activo:** Fase 4.5 — efectos/condiciones y reglas avanzadas.
+- **Siguiente:** migración controlada de Ruleset y extensibilidad de reglas.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -37,7 +37,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-- [x] Esquema SQLite central versionado hasta v15.
+- [x] Esquema SQLite central versionado hasta v16.
 - [x] Migraciones secuenciales e históricas.
 - [x] Snapshots, integridad, restore y rollback pre-restore.
 
@@ -213,7 +213,7 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Tests de tabla inexistente, módulo inactivo y lookup sparse sin coincidencia.
 - [x] CI Core + SQLite + Flutter verde (run `36141619401`).
 
-## 4.4 Combat Foundation — EN CURSO
+## 4.4 Combat Foundation — COMPLETADO
 
 ### 4.4A Core — COMPLETADO
 - [x] Combat state asociado a Encounter activo.
@@ -229,9 +229,11 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Tests de reapertura, migración v14→v15, traza completa y conflictos.
 - [x] CI Core + SQLite + Flutter verde (run `36144495982`).
 
-### 4.4C Estadísticas por Ruleset — ACTIVO
-- [ ] HP/defensas/ataques sólo mediante definiciones del Ruleset; sin valores hardcodeados en Core.
-- [ ] Tests con Rulesets distintos y sin estadísticas opcionales.
+### 4.4C Estadísticas por Ruleset — COMPLETADO
+- [x] Estadísticas numéricas de combate configuradas por ID desde el Ruleset, con módulo, límites y valor inicial opcionales; sin HP/defensa/ataque hardcodeados.
+- [x] Estado inmutable por participante, cambios validados por Ruleset y persistencia SQLite v16.
+- [x] Tests con Rulesets distintos, sin estadísticas y con límites de valor.
+- [x] CI Core + SQLite + Flutter verde (run `36145754744`).
 
 ## 4.5+ Reglas avanzadas
 - [ ] Efectos/condiciones.
