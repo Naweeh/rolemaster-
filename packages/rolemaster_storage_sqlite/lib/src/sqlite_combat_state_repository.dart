@@ -54,8 +54,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       turnIndex: row['turn_index'] as int,
       turnOrder: order,
       actions: actions,
-      conditions: (jsonDecode(row['conditions_json'] as String) as List)
-          .map((item) {
+      conditions: (jsonDecode(row['conditions_json'] as String) as List).map((
+        item,
+      ) {
         final data = Map<String, Object?>.from(item as Map);
         return CombatCondition(
           participantKey: data['participantKey'] as String,
