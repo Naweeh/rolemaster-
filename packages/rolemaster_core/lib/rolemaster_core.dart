@@ -33,6 +33,7 @@ export 'src/character/get_character.dart';
 export 'src/character/list_characters.dart';
 export 'src/character/update_character.dart';
 export 'src/combat/combat_engine.dart';
+export 'src/combat/combat_modifier_trace.dart';
 export 'src/combat/combat_participant.dart';
 export 'src/combat/combat_state.dart';
 export 'src/combat/combat_state_repository.dart';
