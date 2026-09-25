@@ -283,7 +283,9 @@ void main() {
         expectedSourceVersion: '1.0.0',
         preserveOverlay: false,
         skillIdMappings: const <String, String>{'climb-old': 'climb'},
-        itemDefinitionIdMappings: const <String, String>{'sword-old': 'sword'},
+        itemDefinitionIdMappings: const <String, String>{
+            'sword-old': 'sword',
+          },
       );
 
       final database = sqlite3.open(fixture.path);
