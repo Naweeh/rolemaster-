@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Combat Foundation**.
+Sprint activo: **Combat Foundation 4.4B — persistencia de estado y acciones**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -85,7 +85,9 @@ Sprint activo: **Combat Foundation**.
 - [x] Resolution Engine data-driven por `ruleId` + intérpretes por `kind`
 - [x] primer intérprete genérico `dice-threshold` configurado desde Ruleset
 - [x] Tablas versionadas: catálogo inmutable y lookup integrado con Resolution Engine
-- [ ] Combat state
+- [x] Combat Core: Encounter activo, participantes verificados, turnos/rondas y acciones por Resolution Engine
+- [ ] Persistencia SQLite y recuperación de combate
+- [ ] HP/defensas/ataques definidos sólo por Ruleset
 - [ ] Effects / conditions
 - [ ] Extensibilidad de reglas
 - [ ] Migración controlada entre ediciones/versiones
