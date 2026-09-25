@@ -1,3 +1,4 @@
+import 'ruleset_content_migration.dart';
 import 'ruleset_models.dart';
 
 abstract interface class RulesetRepository {
@@ -21,5 +22,6 @@ abstract interface class CampaignRulesetRepository {
   Future<void> migrate({
     required CampaignRulesetState expected,
     required CampaignRulesetState next,
+    required RulesetContentMigration contentMigration,
   });
 }
