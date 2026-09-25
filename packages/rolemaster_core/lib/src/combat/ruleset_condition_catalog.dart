@@ -44,18 +44,26 @@ final class ConditionDefinition {
     required String id,
     String? moduleId,
     this.durationRounds,
+    Map<String, int> statModifiers = const <String, int>{},
+    Map<String, int> resolutionModifiers = const <String, int>{},
   })  : id = id.trim(),
-        moduleId = moduleId?.trim() {
+        moduleId = moduleId?.trim(),
+        statModifiers = Map<String, int>.unmodifiable(statModifiers),
+        resolutionModifiers = Map<String, int>.unmodifiable(resolutionModifiers) {
     if (this.id.isEmpty ||
         this.moduleId != null && this.moduleId!.isEmpty ||
-        durationRounds != null && durationRounds! < 1) {
-      throw ArgumentError('Invalid condition ID, module or duration.');
+        durationRounds != null && durationRounds! < 1 ||
+        this.statModifiers.keys.any((key) => key.trim().isEmpty) ||
+        this.resolutionModifiers.keys.any((key) => key.trim().isEmpty)) {
+      throw ArgumentError('Invalid condition ID, module, duration or modifier.');
     }
   }
 
   final String id;
   final String? moduleId;
   final int? durationRounds;
+  final Map<String, int> statModifiers;
+  final Map<String, int> resolutionModifiers;
 }
 
 final class RulesetConditionCatalog {
@@ -92,6 +100,9 @@ final class RulesetConditionCatalog {
         id: id,
         moduleId: moduleId as String?,
         durationRounds: duration as int?,
+        statModifiers: _modifiers(data['statModifiers'], 'statModifiers'),
+        resolutionModifiers:
+            _modifiers(data['resolutionModifiers'], 'resolutionModifiers'),
       );
       if (!seen.add(definition.id)) {
         throw StateError('Duplicate condition ID: ${definition.id}.');
@@ -113,4 +124,16 @@ final class RulesetConditionCatalog {
     }
     throw StateError('Condition not found: $id.');
   }
+}
+
+Map<String, int> _modifiers(Object? value, String field) {
+  if (value == null) {
+    return const <String, int>{};
+  }
+  if (value is! Map ||
+      value.keys.any((key) => key is! String) ||
+      value.values.any((item) => item is! int)) {
+    throw StateError('Condition $field must contain integer values.');
+  }
+  return Map<String, int>.from(value);
 }
