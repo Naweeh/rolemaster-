@@ -54,6 +54,16 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       turnIndex: row['turn_index'] as int,
       turnOrder: order,
       actions: actions,
+      conditions: (jsonDecode(row['conditions_json'] as String) as List)
+          .map((item) {
+        final data = Map<String, Object?>.from(item as Map);
+        return CombatCondition(
+          participantKey: data['participantKey'] as String,
+          conditionId: data['conditionId'] as String,
+          remainingRounds: data['remainingRounds'] as int?,
+          sourceKey: data['sourceKey'] as String?,
+        );
+      }),
       stats: (jsonDecode(row['stats_json'] as String) as Map).map(
         (key, value) =>
             MapEntry(key as String, Map<String, int>.from(value as Map)),
@@ -106,6 +116,15 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       ]);
 
       final statsJson = jsonEncode(state.stats);
+      final conditionsJson = jsonEncode(<Map<String, Object?>>[
+        for (final condition in state.conditions)
+          <String, Object?>{
+            'participantKey': condition.participantKey,
+            'conditionId': condition.conditionId,
+            'remainingRounds': condition.remainingRounds,
+            'sourceKey': condition.sourceKey,
+          },
+      ]);
 
       if (state.revision == 0) {
         final existing = _database.select(
@@ -119,8 +138,8 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
           '''INSERT INTO combat_states
              (encounter_id, campaign_id, ruleset_id, ruleset_version,
               revision, round_number, turn_index, turn_order_json, actions_json,
-              stats_json)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+              stats_json, conditions_json)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
           <Object?>[
             state.encounterId,
             state.campaignId,
@@ -132,13 +151,14 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
             orderJson,
             actionsJson,
             statsJson,
+            conditionsJson,
           ],
         );
       } else {
         _database.execute(
           '''UPDATE combat_states SET
                revision = ?, round_number = ?, turn_index = ?,
-               turn_order_json = ?, actions_json = ?, stats_json = ?
+               turn_order_json = ?, actions_json = ?, stats_json = ?, conditions_json = ?
              WHERE encounter_id = ? AND campaign_id = ?
                AND ruleset_id = ? AND ruleset_version = ? AND revision = ?''',
           <Object?>[
@@ -148,6 +168,7 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
             orderJson,
             actionsJson,
             statsJson,
+            conditionsJson,
             state.encounterId,
             state.campaignId,
             state.rulesetId,
