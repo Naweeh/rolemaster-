@@ -50,6 +50,35 @@ void main() {
     },
   );
 
+  test('reports foreign key violations', () async {
+    final directory = await Directory.systemTemp.createTemp(
+      'rolemaster_diagnostics_fk',
+    );
+    addTearDown(() => directory.delete(recursive: true));
+    final path = '${directory.path}/foreign-keys.sqlite';
+    final database = sqlite3.open(path);
+    database.execute('''
+      CREATE TABLE campaigns (
+        id TEXT PRIMARY KEY
+      ) STRICT
+    ''');
+    database.execute('''
+      CREATE TABLE child (
+        id TEXT PRIMARY KEY,
+        campaign_id TEXT REFERENCES campaigns(id)
+      ) STRICT
+    ''');
+    database.execute('PRAGMA foreign_keys = OFF');
+    database.execute("INSERT INTO child VALUES ('orphan', 'missing')");
+    database.userVersion = SqliteCampaignRepository.schemaVersion;
+    database.close();
+
+    final diagnostic = const SqliteDatabaseDiagnostics().inspect(path);
+    expect(diagnostic.roleMasterSchemaPresent, isTrue);
+    expect(diagnostic.foreignKeyFailures, hasLength(1));
+    expect(diagnostic.isHealthy, isFalse);
+  });
+
   test('surfaces damaged SQLite files as diagnostic errors', () async {
     final directory = await Directory.systemTemp.createTemp(
       'rolemaster_diagnostics_bad',
