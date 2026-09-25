@@ -8,8 +8,9 @@ void main() {
     expect(catalog.requireActive('marked').durationRounds, isNull);
     expect(() => catalog.requireActive('spellbound'), throwsStateError);
     expect(() => catalog.requireActive('missing'), throwsStateError);
-    expect(RulesetConditionCatalog(_ruleset(conditions: <Object?>[]))
-        .definitions, isEmpty);
+    expect(
+        RulesetConditionCatalog(_ruleset(conditions: <Object?>[])).definitions,
+        isEmpty);
   });
 
   test('round expiry, refresh and removal preserve prior state', () {
@@ -39,10 +40,12 @@ void main() {
       conditionId: 'slowed',
     );
     expect(removed.conditions, isEmpty);
-    expect(() => removed.removeCondition(
-      participantKey: 'character:hero',
-      conditionId: 'slowed',
-    ), throwsStateError);
+    expect(
+        () => removed.removeCondition(
+              participantKey: 'character:hero',
+              conditionId: 'slowed',
+            ),
+        throwsStateError);
   });
 
   test('persistent conditions survive rounds and invalid references fail', () {
@@ -94,19 +97,19 @@ void main() {
 }
 
 CombatState _state() => CombatState(
-  encounterId: 'enc-1',
-  campaignId: 'campaign-1',
-  rulesetId: 'ruleset-1',
-  rulesetVersion: '1',
-  turnOrder: <CombatParticipant>[
-    CombatParticipant(
-      entityType: 'character',
-      entityId: 'hero',
-      name: 'Hero',
-    ),
-    CombatParticipant(entityType: 'npc', entityId: 'guide', name: 'Guide'),
-  ],
-);
+      encounterId: 'enc-1',
+      campaignId: 'campaign-1',
+      rulesetId: 'ruleset-1',
+      rulesetVersion: '1',
+      turnOrder: <CombatParticipant>[
+        CombatParticipant(
+          entityType: 'character',
+          entityId: 'hero',
+          name: 'Hero',
+        ),
+        CombatParticipant(entityType: 'npc', entityId: 'guide', name: 'Guide'),
+      ],
+    );
 
 EffectiveRuleset _ruleset({List<Object?>? conditions}) {
   return EffectiveRuleset(
@@ -123,11 +126,12 @@ EffectiveRuleset _ruleset({List<Object?>? conditions}) {
         ],
       ),
       data: <String, Object?>{
-        'conditions': conditions ?? <Object?>[
-          <String, Object?>{'id': 'slowed', 'durationRounds': 2},
-          <String, Object?>{'id': 'marked'},
-          <String, Object?>{'id': 'spellbound', 'moduleId': 'magic'},
-        ],
+        'conditions': conditions ??
+            <Object?>[
+              <String, Object?>{'id': 'slowed', 'durationRounds': 2},
+              <String, Object?>{'id': 'marked'},
+              <String, Object?>{'id': 'spellbound', 'moduleId': 'magic'},
+            ],
       },
     ),
     activeModuleIds: const <String>[],
