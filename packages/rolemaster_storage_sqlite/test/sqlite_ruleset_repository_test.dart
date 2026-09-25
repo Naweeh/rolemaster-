@@ -308,11 +308,10 @@ void main() {
       );
       expect(
         database.select(
-          'SELECT ruleset_version, stats_json, conditions_json '
-          'FROM combat_states WHERE encounter_id = ?',
+          'SELECT ruleset_version FROM combat_states WHERE encounter_id = ?',
           <Object?>['enc-closed'],
-        ).single,
-        containsPair('ruleset_version', '1.0.0'),
+        ).single['ruleset_version'],
+        '1.0.0',
       );
       expect(
         database.select(
