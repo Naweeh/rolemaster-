@@ -4,8 +4,8 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.4 — Combat Foundation con estadísticas por Ruleset y SQLite v16.
-- **Activo:** Fase 4.5 — efectos/condiciones y reglas avanzadas.
+- **Último completado:** Fase 4.5A — condiciones por Ruleset con duración y SQLite v17.
+- **Activo:** Fase 4.5B — modificadores de efectos aplicados desde el Ruleset.
 - **Siguiente:** migración controlada de Ruleset y extensibilidad de reglas.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
@@ -37,7 +37,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-- [x] Esquema SQLite central versionado hasta v16.
+- [x] Esquema SQLite central versionado hasta v17.
 - [x] Migraciones secuenciales e históricas.
 - [x] Snapshots, integridad, restore y rollback pre-restore.
 
@@ -235,9 +235,22 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Tests con Rulesets distintos, sin estadísticas y con límites de valor.
 - [x] CI Core + SQLite + Flutter verde (run `36145754744`).
 
-## 4.5+ Reglas avanzadas
-- [ ] Efectos/condiciones.
-- [ ] Migración controlada de Ruleset.
+## 4.5+ Reglas avanzadas — EN CURSO
+
+### 4.5A Condiciones — COMPLETADO
+- [x] Definiciones de condiciones versionadas y controladas por módulos activos en el EffectiveRuleset.
+- [x] Aplicar, refrescar y retirar condiciones por participante sin duplicados.
+- [x] Duración opcional en rondas; expiración al cerrar cada ronda.
+- [x] Persistencia de condiciones en SQLite v17 y migración v16→v17.
+- [x] Tests de módulos, expiración, reapertura y migración.
+- [x] CI Core + SQLite + Flutter verde (run `36147176394`).
+
+### 4.5B Efectos de reglas — ACTIVO
+- [ ] Modificadores configurables de estadísticas y resolución desde definiciones del Ruleset.
+- [ ] Orden de aplicación y traza verificables, sin reglas de sistema hardcodeadas.
+
+### 4.5C Migración de Ruleset — SIGUIENTE
+- [ ] Migración controlada entre ediciones/versiones sin reemplazo silencioso.
 
 ---
 
