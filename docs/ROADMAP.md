@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **4.5C — migración controlada de Ruleset**.
+Sprint activo: **Fase 5 — servicios opcionales desacoplados**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -91,7 +91,7 @@ Sprint activo: **4.5C — migración controlada de Ruleset**.
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
 - [x] Effects: modificadores automáticos con traza (CI `36148253242`)
 - [ ] Extensibilidad de reglas
-- [ ] Migración controlada entre ediciones/versiones
+- [x] Migración controlada entre ediciones/versiones (CI `36150283531`)
 
 ## Fase 4 — Interfaz multiplataforma
 
