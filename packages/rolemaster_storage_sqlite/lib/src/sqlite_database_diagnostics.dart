@@ -48,7 +48,7 @@ final class SqliteDatabaseDiagnostics {
         "SELECT name FROM sqlite_master WHERE type = 'table'",
       );
       return SqliteDatabaseDiagnostic(
-        sqliteVersion: sqlite3.version,
+        sqliteVersion: sqlite3.version.toString(),
         schemaVersion: database.userVersion,
         integrityMessages: List<String>.unmodifiable(integrity),
         foreignKeyFailures: List<String>.unmodifiable(failures),
