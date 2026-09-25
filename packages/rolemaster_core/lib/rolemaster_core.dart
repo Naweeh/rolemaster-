@@ -118,6 +118,7 @@ export 'src/ruleset/resolve_effective_ruleset.dart';
 export 'src/ruleset/ruleset_exceptions.dart';
 export 'src/ruleset/ruleset_models.dart';
 export 'src/ruleset/ruleset_repository.dart';
+export 'src/services/optional_services.dart';
 export 'src/skill/character_skill_repository.dart';
 export 'src/skill/character_skill_state.dart';
 export 'src/skill/list_character_skills.dart';
