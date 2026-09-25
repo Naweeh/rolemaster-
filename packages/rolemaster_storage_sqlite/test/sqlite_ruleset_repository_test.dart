@@ -101,7 +101,18 @@ void main() {
         addTearDown(packages.close);
         final bindings = SqliteCampaignRulesetRepository.open(fixture.path);
         addTearDown(bindings.close);
-        await bindings.save(_cleanState(version: '1.0.0'));
+        final initial = _cleanState(version: '1.0.0');
+        await bindings.save(CampaignRulesetState(
+          binding: initial.binding,
+          overlay: initial.overlay.replaceOverrides(
+            const <String, Object?>{
+              'tables': <String, Object?>{
+                'critical-e': <String, Object?>{'max': 90},
+              },
+            },
+            at: DateTime.utc(2026, 8, 10, 13),
+          ),
+        ));
         final campaigns = SqliteCampaignRepository.open(fixture.path);
         addTearDown(campaigns.close);
         final migrate = MigrateCampaignRuleset(
@@ -115,12 +126,16 @@ void main() {
         database.execute('''INSERT INTO encounters
            (id, campaign_id, name, status, created_at, updated_at, started_at)
            VALUES ('enc-1', 'campaign-1', 'Fight', 'active', 1, 1, 1)''');
-        Future<CampaignRulesetState> execute() => migrate(
+        Future<CampaignRulesetState> execute({
+          bool preserveOverlay = false,
+          CampaignRulesOverlayTransformer? overlayTransformer,
+        }) => migrate(
           campaignId: 'campaign-1',
           targetRulesetId: 'rolemaster-rm2',
           targetVersion: '2.0.0',
           expectedSourceVersion: '1.0.0',
-          preserveOverlay: false,
+          preserveOverlay: preserveOverlay,
+          overlayTransformer: overlayTransformer,
         );
         await expectLater(execute(), throwsStateError);
         expect(
@@ -130,8 +145,29 @@ void main() {
         database.execute(
           "UPDATE encounters SET status = 'closed', closed_at = 2 WHERE id = 'enc-1'",
         );
-        final result = await execute();
+        await expectLater(
+          execute(preserveOverlay: true),
+          throwsStateError,
+        );
+        final result = await execute(
+          preserveOverlay: true,
+          overlayTransformer: ({
+            required sourcePackage,
+            required targetPackage,
+            required sourceOverrides,
+          }) => const <String, Object?>{
+            'tables': <String, Object?>{
+              'critical-e': <String, Object?>{'max': 95},
+            },
+          },
+        );
         expect(result.binding.rulesetVersion, '2.0.0');
+        final migratedTable = result.overlay.overrides['tables']!
+            as Map<String, Object?>;
+        expect(
+          (migratedTable['critical-e']! as Map<String, Object?>)['max'],
+          95,
+        );
         expect(
           (await bindings.getForCampaign('campaign-1'))!.binding.rulesetVersion,
           '2.0.0',
