@@ -108,7 +108,9 @@ final class CombatState {
       actions: actions,
       stats: stats,
       conditions: next == turnOrder.length
-          ? conditions.map((item) => item.afterRound()).whereType<CombatCondition>()
+          ? conditions
+              .map((item) => item.afterRound())
+              .whereType<CombatCondition>()
           : conditions,
     );
   }
@@ -160,6 +162,7 @@ final class CombatState {
       conditions: conditions,
     );
   }
+
   CombatState applyCondition(CombatCondition condition) {
     final updated = <CombatCondition>[
       for (final item in conditions)
@@ -194,5 +197,4 @@ final class CombatState {
         stats: stats,
         conditions: updated,
       );
-
 }
