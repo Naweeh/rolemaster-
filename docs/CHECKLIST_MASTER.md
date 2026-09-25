@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.3B — Resolution Engine integrado con lookup de tablas versionadas.
-- **Activo:** Fase 4.4 — Combat Foundation sobre Encounter + Resolution Engine.
-- **Siguiente:** Fase 4.5+ — efectos/condiciones y reglas avanzadas.
+- **Último completado:** Fase 4.4A — base de combate en Core (participantes, turnos y resolución).
+- **Activo:** Fase 4.4B — persistencia y recuperación del estado de combate.
+- **Siguiente:** Fase 4.5+ — efectos/condiciones y reglas avanzadas, tras cerrar Combat Foundation.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -213,12 +213,20 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Tests de tabla inexistente, módulo inactivo y lookup sparse sin coincidencia.
 - [x] CI Core + SQLite + Flutter verde (run `36141619401`).
 
-## 4.4 Combat Foundation — ACTIVO
-- [ ] Combat state asociado a Encounter activo.
-- [ ] Participantes resueltos contra Character/NPC/Creature.
-- [ ] Orden/turno/round sin asumir sistema específico.
-- [ ] Acciones resueltas mediante Resolution Engine.
-- [ ] HP/defensas/ataques sólo mediante definiciones del Ruleset.
+## 4.4 Combat Foundation — EN CURSO
+
+### 4.4A Core — COMPLETADO
+- [x] Combat state asociado a Encounter activo.
+- [x] Participantes resueltos contra Character/NPC/Creature; rechazo de ausentes, archivados y de otra campaña.
+- [x] Orden/turno/round explícitos sin asumir sistema específico.
+- [x] Acciones resueltas mediante Resolution Engine y registradas con actor y resultado.
+- [x] CI Core + SQLite + Flutter verde (run `36143081900`).
+
+### 4.4B Persistencia e integración — ACTIVO
+- [ ] Guardar y recuperar estado de combate y acciones en SQLite con migración versionada.
+- [ ] Prevenir conflictos de actualización de estado y cambios simultáneos de participantes.
+- [ ] HP/defensas/ataques sólo mediante definiciones del Ruleset; sin valores hardcodeados en Core.
+- [ ] Tests de reapertura, migración y consistencia de Encounter.
 
 ## 4.5+ Reglas avanzadas
 - [ ] Efectos/condiciones.
