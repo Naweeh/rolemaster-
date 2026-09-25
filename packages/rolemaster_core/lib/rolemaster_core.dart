@@ -1,8 +1,5 @@
 library rolemaster_core;
 
-export 'src/combat/combat_engine.dart';
-export 'src/combat/combat_participant.dart';
-export 'src/combat/combat_state.dart';
 export 'src/calendar/advance_campaign_time.dart';
 export 'src/calendar/calendar_definition.dart';
 export 'src/calendar/calendar_engine.dart';
@@ -35,6 +32,9 @@ export 'src/character/create_character.dart';
 export 'src/character/get_character.dart';
 export 'src/character/list_characters.dart';
 export 'src/character/update_character.dart';
+export 'src/combat/combat_engine.dart';
+export 'src/combat/combat_participant.dart';
+export 'src/combat/combat_state.dart';
 export 'src/creature/archive_creature.dart';
 export 'src/creature/create_creature.dart';
 export 'src/creature/creature.dart';
