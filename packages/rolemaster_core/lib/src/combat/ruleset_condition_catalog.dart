@@ -9,7 +9,8 @@ final class CombatCondition {
   })  : participantKey = participantKey.trim().toLowerCase(),
         conditionId = conditionId.trim(),
         sourceKey = sourceKey?.trim().toLowerCase() {
-    if (this.participantKey.isEmpty || this.conditionId.isEmpty ||
+    if (this.participantKey.isEmpty ||
+        this.conditionId.isEmpty ||
         remainingRounds != null && remainingRounds! < 1) {
       throw ArgumentError('Invalid combat condition or duration.');
     }
