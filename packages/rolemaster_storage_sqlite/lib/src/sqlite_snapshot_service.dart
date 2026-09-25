@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteSnapshotInfo {
@@ -44,7 +45,11 @@ final class SqliteSnapshotException implements Exception {
 }
 
 final class SqliteSnapshotService {
-  const SqliteSnapshotService();
+  const SqliteSnapshotService({
+    this.logger = const DeveloperSqliteOperationLogger(),
+  });
+
+  final SqliteOperationLogger logger;
 
   Future<SqliteSnapshotInfo> createSnapshot({
     required String sourcePath,
@@ -68,6 +73,8 @@ final class SqliteSnapshotService {
     }
 
     await snapshot.parent.create(recursive: true);
+    final timer = Stopwatch()..start();
+    logger.record('snapshot.create.started', const <String, Object?>{});
     try {
       await _copyDatabase(
         sourcePath: source.path,
@@ -75,8 +82,21 @@ final class SqliteSnapshotService {
         migrateSource: true,
         migrateDestination: false,
       );
-      return await validateSnapshot(snapshot.path, requireCurrentSchema: true);
+      final info = await validateSnapshot(
+        snapshot.path,
+        requireCurrentSchema: true,
+      );
+      logger.record('snapshot.create.completed', <String, Object?>{
+        'schemaVersion': info.schemaVersion,
+        'sizeBytes': info.sizeBytes,
+        'elapsedMilliseconds': timer.elapsedMilliseconds,
+      });
+      return info;
     } catch (error) {
+      logger.record('snapshot.create.failed', <String, Object?>{
+        'errorType': error.runtimeType.toString(),
+        'elapsedMilliseconds': timer.elapsedMilliseconds,
+      });
       await _deleteDatabaseFiles(snapshot.path);
       if (error is SqliteSnapshotException) {
         rethrow;
@@ -142,6 +162,7 @@ final class SqliteSnapshotService {
       );
     }
 
+    logger.record('snapshot.restore.started', const <String, Object?>{});
     await validateSnapshot(snapshot.path);
 
     String? rollbackSnapshotPath;
@@ -175,12 +196,20 @@ final class SqliteSnapshotService {
         destination.path,
         requireCurrentSchema: true,
       );
+      logger.record('snapshot.restore.completed', <String, Object?>{
+        'schemaVersion': restored.schemaVersion,
+        'rollbackCreated': rollbackSnapshotPath != null,
+      });
       return SqliteRestoreResult(
         destinationPath: destination.path,
         schemaVersion: restored.schemaVersion,
         rollbackPath: rollbackSnapshotPath,
       );
     } catch (restoreError) {
+      logger.record('snapshot.restore.failed', <String, Object?>{
+        'errorType': restoreError.runtimeType.toString(),
+        'rollbackAvailable': rollbackSnapshotPath != null,
+      });
       await _deleteDatabaseFiles(destination.path);
       if (rollbackSnapshotPath != null) {
         try {
