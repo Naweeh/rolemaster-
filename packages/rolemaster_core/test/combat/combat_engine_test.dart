@@ -202,20 +202,26 @@ void main() {
     );
     expect(conditioned.conditions.single.remainingRounds, 1);
     expect(conditioned.conditions.single.sourceKey, 'character:hero-1');
-    expect(engine.removeCondition(
-      encounter: encounter,
-      ruleset: ruleset,
-      state: conditioned,
-      participantKey: 'npc:guide-1',
-      conditionId: 'fatigue',
-    ).conditions, isEmpty);
-    expect(() => engine.applyCondition(
-      encounter: encounter,
-      ruleset: ruleset,
-      state: changed,
-      participantKey: 'npc:guide-1',
-      conditionId: 'unknown',
-    ), throwsStateError);
+    expect(
+        engine
+            .removeCondition(
+              encounter: encounter,
+              ruleset: ruleset,
+              state: conditioned,
+              participantKey: 'npc:guide-1',
+              conditionId: 'fatigue',
+            )
+            .conditions,
+        isEmpty);
+    expect(
+        () => engine.applyCondition(
+              encounter: encounter,
+              ruleset: ruleset,
+              state: changed,
+              participantKey: 'npc:guide-1',
+              conditionId: 'unknown',
+            ),
+        throwsStateError);
     expect(
       () => engine.setStat(
         encounter: encounter,
