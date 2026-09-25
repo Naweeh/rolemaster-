@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Fase 4.5C — migración de referencias de campaña entre versiones de Ruleset**.
+Sprint activo: **Fase 3 — extensibilidad de reglas**. La migración 4.5C está completada.
 
 La migración atómica del binding está implementada; todavía falta transformar datos persistidos que referencian IDs del Ruleset. Los servicios opcionales tienen contratos y proveedores desactivados. Ver `BACKEND_CORE_AUDIT.md`.
 
