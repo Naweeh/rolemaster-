@@ -30,7 +30,8 @@ final class CombatEngine {
       for (final participant in participants) participant.key: participant,
     };
     final keys = turnOrder.map((key) => key.trim().toLowerCase()).toList();
-    if (keys.length != byKey.length || keys.toSet().length != byKey.length ||
+    if (keys.length != byKey.length ||
+        keys.toSet().length != byKey.length ||
         !keys.every(byKey.containsKey)) {
       throw ArgumentError('Turn order must contain each participant once.');
     }
@@ -53,7 +54,8 @@ final class CombatEngine {
         state.campaignId != encounter.campaignId) {
       throw StateError('Combat state belongs to another encounter.');
     }
-    final encounterKeys = encounter.participants.map((item) => item.key).toSet();
+    final encounterKeys =
+        encounter.participants.map((item) => item.key).toSet();
     if (encounterKeys.length != state.turnOrder.length ||
         !state.turnOrder.every((item) => encounterKeys.contains(item.key))) {
       throw StateError('Encounter participants changed during combat.');
