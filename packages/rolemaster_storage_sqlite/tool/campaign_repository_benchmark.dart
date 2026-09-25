@@ -41,6 +41,7 @@ Future<void> main() async {
     await directory.delete(recursive: true);
   }
 
+  // ignore: avoid_print
   print(
     jsonEncode(<String, Object>{
       'benchmark': 'sqlite_campaign_repository',
