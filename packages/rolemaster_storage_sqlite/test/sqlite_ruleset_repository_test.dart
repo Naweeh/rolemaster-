@@ -102,17 +102,16 @@ void main() {
         final bindings = SqliteCampaignRulesetRepository.open(fixture.path);
         addTearDown(bindings.close);
         final initial = _cleanState(version: '1.0.0');
-        await bindings.save(CampaignRulesetState(
-          binding: initial.binding,
-          overlay: initial.overlay.replaceOverrides(
-            const <String, Object?>{
+        await bindings.save(
+          CampaignRulesetState(
+            binding: initial.binding,
+            overlay: initial.overlay.replaceOverrides(const <String, Object?>{
               'tables': <String, Object?>{
                 'critical-e': <String, Object?>{'max': 90},
               },
-            },
-            at: DateTime.utc(2026, 8, 10, 13),
+            }, at: DateTime.utc(2026, 8, 10, 13)),
           ),
-        ));
+        );
         final campaigns = SqliteCampaignRepository.open(fixture.path);
         addTearDown(campaigns.close);
         final migrate = MigrateCampaignRuleset(
@@ -145,25 +144,23 @@ void main() {
         database.execute(
           "UPDATE encounters SET status = 'closed', closed_at = 2 WHERE id = 'enc-1'",
         );
-        await expectLater(
-          execute(preserveOverlay: true),
-          throwsStateError,
-        );
+        await expectLater(execute(preserveOverlay: true), throwsStateError);
         final result = await execute(
           preserveOverlay: true,
-          overlayTransformer: ({
-            required sourcePackage,
-            required targetPackage,
-            required sourceOverrides,
-          }) => const <String, Object?>{
-            'tables': <String, Object?>{
-              'critical-e': <String, Object?>{'max': 95},
-            },
-          },
+          overlayTransformer:
+              ({
+                required sourcePackage,
+                required targetPackage,
+                required sourceOverrides,
+              }) => const <String, Object?>{
+                'tables': <String, Object?>{
+                  'critical-e': <String, Object?>{'max': 95},
+                },
+              },
         );
         expect(result.binding.rulesetVersion, '2.0.0');
-        final migratedTable = result.overlay.overrides['tables']!
-            as Map<String, Object?>;
+        final migratedTable =
+            result.overlay.overrides['tables']! as Map<String, Object?>;
         expect(
           (migratedTable['critical-e']! as Map<String, Object?>)['max'],
           95,
