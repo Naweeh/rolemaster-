@@ -155,10 +155,10 @@ void main() {
         snapshotPath: '${fixture.directory.path}/logged.snapshot',
       );
 
-      expect(
-        logger.events.map((item) => item.$1),
-        <String>['snapshot.create.started', 'snapshot.create.completed'],
-      );
+      expect(logger.events.map((item) => item.$1), <String>[
+        'snapshot.create.started',
+        'snapshot.create.completed',
+      ]);
       final completion = logger.events.last.$2;
       expect(
         completion['schemaVersion'],
