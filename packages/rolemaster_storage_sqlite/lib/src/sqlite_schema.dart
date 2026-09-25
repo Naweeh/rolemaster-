@@ -705,7 +705,7 @@ void _createEncounterSchemaV14(Database database) {
 
 void _createCombatSchemaV15(Database database) {
   database.execute('''
-    CREATE TABLE combat_states (
+    CREATE TABLE IF NOT EXISTS combat_states (
       encounter_id TEXT NOT NULL PRIMARY KEY,
       campaign_id TEXT NOT NULL,
       ruleset_id TEXT NOT NULL,
@@ -720,6 +720,7 @@ void _createCombatSchemaV15(Database database) {
     ) STRICT
   ''');
   database.execute(
-    'CREATE INDEX idx_combat_states_campaign ON combat_states(campaign_id)',
+    'CREATE INDEX IF NOT EXISTS idx_combat_states_campaign '
+    'ON combat_states(campaign_id)',
   );
 }
