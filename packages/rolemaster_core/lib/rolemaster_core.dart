@@ -112,6 +112,7 @@ export 'src/resolution/ruleset_resolution_catalog.dart';
 export 'src/resolution/table_lookup_resolution_interpreter.dart';
 export 'src/ruleset/effective_ruleset.dart';
 export 'src/ruleset/initialize_campaign_ruleset.dart';
+export 'src/ruleset/migrate_campaign_ruleset.dart';
 export 'src/ruleset/reset_campaign_rules.dart';
 export 'src/ruleset/resolve_effective_ruleset.dart';
 export 'src/ruleset/ruleset_exceptions.dart';
