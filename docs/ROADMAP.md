@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Tablas versionadas**.
+Sprint activo: **Combat Foundation**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -84,7 +84,7 @@ Sprint activo: **Tablas versionadas**.
 - [x] Dice Kernel con RNG inyectable y resultados trazables
 - [x] Resolution Engine data-driven por `ruleId` + intérpretes por `kind`
 - [x] primer intérprete genérico `dice-threshold` configurado desde Ruleset
-- [ ] Tablas versionadas
+- [x] Tablas versionadas: catálogo inmutable y lookup integrado con Resolution Engine
 - [ ] Combat state
 - [ ] Effects / conditions
 - [ ] Extensibilidad de reglas

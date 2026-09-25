@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.3A — Table Foundation versionada dentro del `EffectiveRuleset`.
-- **Activo:** Fase 4.3B — integración Resolution Engine → lookup de tabla por ID.
-- **Siguiente:** Fase 4.4 — Combat Foundation sobre Encounter + Resolution Engine.
+- **Último completado:** Fase 4.3B — Resolution Engine integrado con lookup de tablas versionadas.
+- **Activo:** Fase 4.4 — Combat Foundation sobre Encounter + Resolution Engine.
+- **Siguiente:** Fase 4.5+ — efectos/condiciones y reglas avanzadas.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -192,7 +192,7 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Ninguna regla específica de D&D/Rolemaster hardcodeada en el motor.
 - [x] CI Core + SQLite + Flutter verde.
 
-## 4.3 Tablas versionadas — EN CURSO
+## 4.3 Tablas versionadas — COMPLETADO
 
 ### 4.3A Table Foundation — COMPLETADO
 - [x] Definiciones de tabla dentro del Ruleset/EffectiveRuleset.
@@ -205,13 +205,15 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Tests de overlay sin mutar el paquete base.
 - [x] CI Core + SQLite + Flutter verde.
 
-### 4.3B Integración con Resolution — ACTIVO
-- [ ] Intérprete genérico de Resolution que consulte una tabla por ID.
-- [ ] Input de lookup configurable desde request/Ruleset.
-- [ ] Resultado de tabla incorporado a la traza de Resolution.
-- [ ] Tests de tabla inexistente, módulo inactivo y lookup sparse sin coincidencia.
+### 4.3B Integración con Resolution — COMPLETADO
+- [x] Intérprete genérico `table-lookup` que consulta una tabla por ID.
+- [x] Input fijo o desde `ResolutionRequest.inputs`.
+- [x] ID, input, rango y resultado de tabla incorporados a `ResolutionResult.details`.
+- [x] Outcome configurable o derivado de la fila; sin coincidencia requiere outcome explícito.
+- [x] Tests de tabla inexistente, módulo inactivo y lookup sparse sin coincidencia.
+- [x] CI Core + SQLite + Flutter verde (run `36141619401`).
 
-## 4.4 Combat Foundation — SIGUIENTE
+## 4.4 Combat Foundation — ACTIVO
 - [ ] Combat state asociado a Encounter activo.
 - [ ] Participantes resueltos contra Character/NPC/Creature.
 - [ ] Orden/turno/round sin asumir sistema específico.
