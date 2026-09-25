@@ -114,6 +114,7 @@ final class CombatState {
       stats: stats,
     );
   }
+
   CombatState setStat({
     required String participantKey,
     required String statId,
@@ -124,7 +125,8 @@ final class CombatState {
       throw StateError('Combat participant not found: $key.');
     }
     final updated = <String, Map<String, int>>{
-      for (final entry in stats.entries) entry.key: Map<String, int>.of(entry.value),
+      for (final entry in stats.entries)
+        entry.key: Map<String, int>.of(entry.value),
     };
     updated.putIfAbsent(key, () => <String, int>{})[statId] = value;
     return CombatState(
@@ -140,5 +142,4 @@ final class CombatState {
       stats: updated,
     );
   }
-
 }
