@@ -22,6 +22,9 @@ void main() {
         <String>['Wolf', 'Hero', 'Guide']);
     expect(state.currentParticipant.key, 'creature:monster-1');
     expect(state.round, 1);
+    expect(state.revision, 0);
+    expect(state.rulesetId, 'system-1');
+    expect(state.advanceTurn().revision, 1);
     expect(state.advanceTurn().currentParticipant.key, 'character:hero-1');
     final next = state.advanceTurn().advanceTurn().advanceTurn();
     expect(next.round, 2);
@@ -102,6 +105,7 @@ void main() {
       ),
     );
 
+    expect(updated.revision, 1);
     expect(updated.actions.single.actorKey, 'character:hero-1');
     expect(updated.actions.single.result.outcome, 'hit');
     expect(updated.actions.single.result.details['result'],
