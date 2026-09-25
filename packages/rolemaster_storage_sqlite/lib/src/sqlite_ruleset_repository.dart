@@ -268,7 +268,7 @@ final class SqliteCampaignRulesetRepository
 
   @override
   Future<void> migrate({
-    required CampaignRulesetBinding expected,
+    required CampaignRulesetState expected,
     required CampaignRulesetState next,
   }) async {
     if (expected.campaignId != next.binding.campaignId ||
