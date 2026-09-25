@@ -341,7 +341,6 @@ void main() {
       throwsStateError,
     );
   });
-
 }
 
 Encounter _encounter(
