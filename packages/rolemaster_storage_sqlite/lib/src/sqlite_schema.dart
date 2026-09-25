@@ -1,6 +1,6 @@
 import 'package:sqlite3/sqlite3.dart';
 
-const int rolemasterSqliteSchemaVersion = 14;
+const int rolemasterSqliteSchemaVersion = 15;
 
 void initializeRolemasterSqliteSchema(Database database) {
   database.execute('PRAGMA foreign_keys = ON');
@@ -163,6 +163,17 @@ void initializeRolemasterSqliteSchema(Database database) {
       },
     );
     version = 14;
+  }
+
+  if (version == 14) {
+    _runMigration(
+      database,
+      targetVersion: 15,
+      migrate: () {
+        _createCombatSchemaV15(database);
+      },
+    );
+    version = 15;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -689,5 +700,26 @@ void _createEncounterSchemaV14(Database database) {
   database.execute(
     'CREATE INDEX idx_encounter_participants_entity '
     'ON encounter_participants(entity_type, entity_id)',
+  );
+}
+
+void _createCombatSchemaV15(Database database) {
+  database.execute('''
+    CREATE TABLE combat_states (
+      encounter_id TEXT NOT NULL PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      ruleset_id TEXT NOT NULL,
+      ruleset_version TEXT NOT NULL,
+      revision INTEGER NOT NULL CHECK (revision >= 0),
+      round_number INTEGER NOT NULL CHECK (round_number >= 1),
+      turn_index INTEGER NOT NULL CHECK (turn_index >= 0),
+      turn_order_json TEXT NOT NULL,
+      actions_json TEXT NOT NULL,
+      FOREIGN KEY (encounter_id) REFERENCES encounters(id) ON DELETE CASCADE,
+      FOREIGN KEY (campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
+  database.execute(
+    'CREATE INDEX idx_combat_states_campaign ON combat_states(campaign_id)',
   );
 }
