@@ -103,7 +103,8 @@ final class MigrateCampaignRuleset {
         sourceOverrides: current.overlay.overrides,
       );
       if (overrides.keys.any((key) => !target.data.containsKey(key))) {
-        throw StateError('Migrated overlay has keys absent from target ruleset.');
+        throw StateError(
+            'Migrated overlay has keys absent from target ruleset.');
       }
     }
     final now = clock().toUtc();
