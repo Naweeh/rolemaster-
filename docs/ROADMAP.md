@@ -75,7 +75,9 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Fase 5 — servicios opcionales desacoplados**.
+Sprint activo: **Fase 6 — hardening y Backend/Core Freeze**.
+
+Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las integraciones funcionales con proveedores siguen siendo optativas y quedan pendientes para después del freeze.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
