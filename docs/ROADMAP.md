@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v16
+  - [x] esquema SQLite central versionado hasta v17
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Efectos/condiciones y reglas avanzadas**.
+Sprint activo: **4.5B — modificadores de efectos por Ruleset**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -88,7 +88,8 @@ Sprint activo: **Efectos/condiciones y reglas avanzadas**.
 - [x] Combat Core: Encounter activo, participantes verificados, turnos/rondas y acciones por Resolution Engine
 - [x] Persistencia SQLite v15 y recuperación de combate con revisión optimista
 - [x] Estadísticas de combate definidas por Ruleset y persistidas en SQLite v16
-- [ ] Effects / conditions
+- [x] Conditions: catálogo, duración por rondas y SQLite v17
+- [ ] Effects: modificadores automáticos con traza
 - [ ] Extensibilidad de reglas
 - [ ] Migración controlada entre ediciones/versiones
 
