@@ -19,7 +19,7 @@ abstract interface class CampaignRulesetRepository {
   Future<void> save(CampaignRulesetState state);
 
   Future<void> migrate({
-    required CampaignRulesetBinding expected,
+    required CampaignRulesetState expected,
     required CampaignRulesetState next,
   });
 }
