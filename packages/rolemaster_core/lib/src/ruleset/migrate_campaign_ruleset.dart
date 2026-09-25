@@ -39,7 +39,8 @@ final class MigrateCampaignRuleset {
       throw CampaignRulesetNotInitializedException(id);
     }
     if (current.binding.rulesetVersion != expectedSourceVersion.trim()) {
-      throw StateError('Campaign ruleset changed since migration was requested.');
+      throw StateError(
+          'Campaign ruleset changed since migration was requested.');
     }
     final source = await rulesetRepository.getPackage(
       rulesetId: current.binding.rulesetId,
@@ -51,7 +52,7 @@ final class MigrateCampaignRuleset {
     );
     if (source == null) {
       throw RulesetNotFoundException(
-        current.binding.rulesetId, current.binding.rulesetVersion);
+          current.binding.rulesetId, current.binding.rulesetVersion);
     }
     if (target == null) {
       throw RulesetNotFoundException(targetRulesetId, targetVersion);
@@ -59,7 +60,8 @@ final class MigrateCampaignRuleset {
     if (source.manifest.systemId != target.manifest.systemId ||
         source.manifest.id != target.manifest.id ||
         source.manifest.version == target.manifest.version) {
-      throw StateError('Migration requires a different version of the same ruleset.');
+      throw StateError(
+          'Migration requires a different version of the same ruleset.');
     }
     final selected = activeModuleIds == null
         ? current.binding.activeModuleIds
@@ -69,7 +71,8 @@ final class MigrateCampaignRuleset {
         unique.length != selected.length) {
       throw ArgumentError('Migration modules must be unique and nonempty.');
     }
-    final available = target.manifest.modules.map((module) => module.id).toSet();
+    final available =
+        target.manifest.modules.map((module) => module.id).toSet();
     for (final module in unique) {
       if (!available.contains(module)) {
         throw UnknownRulesetModuleException(module);
@@ -80,9 +83,8 @@ final class MigrateCampaignRuleset {
         throw RequiredRulesetModuleMissingException(module);
       }
     }
-    final overrides = preserveOverlay
-        ? current.overlay.overrides
-        : const <String, Object?>{};
+    final overrides =
+        preserveOverlay ? current.overlay.overrides : const <String, Object?>{};
     if (preserveOverlay &&
         overrides.keys.any((key) => !target.data.containsKey(key))) {
       throw StateError('Overlay has keys absent from the target ruleset.');
