@@ -52,9 +52,8 @@ final class TableLookupResolutionInterpreter
       );
     }
 
-    final outcome = config['matchOutcome'] ??
-        entry.result['outcome'] ??
-        'matched';
+    final outcome =
+        config['matchOutcome'] ?? entry.result['outcome'] ?? 'matched';
     return ResolutionEvaluation(
       outcome: _requiredString(outcome, 'match outcome'),
       details: details,
