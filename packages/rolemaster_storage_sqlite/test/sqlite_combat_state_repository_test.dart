@@ -27,12 +27,14 @@ void main() {
       value: 3,
     );
     await repository.save(updated);
-    updated = updated.applyCondition(CombatCondition(
-      participantKey: 'npc:guide-1',
-      conditionId: 'fatigue',
-      remainingRounds: 2,
-      sourceKey: 'character:hero-1',
-    ));
+    updated = updated.applyCondition(
+      CombatCondition(
+        participantKey: 'npc:guide-1',
+        conditionId: 'fatigue',
+        remainingRounds: 2,
+        sourceKey: 'character:hero-1',
+      ),
+    );
     await repository.save(updated);
     repository.close();
 
@@ -149,14 +151,17 @@ void main() {
     final state = await reopened.getByEncounterId('enc-1');
     expect(state!.conditions, isEmpty);
     expect(state.stats['npc:guide-1']!['stamina'], 10);
-    await reopened.save(state.applyCondition(CombatCondition(
-      participantKey: 'npc:guide-1',
-      conditionId: 'marked',
-    )));
-    expect((await reopened.getByEncounterId('enc-1'))!.conditions, hasLength(1));
+    await reopened.save(
+      state.applyCondition(
+        CombatCondition(participantKey: 'npc:guide-1', conditionId: 'marked'),
+      ),
+    );
+    expect(
+      (await reopened.getByEncounterId('enc-1'))!.conditions,
+      hasLength(1),
+    );
     reopened.close();
   });
-
 }
 
 Future<void> _seedEncounter(String path) async {
