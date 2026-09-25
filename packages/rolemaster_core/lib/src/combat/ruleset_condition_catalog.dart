@@ -49,13 +49,15 @@ final class ConditionDefinition {
   })  : id = id.trim(),
         moduleId = moduleId?.trim(),
         statModifiers = Map<String, int>.unmodifiable(statModifiers),
-        resolutionModifiers = Map<String, int>.unmodifiable(resolutionModifiers) {
+        resolutionModifiers =
+            Map<String, int>.unmodifiable(resolutionModifiers) {
     if (this.id.isEmpty ||
         this.moduleId != null && this.moduleId!.isEmpty ||
         durationRounds != null && durationRounds! < 1 ||
         this.statModifiers.keys.any((key) => key.trim().isEmpty) ||
         this.resolutionModifiers.keys.any((key) => key.trim().isEmpty)) {
-      throw ArgumentError('Invalid condition ID, module, duration or modifier.');
+      throw ArgumentError(
+          'Invalid condition ID, module, duration or modifier.');
     }
   }
 
