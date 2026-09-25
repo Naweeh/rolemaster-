@@ -1,5 +1,8 @@
 library rolemaster_core;
 
+export 'src/combat/combat_engine.dart';
+export 'src/combat/combat_participant.dart';
+export 'src/combat/combat_state.dart';
 export 'src/calendar/advance_campaign_time.dart';
 export 'src/calendar/calendar_definition.dart';
 export 'src/calendar/calendar_engine.dart';
