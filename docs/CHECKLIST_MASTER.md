@@ -25,7 +25,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] CI remoto.
 - [ ] Comunicación local entre dispositivos del GM.
 - [ ] Estrategia de plugins/extensiones.
-- [ ] Runners Windows/Android validados en toolchain real.
+- [x] Runners Windows/Android generados en CI y compilados en toolchains reales (run `36182038725`).
 
 ---
 
@@ -277,7 +277,7 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
 - [ ] Logging estructurado de aplicación; el diagnóstico SQLite cubre estado de la base, no logging general.
 - [x] Benchmark reproducible de lectura/escritura del repositorio SQLite, ejecutado en CI (run `36180797429`): mediana 590.613 ms / 500 altas y 47.901 ms / 500 lecturas en runner GitHub; dato informativo, no umbral.
-- [ ] Auditoría final de contratos (incluye revisión de límites/concurrencia y deuda nativa).
+- [ ] Auditoría final de contratos (incluye revisión de límites/concurrencia y deuda nativa); auditoría en curso.
 - [ ] Tag Backend/Core Freeze.
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
