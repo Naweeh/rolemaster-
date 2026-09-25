@@ -60,14 +60,15 @@ final class InMemoryCampaignRulesetRepository
     required CampaignRulesetState expected,
     required CampaignRulesetState next,
   }) async {
-    final current = _states[expected.campaignId];
+    final current = _states[expected.binding.campaignId];
     if (current == null ||
-        current.binding.rulesetId != expected.rulesetId ||
-        current.binding.rulesetVersion != expected.rulesetVersion ||
-        current.binding.boundAt != expected.boundAt) {
+        current.binding.rulesetId != expected.binding.rulesetId ||
+        current.binding.rulesetVersion != expected.binding.rulesetVersion ||
+        current.binding.boundAt != expected.binding.boundAt ||
+        current.overlay.updatedAt != expected.overlay.updatedAt) {
       throw StateError('Campaign ruleset changed during migration.');
     }
-    _states[expected.campaignId] = next;
+    _states[expected.binding.campaignId] = next;
   }
 
   @override
