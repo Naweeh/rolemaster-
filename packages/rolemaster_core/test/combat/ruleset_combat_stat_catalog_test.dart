@@ -22,16 +22,17 @@ void main() {
 
     expect(RulesetCombatStatCatalog(vitality).activeDefinitions.single.id,
         'vitality');
-    expect(RulesetCombatStatCatalog(guard).activeDefinitions.single.id, 'guard');
+    expect(
+        RulesetCombatStatCatalog(guard).activeDefinitions.single.id, 'guard');
     expect(RulesetCombatStatCatalog(guard).requireActive('guard').accepts(-5),
         isTrue);
     expect(RulesetCombatStatCatalog(guard).requireActive('guard').accepts(11),
         isFalse);
-    expect(RulesetCombatStatCatalog(_ruleset(<Object?>[])).definitions, isEmpty);
+    expect(
+        RulesetCombatStatCatalog(_ruleset(<Object?>[])).definitions, isEmpty);
   });
 
-  test('rejects malformed definitions, duplicate IDs and inactive modules',
-      () {
+  test('rejects malformed definitions, duplicate IDs and inactive modules', () {
     expect(
       () => RulesetCombatStatCatalog(_ruleset(<Object?>[
         <String, Object?>{'id': 'hp', 'initial': 'ten'},
