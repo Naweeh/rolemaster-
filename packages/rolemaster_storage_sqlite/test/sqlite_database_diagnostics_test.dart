@@ -25,7 +25,7 @@ void main() {
     final diagnostic = const SqliteDatabaseDiagnostics().inspect(path);
     expect(diagnostic.isHealthy, isTrue);
     expect(diagnostic.roleMasterSchemaPresent, isTrue);
-    expect(diagnostic.schemaVersion, rolemasterSqliteSchemaVersion);
+    expect(diagnostic.schemaVersion, SqliteCampaignRepository.schemaVersion);
 
     final reopened = sqlite3.open(path, mode: OpenMode.readOnly);
     expect(reopened.userVersion, rolemasterSqliteSchemaVersion);
