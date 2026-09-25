@@ -17,15 +17,24 @@ final class CombatState {
   CombatState({
     required String encounterId,
     required String campaignId,
+    required String rulesetId,
+    required String rulesetVersion,
     required Iterable<CombatParticipant> turnOrder,
+    this.revision = 0,
     this.round = 1,
     this.turnIndex = 0,
     Iterable<CombatAction> actions = const <CombatAction>[],
   })  : encounterId = encounterId.trim(),
         campaignId = campaignId.trim(),
+        rulesetId = rulesetId.trim(),
+        rulesetVersion = rulesetVersion.trim(),
         turnOrder = List<CombatParticipant>.unmodifiable(turnOrder),
         actions = List<CombatAction>.unmodifiable(actions) {
-    if (this.encounterId.isEmpty || this.campaignId.isEmpty) {
+    if (this.encounterId.isEmpty ||
+        this.campaignId.isEmpty ||
+        this.rulesetId.isEmpty ||
+        this.rulesetVersion.isEmpty ||
+        revision < 0) {
       throw ArgumentError('Combat encounterId and campaignId are required.');
     }
     if (this.turnOrder.isEmpty ||
@@ -41,7 +50,9 @@ final class CombatState {
     }
     for (final action in this.actions) {
       if (!this.turnOrder.any((item) => item.key == action.actorKey) ||
-          action.result.campaignId != this.campaignId) {
+          action.result.campaignId != this.campaignId ||
+          action.result.rulesetId != this.rulesetId ||
+          action.result.rulesetVersion != this.rulesetVersion) {
         throw ArgumentError('Combat action does not belong to this combat.');
       }
     }
@@ -49,6 +60,9 @@ final class CombatState {
 
   final String encounterId;
   final String campaignId;
+  final String rulesetId;
+  final String rulesetVersion;
+  final int revision;
   final List<CombatParticipant> turnOrder;
   final int round;
   final int turnIndex;
@@ -61,6 +75,9 @@ final class CombatState {
     return CombatState(
       encounterId: encounterId,
       campaignId: campaignId,
+      rulesetId: rulesetId,
+      rulesetVersion: rulesetVersion,
+      revision: revision + 1,
       turnOrder: turnOrder,
       round: next == turnOrder.length ? round + 1 : round,
       turnIndex: next % turnOrder.length,
@@ -75,6 +92,9 @@ final class CombatState {
     return CombatState(
       encounterId: encounterId,
       campaignId: campaignId,
+      rulesetId: rulesetId,
+      rulesetVersion: rulesetVersion,
+      revision: revision + 1,
       turnOrder: turnOrder,
       round: round,
       turnIndex: turnIndex,
