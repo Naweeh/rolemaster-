@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **4.5B — modificadores de efectos por Ruleset**.
+Sprint activo: **4.5C — migración controlada de Ruleset**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -89,7 +89,7 @@ Sprint activo: **4.5B — modificadores de efectos por Ruleset**.
 - [x] Persistencia SQLite v15 y recuperación de combate con revisión optimista
 - [x] Estadísticas de combate definidas por Ruleset y persistidas en SQLite v16
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
-- [ ] Effects: modificadores automáticos con traza
+- [x] Effects: modificadores automáticos con traza (CI `36148253242`)
 - [ ] Extensibilidad de reglas
 - [ ] Migración controlada entre ediciones/versiones
 

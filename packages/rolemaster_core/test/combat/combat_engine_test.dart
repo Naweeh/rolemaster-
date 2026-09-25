@@ -245,6 +245,102 @@ void main() {
       throwsStateError,
     );
   });
+  test('condition modifiers stack in ID order and record resolution trace',
+      () async {
+    final at = DateTime.utc(2026, 9, 25);
+    final encounter = _encounter(at);
+    final ruleset = _statRuleset();
+    final engine = _combatEngine();
+    var state = await engine.start(
+      encounter: encounter,
+      ruleset: ruleset,
+      turnOrder: <String>[
+        'character:hero-1',
+        'npc:guide-1',
+        'creature:monster-1',
+      ],
+    );
+    state = engine.applyCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      participantKey: 'character:hero-1',
+      conditionId: 'focus',
+    );
+    state = engine.applyCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      participantKey: 'character:hero-1',
+      conditionId: 'fatigue',
+    );
+    final stat = engine.effectiveStat(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      participantKey: 'character:hero-1',
+      statId: 'stamina',
+    );
+    expect(stat.baseValue, 10);
+    expect(stat.effectiveValue, 9);
+    expect(stat.modifiers.map((item) => item.conditionId),
+        <String>['fatigue', 'focus']);
+
+    final request = ResolutionRequest(
+      ruleId: 'strike',
+      inputs: const <String, Object?>{'roll': 12},
+    );
+    final acted = engine.resolveAction(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      actorKey: 'character:hero-1',
+      request: request,
+    );
+    final result = acted.actions.single.result;
+    expect(result.outcome, 'hit');
+    expect(result.details['input'], 11);
+    expect(request.inputs['roll'], 12);
+    final trace = result.details['combatEffects'] as List;
+    expect((trace.first as Map)['conditionId'], 'fatigue');
+    expect((trace.first as Map)['delta'], -3);
+    expect((trace.last as Map)['conditionId'], 'focus');
+    expect((trace.last as Map)['delta'], 2);
+    expect(state.actions, isEmpty);
+  });
+
+  test('effect modifiers reject missing numeric inputs', () async {
+    final at = DateTime.utc(2026, 9, 25);
+    final encounter = _encounter(at);
+    final ruleset = _statRuleset();
+    final engine = _combatEngine();
+    var state = await engine.start(
+      encounter: encounter,
+      ruleset: ruleset,
+      turnOrder: <String>[
+        'character:hero-1',
+        'npc:guide-1',
+        'creature:monster-1',
+      ],
+    );
+    state = engine.applyCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      participantKey: 'character:hero-1',
+      conditionId: 'fatigue',
+    );
+    expect(
+      () => engine.resolveAction(
+        encounter: encounter,
+        ruleset: ruleset,
+        state: state,
+        actorKey: 'character:hero-1',
+        request: ResolutionRequest(ruleId: 'strike'),
+      ),
+      throwsStateError,
+    );
+  });
 }
 
 Encounter _encounter(
@@ -389,7 +485,44 @@ EffectiveRuleset _statRuleset() {
       ),
       data: const <String, Object?>{
         'conditions': <Object?>[
-          <String, Object?>{'id': 'fatigue', 'durationRounds': 1},
+          <String, Object?>{
+            'id': 'fatigue',
+            'durationRounds': 1,
+            'statModifiers': <String, Object?>{'stamina': -2},
+            'resolutionModifiers': <String, Object?>{'roll': -3},
+          },
+          <String, Object?>{
+            'id': 'focus',
+            'statModifiers': <String, Object?>{'stamina': 1},
+            'resolutionModifiers': <String, Object?>{'roll': 2},
+          },
+        ],
+        'resolutionRules': <Object?>[
+          <String, Object?>{
+            'id': 'strike',
+            'kind': 'table-lookup',
+            'config': <String, Object?>{
+              'tableId': 'attack',
+              'inputKey': 'roll',
+            },
+          },
+        ],
+        'tables': <Object?>[
+          <String, Object?>{
+            'id': 'attack',
+            'entries': <Object?>[
+              <String, Object?>{
+                'min': 1,
+                'max': 10,
+                'result': <String, Object?>{'outcome': 'miss'},
+              },
+              <String, Object?>{
+                'min': 11,
+                'max': 20,
+                'result': <String, Object?>{'outcome': 'hit'},
+              },
+            ],
+          },
         ],
         'combatStats': <Object?>[
           <String, Object?>{

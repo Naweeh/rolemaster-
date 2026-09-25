@@ -2,7 +2,9 @@ import '../encounter/encounter.dart';
 import '../encounter/encounter_status.dart';
 import '../resolution/resolution_engine.dart';
 import '../resolution/resolution_request.dart';
+import '../resolution/resolution_result.dart';
 import '../ruleset/effective_ruleset.dart';
+import 'combat_modifier_trace.dart';
 import 'combat_participant.dart';
 import 'combat_state.dart';
 import 'ruleset_combat_stat_catalog.dart';
@@ -85,10 +87,57 @@ final class CombatEngine {
     if (key != state.currentParticipant.key) {
       throw StateError('Only the current participant can act.');
     }
-    final result = _resolutionEngine.resolve(
+    final inputs = Map<String, Object?>.of(request.inputs);
+    final applied = <CombatModifierTrace>[];
+    for (final condition in _activeConditions(ruleset, state, key)) {
+      final definition =
+          RulesetConditionCatalog(ruleset).requireActive(condition.conditionId);
+      final fields = definition.resolutionModifiers.keys.toList()..sort();
+      for (final field in fields) {
+        final base = inputs[field];
+        if (base is! int) {
+          throw StateError('Effect modifier requires integer input: $field.');
+        }
+        final delta = definition.resolutionModifiers[field]!;
+        inputs[field] = base + delta;
+        applied.add(CombatModifierTrace(
+          conditionId: definition.id,
+          field: field,
+          delta: delta,
+        ));
+      }
+    }
+    final resolved = _resolutionEngine.resolve(
       ruleset: ruleset,
-      request: request,
+      request: ResolutionRequest(
+        ruleId: request.ruleId,
+        inputs: inputs,
+        purpose: request.purpose,
+      ),
     );
+    if (applied.isNotEmpty && resolved.details.containsKey('combatEffects')) {
+      throw StateError('Resolution details already define combatEffects.');
+    }
+    final result = applied.isEmpty
+        ? resolved
+        : ResolutionResult(
+            id: resolved.id,
+            campaignId: resolved.campaignId,
+            rulesetId: resolved.rulesetId,
+            rulesetVersion: resolved.rulesetVersion,
+            ruleId: resolved.ruleId,
+            ruleKind: resolved.ruleKind,
+            outcome: resolved.outcome,
+            details: <String, Object?>{
+              ...resolved.details,
+              'combatEffects': <Map<String, Object?>>[
+                for (final modifier in applied) modifier.toJson(),
+              ],
+            },
+            diceRolls: resolved.diceRolls,
+            purpose: resolved.purpose,
+            occurredAt: resolved.occurredAt,
+          );
     return state.addAction(CombatAction(actorKey: key, result: result));
   }
 
@@ -144,6 +193,61 @@ final class CombatEngine {
       participantKey: participantKey,
       conditionId: conditionId,
     );
+  }
+
+  CombatStatEvaluation effectiveStat({
+    required Encounter encounter,
+    required EffectiveRuleset ruleset,
+    required CombatState state,
+    required String participantKey,
+    required String statId,
+  }) {
+    _validateState(encounter, ruleset, state);
+    final key = participantKey.trim().toLowerCase();
+    final definition = RulesetCombatStatCatalog(ruleset).requireActive(statId);
+    if (!state.turnOrder.any((item) => item.key == key)) {
+      throw StateError('Combat participant not found: $key.');
+    }
+    final base = state.stats[key]?[definition.id];
+    if (base == null) {
+      throw StateError('Combat stat has no base value: ${definition.id}.');
+    }
+    var total = base;
+    final applied = <CombatModifierTrace>[];
+    for (final condition in _activeConditions(ruleset, state, key)) {
+      final effect =
+          RulesetConditionCatalog(ruleset).requireActive(condition.conditionId);
+      final delta = effect.statModifiers[definition.id];
+      if (delta != null) {
+        total += delta;
+        applied.add(CombatModifierTrace(
+          conditionId: effect.id,
+          field: definition.id,
+          delta: delta,
+        ));
+      }
+    }
+    return CombatStatEvaluation(
+      baseValue: base,
+      effectiveValue: total,
+      modifiers: applied,
+    );
+  }
+
+  List<CombatCondition> _activeConditions(
+    EffectiveRuleset ruleset,
+    CombatState state,
+    String participantKey,
+  ) {
+    final conditions = state.conditions
+        .where((item) => item.participantKey == participantKey)
+        .toList()
+      ..sort((left, right) => left.conditionId.compareTo(right.conditionId));
+    final catalog = RulesetConditionCatalog(ruleset);
+    for (final condition in conditions) {
+      catalog.requireActive(condition.conditionId);
+    }
+    return conditions;
   }
 
   void _validateState(
