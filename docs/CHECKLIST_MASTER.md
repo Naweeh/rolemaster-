@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.5C — migración controlada de Ruleset.
-- **Activo:** Fase 5 — contratos y servicios opcionales.
-- **Siguiente:** Fase 6 — Hardening y Backend/Core Freeze.
+- **Último completado:** Fase 4.5B — modificadores de condiciones y traza de resolución.
+- **Activo:** Fase 4.5C — migración de datos de campaña entre versiones de Ruleset.
+- **Siguiente:** Fase 6 — Hardening y Backend/Core Freeze; luego fase 7.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -25,7 +25,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] CI remoto.
 - [ ] Comunicación local entre dispositivos del GM.
 - [ ] Estrategia de plugins/extensiones.
-- [ ] Runners Windows/Android validados en toolchain real.
+- [x] Runners Windows/Android generados en CI y compilados en toolchains reales (run `36182038725`).
 
 ---
 
@@ -250,32 +250,36 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Orden de aplicación y traza verificables, sin reglas de sistema hardcodeadas.
 - [x] CI Core + SQLite + Flutter verde (run `36148253242`).
 
-### 4.5C Migración de Ruleset — COMPLETADO
-- [x] Migración explícita entre ediciones/versiones del mismo Ruleset, con versión origen esperada, módulos validados y política de overlay.
-- [x] Actualización atómica en SQLite; rechazo con encuentros activos y cambios concurrentes de binding/overlay.
-- [x] Reemplazo silencioso continúa bloqueado.
-- [x] CI Core + SQLite + Flutter verde (run `36150283531`).
+### 4.5C Migración de Ruleset — ACTIVO
+- [x] Base de migración del binding: valida versión origen, paquete destino, módulos, encuentros activos y escrituras concurrentes.
+- [x] Overlay no vacío requiere un transformador explícito; reemplazo silencioso continúa bloqueado.
+- [ ] Mapear y transformar referencias persistidas de campaña (habilidades, estadísticas, objetos y condiciones) entre versiones.
+- [x] CI Core + SQLite + Flutter verde para la base del binding (run `36150283531`).
 
 ---
 
-# Fase 5 — Servicios opcionales
+# Fase 5 — Servicios opcionales: contratos completados
 
-- [ ] AI Service.
-- [ ] NPC Intelligence.
-- [ ] STT/TTS.
-- [ ] Audio Director.
+- [x] Contrato de AI Service y proveedor desactivado.
+- [x] Contrato de NPC Intelligence y proveedor desactivado.
+- [x] Contratos STT/TTS y proveedor desactivado.
+- [x] Contrato de Audio Director y proveedor desactivado.
+- [x] Core permanece utilizable sin red, credenciales ni audio.
+- [x] CI Core + SQLite + Flutter verde (run `36150856950`).
+- [ ] Proveedores funcionales de IA, voz y audio; integración optativa posterior a Backend/Core Freeze.
 
 ---
 
 # Fase 6 — Hardening y Backend/Core Freeze
 
-- [ ] Suite completa verde.
-- [ ] Migraciones verificadas.
-- [ ] Corrupción/recuperación.
-- [ ] Logging/diagnóstico.
-- [ ] Benchmarks.
-- [ ] Auditoría de contratos.
-- [ ] Tag Backend/Core Freeze.
+- [x] Suite completa verde: CI Core + SQLite + Flutter verde (validación de servicios opcionales y diagnóstico).
+- [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
+- [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
+- [ ] Logging estructurado de aplicación; el diagnóstico SQLite cubre estado de la base, no logging general.
+- [x] Benchmark reproducible de lectura/escritura del repositorio SQLite, ejecutado en CI (run `36180797429`): mediana 590.613 ms / 500 altas y 47.901 ms / 500 lecturas en runner GitHub; dato informativo, no umbral.
+- [x] Auditoría registrada en `docs/BACKEND_CORE_AUDIT.md`.
+- [ ] Cerrar gaps enumerados por la auditoría antes del Freeze.
+- [ ] Tag Backend/Core Freeze (bloqueado hasta cerrar migración de datos, logging general, métricas objetivo y coordinación de restore).
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
 

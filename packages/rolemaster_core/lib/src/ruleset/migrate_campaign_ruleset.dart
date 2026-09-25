@@ -4,6 +4,12 @@ import 'ruleset_exceptions.dart';
 import 'ruleset_models.dart';
 import 'ruleset_repository.dart';
 
+typedef CampaignRulesOverlayTransformer = Map<String, Object?> Function({
+  required RulesetPackage sourcePackage,
+  required RulesetPackage targetPackage,
+  required Map<String, Object?> sourceOverrides,
+});
+
 /// An explicit, validated change of a campaign's pinned package version.
 final class MigrateCampaignRuleset {
   MigrateCampaignRuleset({
@@ -24,6 +30,7 @@ final class MigrateCampaignRuleset {
     required String targetVersion,
     required String expectedSourceVersion,
     required bool preserveOverlay,
+    CampaignRulesOverlayTransformer? overlayTransformer,
     Iterable<String>? activeModuleIds,
   }) async {
     final id = campaignId.trim();
@@ -83,11 +90,22 @@ final class MigrateCampaignRuleset {
         throw RequiredRulesetModuleMissingException(module);
       }
     }
-    final overrides =
-        preserveOverlay ? current.overlay.overrides : const <String, Object?>{};
-    if (preserveOverlay &&
-        overrides.keys.any((key) => !target.data.containsKey(key))) {
-      throw StateError('Overlay has keys absent from the target ruleset.');
+    var overrides = const <String, Object?>{};
+    if (preserveOverlay && current.overlay.overrides.isNotEmpty) {
+      if (overlayTransformer == null) {
+        throw StateError(
+          'Non-empty overlays require an explicit migration transformer.',
+        );
+      }
+      overrides = overlayTransformer(
+        sourcePackage: source,
+        targetPackage: target,
+        sourceOverrides: current.overlay.overrides,
+      );
+      if (overrides.keys.any((key) => !target.data.containsKey(key))) {
+        throw StateError(
+            'Migrated overlay has keys absent from target ruleset.');
+      }
     }
     final now = clock().toUtc();
     final next = CampaignRulesetState(

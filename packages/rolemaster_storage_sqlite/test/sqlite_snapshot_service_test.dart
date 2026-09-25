@@ -146,6 +146,28 @@ void main() {
       },
     );
 
+    test('logs snapshot lifecycle without campaign content', () async {
+      final fixture = await _createFixture('snapshot-logging');
+      addTearDown(fixture.dispose);
+      final logger = _RecordingSqliteLogger();
+      await SqliteSnapshotService(logger: logger).createSnapshot(
+        sourcePath: fixture.path,
+        snapshotPath: '${fixture.directory.path}/logged.snapshot',
+      );
+
+      expect(logger.events.map((item) => item.$1), <String>[
+        'snapshot.create.started',
+        'snapshot.create.completed',
+      ]);
+      final completion = logger.events.last.$2;
+      expect(
+        completion['schemaVersion'],
+        SqliteCampaignRepository.schemaVersion,
+      );
+      expect(completion.containsKey('campaignId'), isFalse);
+      expect(completion.containsKey('campaignName'), isFalse);
+    });
+
     test('rejects invalid snapshots without touching live database', () async {
       final fixture = await _createFixture('snapshot-invalid');
       addTearDown(fixture.dispose);
@@ -238,4 +260,13 @@ final class _Fixture {
   final Directory directory;
 
   Future<void> dispose() => directory.delete(recursive: true);
+}
+
+final class _RecordingSqliteLogger implements SqliteOperationLogger {
+  final events = <(String, Map<String, Object?>)>[];
+
+  @override
+  void record(String event, Map<String, Object?> fields) {
+    events.add((event, Map<String, Object?>.of(fields)));
+  }
 }

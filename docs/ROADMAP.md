@@ -75,7 +75,11 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Fase 5 — servicios opcionales desacoplados**.
+Sprint activo: **Fase 4.5C — migración de referencias de campaña entre versiones de Ruleset**.
+
+La migración atómica del binding está implementada; todavía falta transformar datos persistidos que referencian IDs del Ruleset. Los servicios opcionales tienen contratos y proveedores desactivados. Ver `BACKEND_CORE_AUDIT.md`.
+
+Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las integraciones funcionales con proveedores siguen siendo optativas y quedan pendientes para después del freeze.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -91,7 +95,8 @@ Sprint activo: **Fase 5 — servicios opcionales desacoplados**.
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
 - [x] Effects: modificadores automáticos con traza (CI `36148253242`)
 - [ ] Extensibilidad de reglas
-- [x] Migración controlada entre ediciones/versiones (CI `36150283531`)
+- [ ] Migrar referencias persistidas de campaña entre versiones (skills, stats, items y conditions).
+- [x] Fundamento de migración atómica del binding (CI `36150283531`), pendiente completar mapeo de contenido.
 
 ## Fase 4 — Interfaz multiplataforma
 
