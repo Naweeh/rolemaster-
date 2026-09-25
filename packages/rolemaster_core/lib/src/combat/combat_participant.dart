@@ -67,7 +67,9 @@ final class CombatParticipantResolver {
         default:
           throw StateError('Unsupported combat participant type: $type.');
       }
-      if (name == null || campaignId != encounter.campaignId || archived == true) {
+      if (name == null ||
+          campaignId != encounter.campaignId ||
+          archived == true) {
         throw StateError('Combat participant unavailable: $type:$id.');
       }
       participants.add(
