@@ -7,15 +7,11 @@ abstract interface class SqliteOperationLogger {
   void record(String event, Map<String, Object?> fields);
 }
 
-final class DeveloperSqliteOperationLogger
-    implements SqliteOperationLogger {
+final class DeveloperSqliteOperationLogger implements SqliteOperationLogger {
   const DeveloperSqliteOperationLogger();
 
   @override
   void record(String event, Map<String, Object?> fields) {
-    developer.log(
-      '$event ${jsonEncode(fields)}',
-      name: 'rolemaster.sqlite',
-    );
+    developer.log('$event ${jsonEncode(fields)}', name: 'rolemaster.sqlite');
   }
 }
