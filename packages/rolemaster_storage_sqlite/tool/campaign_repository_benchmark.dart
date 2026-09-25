@@ -16,11 +16,13 @@ Future<void> main() async {
     for (var round = 0; round < 4; round++) {
       final write = Stopwatch()..start();
       for (var item = 0; item < sampleSize; item++) {
-        await repository.save(Campaign(
-          id: 'r$round-c$item',
-          name: 'Benchmark campaign $item',
-          createdAt: DateTime.utc(2026),
-        ));
+        await repository.save(
+          Campaign(
+            id: 'r$round-c$item',
+            name: 'Benchmark campaign $item',
+            createdAt: DateTime.utc(2026),
+          ),
+        );
       }
       write.stop();
 
@@ -39,15 +41,17 @@ Future<void> main() async {
     await directory.delete(recursive: true);
   }
 
-  print(jsonEncode(<String, Object>{
-    'benchmark': 'sqlite_campaign_repository',
-    'iterationsPerRound': sampleSize,
-    'measuredRounds': writeSamples.length,
-    'warmupRounds': 1,
-    'medianWriteMicroseconds': _median(writeSamples),
-    'medianReadMicroseconds': _median(readSamples),
-    'note': 'Informational only; compare on the same machine and runtime.',
-  }));
+  print(
+    jsonEncode(<String, Object>{
+      'benchmark': 'sqlite_campaign_repository',
+      'iterationsPerRound': sampleSize,
+      'measuredRounds': writeSamples.length,
+      'warmupRounds': 1,
+      'medianWriteMicroseconds': _median(writeSamples),
+      'medianReadMicroseconds': _median(readSamples),
+      'note': 'Informational only; compare on the same machine and runtime.',
+    }),
+  );
 }
 
 int _median(List<int> values) {
