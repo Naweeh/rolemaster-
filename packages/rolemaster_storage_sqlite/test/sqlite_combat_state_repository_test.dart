@@ -27,12 +27,22 @@ void main() {
       value: 3,
     );
     await repository.save(updated);
+    updated = updated.applyCondition(CombatCondition(
+      participantKey: 'npc:guide-1',
+      conditionId: 'fatigue',
+      remainingRounds: 2,
+      sourceKey: 'character:hero-1',
+    ));
+    await repository.save(updated);
     repository.close();
 
     repository = SqliteCombatStateRepository.open(path);
     final loaded = await repository.getByEncounterId('enc-1');
     expect(loaded, isNotNull);
-    expect(loaded!.revision, 3);
+    expect(loaded!.revision, 4);
+    expect(loaded.conditions.single.conditionId, 'fatigue');
+    expect(loaded.conditions.single.remainingRounds, 2);
+    expect(loaded.conditions.single.sourceKey, 'character:hero-1');
     expect(loaded.stats['npc:guide-1']!['stamina'], 3);
     expect(loaded.stats['character:hero-1']!['stamina'], 10);
     expect(loaded.round, 1);
@@ -112,7 +122,7 @@ void main() {
     database.close();
 
     final combat = SqliteCombatStateRepository.open(path);
-    expect(SqliteCombatStateRepository.schemaVersion, 16);
+    expect(SqliteCombatStateRepository.schemaVersion, 17);
     expect(await combat.getByEncounterId('enc-1'), isNull);
     await combat.save(_state());
     combat.close();
