@@ -36,6 +36,7 @@ export 'src/combat/combat_engine.dart';
 export 'src/combat/combat_participant.dart';
 export 'src/combat/combat_state.dart';
 export 'src/combat/combat_state_repository.dart';
+export 'src/combat/ruleset_combat_stat_catalog.dart';
 export 'src/creature/archive_creature.dart';
 export 'src/creature/create_creature.dart';
 export 'src/creature/creature.dart';

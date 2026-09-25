@@ -54,6 +54,10 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       turnIndex: row['turn_index'] as int,
       turnOrder: order,
       actions: actions,
+      stats: (jsonDecode(row['stats_json'] as String) as Map).map(
+        (key, value) =>
+            MapEntry(key as String, Map<String, int>.from(value as Map)),
+      ),
     );
   }
 
@@ -101,6 +105,8 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
         for (final action in state.actions) _encodeAction(action),
       ]);
 
+      final statsJson = jsonEncode(state.stats);
+
       if (state.revision == 0) {
         final existing = _database.select(
           'SELECT revision FROM combat_states WHERE encounter_id = ?',
@@ -112,8 +118,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
         _database.execute(
           '''INSERT INTO combat_states
              (encounter_id, campaign_id, ruleset_id, ruleset_version,
-              revision, round_number, turn_index, turn_order_json, actions_json)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+              revision, round_number, turn_index, turn_order_json, actions_json,
+              stats_json)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
           <Object?>[
             state.encounterId,
             state.campaignId,
@@ -124,13 +131,14 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
             state.turnIndex,
             orderJson,
             actionsJson,
+            statsJson,
           ],
         );
       } else {
         _database.execute(
           '''UPDATE combat_states SET
                revision = ?, round_number = ?, turn_index = ?,
-               turn_order_json = ?, actions_json = ?
+               turn_order_json = ?, actions_json = ?, stats_json = ?
              WHERE encounter_id = ? AND campaign_id = ?
                AND ruleset_id = ? AND ruleset_version = ? AND revision = ?''',
           <Object?>[
@@ -139,6 +147,7 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
             state.turnIndex,
             orderJson,
             actionsJson,
+            statsJson,
             state.encounterId,
             state.campaignId,
             state.rulesetId,

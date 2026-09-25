@@ -21,12 +21,20 @@ void main() {
     await repository.save(updated);
     updated = updated.advanceTurn();
     await repository.save(updated);
+    updated = updated.setStat(
+      participantKey: 'npc:guide-1',
+      statId: 'stamina',
+      value: 3,
+    );
+    await repository.save(updated);
     repository.close();
 
     repository = SqliteCombatStateRepository.open(path);
     final loaded = await repository.getByEncounterId('enc-1');
     expect(loaded, isNotNull);
-    expect(loaded!.revision, 2);
+    expect(loaded!.revision, 3);
+    expect(loaded.stats['npc:guide-1']!['stamina'], 3);
+    expect(loaded.stats['character:hero-1']!['stamina'], 10);
     expect(loaded.round, 1);
     expect(loaded.turnIndex, 1);
     expect(loaded.currentParticipant.key, 'npc:guide-1');
@@ -104,7 +112,7 @@ void main() {
     database.close();
 
     final combat = SqliteCombatStateRepository.open(path);
-    expect(SqliteCombatStateRepository.schemaVersion, 15);
+    expect(SqliteCombatStateRepository.schemaVersion, 16);
     expect(await combat.getByEncounterId('enc-1'), isNull);
     await combat.save(_state());
     combat.close();
@@ -149,6 +157,10 @@ CombatState _state() {
     campaignId: 'campaign-1',
     rulesetId: 'system-1',
     rulesetVersion: '1',
+    stats: const <String, Map<String, int>>{
+      'character:hero-1': <String, int>{'stamina': 10},
+      'npc:guide-1': <String, int>{'stamina': 10},
+    },
     turnOrder: <CombatParticipant>[
       CombatParticipant(
         entityType: 'character',
