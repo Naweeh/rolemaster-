@@ -32,7 +32,7 @@ void main() {
       ruleset: _ruleset(
         config: const <String, Object?>{
           'tableId': 'critical',
-          'input': 10,
+          'input': 5,
           'matchOutcome': 'custom',
         },
       ),
@@ -41,7 +41,7 @@ void main() {
 
     expect(result.outcome, 'custom');
     expect(result.details['min'], 1);
-    expect(result.details['max'], 10);
+    expect(result.details['max'], 5);
   });
 
   test('returns an explicit outcome for a sparse table gap', () {
