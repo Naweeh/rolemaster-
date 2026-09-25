@@ -32,7 +32,7 @@ Estado: **completada**.
 - [x] Event Engine
 - [x] State Manager con optimistic revisioning y CAS
 - [x] Persistencia y snapshots
-  - [x] esquema SQLite central versionado hasta v14
+  - [x] esquema SQLite central versionado hasta v15
   - [x] migraciones secuenciales
   - [x] snapshots consistentes mediante SQLite backup
   - [x] validación de integridad y claves foráneas
@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Combat Foundation 4.4B — persistencia de estado y acciones**.
+Sprint activo: **Combat Foundation 4.4C — estadísticas desde Ruleset**.
 
 - [x] Effective Ruleset = paquete exacto + módulos activos + overlay
 - [x] validación de binding/versión/módulos obligatorios
@@ -86,7 +86,7 @@ Sprint activo: **Combat Foundation 4.4B — persistencia de estado y acciones**.
 - [x] primer intérprete genérico `dice-threshold` configurado desde Ruleset
 - [x] Tablas versionadas: catálogo inmutable y lookup integrado con Resolution Engine
 - [x] Combat Core: Encounter activo, participantes verificados, turnos/rondas y acciones por Resolution Engine
-- [ ] Persistencia SQLite y recuperación de combate
+- [x] Persistencia SQLite v15 y recuperación de combate con revisión optimista
 - [ ] HP/defensas/ataques definidos sólo por Ruleset
 - [ ] Effects / conditions
 - [ ] Extensibilidad de reglas

@@ -184,7 +184,7 @@ void main() {
     database.close();
 
     final encounterRepository = SqliteEncounterRepository.open(path);
-    expect(SqliteEncounterRepository.schemaVersion, 14);
+    expect(SqliteEncounterRepository.schemaVersion, 15);
     encounterRepository.close();
 
     final reopenedMapRepository = SqliteSceneMapRepository.open(path);

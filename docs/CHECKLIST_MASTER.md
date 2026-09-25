@@ -4,8 +4,8 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.4A — base de combate en Core (participantes, turnos y resolución).
-- **Activo:** Fase 4.4B — persistencia y recuperación del estado de combate.
+- **Último completado:** Fase 4.4B — estado de combate persistido en SQLite v15 con revisión optimista.
+- **Activo:** Fase 4.4C — integrar estadísticas de combate exclusivamente desde el Ruleset.
 - **Siguiente:** Fase 4.5+ — efectos/condiciones y reglas avanzadas, tras cerrar Combat Foundation.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
@@ -37,7 +37,7 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 - [x] Build web técnico automatizado.
 - [x] Artefacto descargable `rolemaster-web-preview`.
 - [ ] GitHub Pages para URL directa — pendiente habilitación del repositorio.
-- [x] Esquema SQLite central versionado hasta v14.
+- [x] Esquema SQLite central versionado hasta v15.
 - [x] Migraciones secuenciales e históricas.
 - [x] Snapshots, integridad, restore y rollback pre-restore.
 
@@ -222,11 +222,16 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Acciones resueltas mediante Resolution Engine y registradas con actor y resultado.
 - [x] CI Core + SQLite + Flutter verde (run `36143081900`).
 
-### 4.4B Persistencia e integración — ACTIVO
-- [ ] Guardar y recuperar estado de combate y acciones en SQLite con migración versionada.
-- [ ] Prevenir conflictos de actualización de estado y cambios simultáneos de participantes.
+### 4.4B Persistencia e integración — COMPLETADO
+- [x] Guardar y recuperar estado de combate, acciones y tiradas en SQLite v15.
+- [x] Revisiones optimistas, rechazo de sobrescrituras y cambios de participantes o cierre del Encounter.
+- [x] Binding exacto de ID y versión de Ruleset durante toda la sesión.
+- [x] Tests de reapertura, migración v14→v15, traza completa y conflictos.
+- [x] CI Core + SQLite + Flutter verde (run `36144495982`).
+
+### 4.4C Estadísticas por Ruleset — ACTIVO
 - [ ] HP/defensas/ataques sólo mediante definiciones del Ruleset; sin valores hardcodeados en Core.
-- [ ] Tests de reapertura, migración y consistencia de Encounter.
+- [ ] Tests con Rulesets distintos y sin estadísticas opcionales.
 
 ## 4.5+ Reglas avanzadas
 - [ ] Efectos/condiciones.
