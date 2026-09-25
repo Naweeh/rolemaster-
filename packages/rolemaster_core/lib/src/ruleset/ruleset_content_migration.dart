@@ -14,11 +14,11 @@ final class RulesetContentMigration {
           availableTargetItemIds,
         ) {
     if (this.skillIds.entries.any(
-          (entry) => entry.key.trim().isEmpty || entry.value.trim().isEmpty,
-        ) ||
+              (entry) => entry.key.trim().isEmpty || entry.value.trim().isEmpty,
+            ) ||
         this.itemDefinitionIds.entries.any(
-          (entry) => entry.key.trim().isEmpty || entry.value.trim().isEmpty,
-        )) {
+              (entry) => entry.key.trim().isEmpty || entry.value.trim().isEmpty,
+            )) {
       throw ArgumentError('Ruleset content mappings require nonempty IDs.');
     }
   }
