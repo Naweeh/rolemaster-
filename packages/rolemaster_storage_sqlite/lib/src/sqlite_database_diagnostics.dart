@@ -39,8 +39,10 @@ final class SqliteDatabaseDiagnostics {
           .toList(growable: false);
       final foreignKeys = database.select('PRAGMA foreign_key_check');
       final failures = foreignKeys
-          .map((row) =>
-              '${row['table']} rowid=${row['rowid']} parent=${row['parent']}')
+          .map(
+            (row) =>
+                '${row['table']} rowid=${row['rowid']} parent=${row['parent']}',
+          )
           .toList(growable: false);
       final tables = database.select(
         "SELECT name FROM sqlite_master WHERE type = 'table'",
@@ -50,8 +52,9 @@ final class SqliteDatabaseDiagnostics {
         schemaVersion: database.userVersion,
         integrityMessages: List<String>.unmodifiable(integrity),
         foreignKeyFailures: List<String>.unmodifiable(failures),
-        roleMasterSchemaPresent:
-            tables.any((row) => row['name'] == 'campaigns'),
+        roleMasterSchemaPresent: tables.any(
+          (row) => row['name'] == 'campaigns',
+        ),
       );
     } finally {
       database.close();
