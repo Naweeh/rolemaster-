@@ -254,6 +254,22 @@ void main() {
         );
       }
 
+      final legacyCombat = sqlite3.open(fixture.path);
+      legacyCombat.execute("""
+        INSERT INTO encounters
+          (id, campaign_id, name, status, created_at, updated_at, started_at, closed_at)
+        VALUES ('enc-closed', 'campaign-1', 'Closed fight', 'closed', 1, 2, 1, 2)
+      """);
+      legacyCombat.execute("""
+        INSERT INTO combat_states
+          (encounter_id, campaign_id, ruleset_id, ruleset_version, revision,
+           round_number, turn_index, turn_order_json, actions_json, stats_json, conditions_json)
+        VALUES ('enc-closed', 'campaign-1', 'rolemaster-rm2', '1.0.0', 2,
+                3, 0, '[]', '[]', '{"npc:ogre":{"initiative":-2}}',
+                '[{"participantKey":"npc:ogre","conditionId":"stunned","remainingRounds":1,"sourceKey":null}]')
+      """);
+      legacyCombat.close();
+
       final migration = MigrateCampaignRuleset(
         campaignRepository: campaigns,
         rulesetRepository: packages,
@@ -289,6 +305,28 @@ void main() {
       expect(
         (await bindings.getForCampaign('campaign-1'))!.binding.rulesetVersion,
         '2.0.0',
+      );
+      expect(
+        database.select(
+          'SELECT ruleset_version, stats_json, conditions_json '
+          'FROM combat_states WHERE encounter_id = ?',
+          <Object?>['enc-closed'],
+        ).single,
+        containsPair('ruleset_version', '1.0.0'),
+      );
+      expect(
+        database.select(
+          'SELECT stats_json FROM combat_states WHERE encounter_id = ?',
+          <Object?>['enc-closed'],
+        ).single['stats_json'],
+        '{"npc:ogre":{"initiative":-2}}',
+      );
+      expect(
+        database.select(
+          'SELECT conditions_json FROM combat_states WHERE encounter_id = ?',
+          <Object?>['enc-closed'],
+        ).single['conditions_json'],
+        '[{"participantKey":"npc:ogre","conditionId":"stunned","remainingRounds":1,"sourceKey":null}]',
       );
 
       await expectLater(
