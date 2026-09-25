@@ -4,12 +4,17 @@ import 'package:test/test.dart';
 void main() {
   final at = DateTime.utc(2026, 9, 25);
 
-  test('resolves three entity types and preserves explicit turn order', () async {
+  test('resolves three entity types and preserves explicit turn order',
+      () async {
     final engine = _combatEngine();
     final state = await engine.start(
       encounter: _encounter(at),
       ruleset: _ruleset(),
-      turnOrder: <String>['CREATURE:monster-1', 'character:hero-1', 'npc:guide-1'],
+      turnOrder: <String>[
+        'CREATURE:monster-1',
+        'character:hero-1',
+        'npc:guide-1'
+      ],
     );
 
     expect(state.encounterId, 'enc-1');
@@ -33,13 +38,13 @@ void main() {
       EncounterParticipant(entityType: 'creature', entityId: 'foreign'),
       EncounterParticipant(entityType: 'vehicle', entityId: 'car'),
     ]) {
-      final encounter = _encounter(at, participants: <EncounterParticipant>[reference]);
+      final encounter =
+          _encounter(at, participants: <EncounterParticipant>[reference]);
       await expectLater(resolver.resolve(encounter), throwsStateError);
     }
   });
 
-  test('requires an active encounter and complete unique turn order',
-      () async {
+  test('requires an active encounter and complete unique turn order', () async {
     final engine = _combatEngine();
     await expectLater(
       engine.start(
@@ -155,7 +160,8 @@ void main() {
   });
 }
 
-Encounter _encounter(DateTime at, {
+Encounter _encounter(
+  DateTime at, {
   Iterable<EncounterParticipant>? participants,
 }) {
   return Encounter(
@@ -163,11 +169,12 @@ Encounter _encounter(DateTime at, {
     campaignId: 'campaign-1',
     name: 'Road fight',
     status: EncounterStatus.active,
-    participants: participants ?? <EncounterParticipant>[
-      EncounterParticipant(entityType: 'character', entityId: 'hero-1'),
-      EncounterParticipant(entityType: 'npc', entityId: 'guide-1'),
-      EncounterParticipant(entityType: 'creature', entityId: 'monster-1'),
-    ],
+    participants: participants ??
+        <EncounterParticipant>[
+          EncounterParticipant(entityType: 'character', entityId: 'hero-1'),
+          EncounterParticipant(entityType: 'npc', entityId: 'guide-1'),
+          EncounterParticipant(entityType: 'creature', entityId: 'monster-1'),
+        ],
     createdAt: at,
     startedAt: at.add(const Duration(minutes: 1)),
   );
@@ -177,7 +184,8 @@ CombatParticipantResolver _resolver() {
   final at = DateTime.utc(2026, 9, 25);
   return CombatParticipantResolver(
     characters: _CharacterRepo(<Character>[
-      Character(id: 'hero-1', campaignId: 'campaign-1', name: 'Hero', createdAt: at),
+      Character(
+          id: 'hero-1', campaignId: 'campaign-1', name: 'Hero', createdAt: at),
       Character(
         id: 'archived',
         campaignId: 'campaign-1',
@@ -293,8 +301,12 @@ final class _CharacterRepo implements CharacterRepository {
   Future<List<Character>> getForCampaign(
     String campaignId, {
     bool includeArchived = false,
-  }) async => _items.values.where((item) =>
-      item.campaignId == campaignId && (includeArchived || !item.isArchived)).toList();
+  }) async =>
+      _items.values
+          .where((item) =>
+              item.campaignId == campaignId &&
+              (includeArchived || !item.isArchived))
+          .toList();
 
   @override
   Future<void> save(Character character) async {
@@ -314,8 +326,12 @@ final class _NpcRepo implements NpcRepository {
   Future<List<Npc>> getForCampaign(
     String campaignId, {
     bool includeArchived = false,
-  }) async => _items.values.where((item) =>
-      item.campaignId == campaignId && (includeArchived || !item.isArchived)).toList();
+  }) async =>
+      _items.values
+          .where((item) =>
+              item.campaignId == campaignId &&
+              (includeArchived || !item.isArchived))
+          .toList();
 
   @override
   Future<void> save(Npc npc) async {
@@ -335,8 +351,12 @@ final class _CreatureRepo implements CreatureRepository {
   Future<List<Creature>> getForCampaign(
     String campaignId, {
     bool includeArchived = false,
-  }) async => _items.values.where((item) =>
-      item.campaignId == campaignId && (includeArchived || !item.isArchived)).toList();
+  }) async =>
+      _items.values
+          .where((item) =>
+              item.campaignId == campaignId &&
+              (includeArchived || !item.isArchived))
+          .toList();
 
   @override
   Future<void> save(Creature creature) async {
