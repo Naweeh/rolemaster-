@@ -38,6 +38,8 @@ final class CombatEngine {
     return CombatState(
       encounterId: encounter.id,
       campaignId: encounter.campaignId,
+      rulesetId: ruleset.rulesetId,
+      rulesetVersion: ruleset.version,
       turnOrder: <CombatParticipant>[for (final key in keys) byKey[key]!],
     );
   }
@@ -51,7 +53,9 @@ final class CombatEngine {
   }) {
     _validateEncounter(encounter, ruleset);
     if (state.encounterId != encounter.id ||
-        state.campaignId != encounter.campaignId) {
+        state.campaignId != encounter.campaignId ||
+        state.rulesetId != ruleset.rulesetId ||
+        state.rulesetVersion != ruleset.version) {
       throw StateError('Combat state belongs to another encounter.');
     }
     final encounterKeys =
