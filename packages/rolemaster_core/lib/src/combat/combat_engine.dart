@@ -122,7 +122,8 @@ final class CombatEngine {
     String? sourceKey,
   }) {
     _validateState(encounter, ruleset, state);
-    final definition = RulesetConditionCatalog(ruleset).requireActive(conditionId);
+    final definition =
+        RulesetConditionCatalog(ruleset).requireActive(conditionId);
     return state.applyCondition(CombatCondition(
       participantKey: participantKey,
       conditionId: definition.id,
