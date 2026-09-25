@@ -271,16 +271,16 @@ final class SqliteCampaignRulesetRepository
     required CampaignRulesetState expected,
     required CampaignRulesetState next,
   }) async {
-    if (expected.campaignId != next.binding.campaignId ||
-        expected.rulesetId != next.binding.rulesetId ||
-        expected.rulesetVersion == next.binding.rulesetVersion) {
+    if (expected.binding.campaignId != next.binding.campaignId ||
+        expected.binding.rulesetId != next.binding.rulesetId ||
+        expected.binding.rulesetVersion == next.binding.rulesetVersion) {
       throw StateError('Invalid campaign ruleset migration.');
     }
     _database.execute('BEGIN IMMEDIATE');
     try {
       final active = _database.select(
         "SELECT 1 FROM encounters WHERE campaign_id = ? AND status = 'active' LIMIT 1",
-        <Object?>[expected.campaignId],
+        <Object?>[expected.binding.campaignId],
       );
       if (active.isNotEmpty) {
         throw StateError('Close active encounters before migrating rulesets.');
@@ -298,6 +298,7 @@ final class SqliteCampaignRulesetRepository
                bound_at = ?, overlay_json = ?, overlay_updated_at = ?
            WHERE campaign_id = ? AND ruleset_id = ?
              AND ruleset_version = ? AND bound_at = ?
+             AND overlay_updated_at = ?
            RETURNING campaign_id''',
         <Object?>[
           next.binding.rulesetVersion,
@@ -305,10 +306,11 @@ final class SqliteCampaignRulesetRepository
           next.binding.boundAt.millisecondsSinceEpoch,
           jsonEncode(next.overlay.overrides),
           next.overlay.updatedAt.millisecondsSinceEpoch,
-          expected.campaignId,
-          expected.rulesetId,
-          expected.rulesetVersion,
-          expected.boundAt.millisecondsSinceEpoch,
+          expected.binding.campaignId,
+          expected.binding.rulesetId,
+          expected.binding.rulesetVersion,
+          expected.binding.boundAt.millisecondsSinceEpoch,
+          expected.overlay.updatedAt.millisecondsSinceEpoch,
         ],
       );
       if (changed.length != 1) {
