@@ -193,7 +193,7 @@ void main() {
           createdAt: DateTime.utc(2026, 8, 10, 10),
         ),
       );
-      campaigns.close();
+      addTearDown(campaigns.close);
       final characters = SqliteCharacterRepository.open(fixture.path);
       for (final id in <String>['character-1', 'character-rollback']) {
         await characters.save(
