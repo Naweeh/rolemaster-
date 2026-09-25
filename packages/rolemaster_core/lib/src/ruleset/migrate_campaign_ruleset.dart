@@ -112,14 +112,18 @@ final class MigrateCampaignRuleset {
             'Migrated overlay has keys absent from target ruleset.');
       }
     }
-    final sourceSkills =
-        RulesetSkillCatalog.fromPackage(source).definitions.map((item) => item.id).toSet();
+    final sourceSkills = RulesetSkillCatalog.fromPackage(source)
+        .definitions
+        .map((item) => item.id)
+        .toSet();
     final targetSkills = RulesetSkillCatalog.fromPackage(target)
         .availableForModules(selected)
         .map((item) => item.id)
         .toSet();
-    final sourceItems =
-        RulesetItemCatalog.fromPackage(source).definitions.map((item) => item.id).toSet();
+    final sourceItems = RulesetItemCatalog.fromPackage(source)
+        .definitions
+        .map((item) => item.id)
+        .toSet();
     final targetItems = RulesetItemCatalog.fromPackage(target)
         .availableForModules(selected)
         .map((item) => item.id)
