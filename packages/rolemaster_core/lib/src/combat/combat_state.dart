@@ -28,13 +28,16 @@ final class CombatState {
     if (this.encounterId.isEmpty || this.campaignId.isEmpty) {
       throw ArgumentError('Combat encounterId and campaignId are required.');
     }
-    if (this.turnOrder.isEmpty || round < 1 ||
-        turnIndex < 0 || turnIndex >= this.turnOrder.length) {
+    if (this.turnOrder.isEmpty ||
+        round < 1 ||
+        turnIndex < 0 ||
+        turnIndex >= this.turnOrder.length) {
       throw ArgumentError('Combat requires participants and a valid turn.');
     }
     if (this.turnOrder.map((item) => item.key).toSet().length !=
         this.turnOrder.length) {
-      throw ArgumentError('Combat turn order must contain unique participants.');
+      throw ArgumentError(
+          'Combat turn order must contain unique participants.');
     }
     for (final action in this.actions) {
       if (!this.turnOrder.any((item) => item.key == action.actorKey) ||
