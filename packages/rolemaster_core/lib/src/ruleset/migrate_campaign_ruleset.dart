@@ -1,5 +1,8 @@
 import '../campaign/campaign_not_found_exception.dart';
 import '../campaign/campaign_repository.dart';
+import '../inventory/ruleset_item_catalog.dart';
+import '../skill/ruleset_skill_catalog.dart';
+import 'ruleset_content_migration.dart';
 import 'ruleset_exceptions.dart';
 import 'ruleset_models.dart';
 import 'ruleset_repository.dart';
@@ -31,6 +34,8 @@ final class MigrateCampaignRuleset {
     required String expectedSourceVersion,
     required bool preserveOverlay,
     CampaignRulesOverlayTransformer? overlayTransformer,
+    Map<String, String> skillIdMappings = const <String, String>{},
+    Map<String, String> itemDefinitionIdMappings = const <String, String>{},
     Iterable<String>? activeModuleIds,
   }) async {
     final id = campaignId.trim();
@@ -107,6 +112,31 @@ final class MigrateCampaignRuleset {
             'Migrated overlay has keys absent from target ruleset.');
       }
     }
+    final sourceSkills =
+        RulesetSkillCatalog.fromPackage(source).definitions.map((item) => item.id).toSet();
+    final targetSkills = RulesetSkillCatalog.fromPackage(target)
+        .availableForModules(selected)
+        .map((item) => item.id)
+        .toSet();
+    final sourceItems =
+        RulesetItemCatalog.fromPackage(source).definitions.map((item) => item.id).toSet();
+    final targetItems = RulesetItemCatalog.fromPackage(target)
+        .availableForModules(selected)
+        .map((item) => item.id)
+        .toSet();
+    _validateMappings(skillIdMappings, sourceSkills, targetSkills, 'skill');
+    _validateMappings(
+      itemDefinitionIdMappings,
+      sourceItems,
+      targetItems,
+      'item definition',
+    );
+    final contentMigration = RulesetContentMigration(
+      skillIds: skillIdMappings,
+      itemDefinitionIds: itemDefinitionIdMappings,
+      availableTargetSkillIds: targetSkills,
+      availableTargetItemIds: targetItems,
+    );
     final now = clock().toUtc();
     final next = CampaignRulesetState(
       binding: CampaignRulesetBinding(
@@ -125,7 +155,24 @@ final class MigrateCampaignRuleset {
     await campaignRulesetRepository.migrate(
       expected: current,
       next: next,
+      contentMigration: contentMigration,
     );
     return next;
+  }
+}
+
+void _validateMappings(
+  Map<String, String> mappings,
+  Set<String> sourceIds,
+  Set<String> targetIds,
+  String kind,
+) {
+  for (final entry in mappings.entries) {
+    if (!sourceIds.contains(entry.key)) {
+      throw StateError('Unknown source $kind ID: ${entry.key}.');
+    }
+    if (!targetIds.contains(entry.value)) {
+      throw StateError('Unknown or inactive target $kind ID: ${entry.value}.');
+    }
   }
 }
