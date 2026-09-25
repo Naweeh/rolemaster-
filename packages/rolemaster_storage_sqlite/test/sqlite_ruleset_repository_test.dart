@@ -338,6 +338,26 @@ void main() {
         ),
         throwsStateError,
       );
+      database.execute("""
+        CREATE TRIGGER fail_campaign_ruleset_migration
+        BEFORE UPDATE ON campaign_rulesets
+        WHEN OLD.campaign_id = 'campaign-rollback'
+        BEGIN
+          SELECT RAISE(ABORT, 'forced binding failure');
+        END
+      """);
+      await expectLater(
+        migration(
+          campaignId: 'campaign-rollback',
+          targetRulesetId: 'rolemaster-rm2',
+          targetVersion: '2.0.0',
+          expectedSourceVersion: '1.0.0',
+          preserveOverlay: false,
+          skillIdMappings: const <String, String>{'climb-old': 'climb'},
+          itemDefinitionIdMappings: const <String, String>{'sword-old': 'sword'},
+        ),
+        throwsA(isA<SqliteException>()),
+      );
       expect(
         database.select(
           'SELECT skill_id FROM character_skills WHERE character_id = ?',
