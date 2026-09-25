@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.5B — modificadores de condiciones y traza de resolución.
-- **Activo:** Fase 4.5C — migración controlada de Ruleset.
-- **Siguiente:** extensibilidad de reglas y servicios opcionales.
+- **Último completado:** Fase 4.5C — migración controlada de Ruleset.
+- **Activo:** Fase 5 — contratos y servicios opcionales.
+- **Siguiente:** Fase 6 — Hardening y Backend/Core Freeze.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -250,8 +250,11 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Orden de aplicación y traza verificables, sin reglas de sistema hardcodeadas.
 - [x] CI Core + SQLite + Flutter verde (run `36148253242`).
 
-### 4.5C Migración de Ruleset — ACTIVO
-- [ ] Migración controlada entre ediciones/versiones sin reemplazo silencioso.
+### 4.5C Migración de Ruleset — COMPLETADO
+- [x] Migración explícita entre ediciones/versiones del mismo Ruleset, con versión origen esperada, módulos validados y política de overlay.
+- [x] Actualización atómica en SQLite; rechazo con encuentros activos y cambios concurrentes de binding/overlay.
+- [x] Reemplazo silencioso continúa bloqueado.
+- [x] CI Core + SQLite + Flutter verde (run `36150283531`).
 
 ---
 
