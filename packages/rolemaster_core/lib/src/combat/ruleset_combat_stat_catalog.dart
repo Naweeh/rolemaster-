@@ -49,13 +49,16 @@ final class RulesetCombatStatCatalog {
     final result = <CombatStatDefinition>[];
     for (final value in raw) {
       if (value is! Map || value.keys.any((key) => key is! String)) {
-        throw StateError('Each combat stat must be an object with string keys.');
+        throw StateError(
+            'Each combat stat must be an object with string keys.');
       }
       final data = Map<String, Object?>.from(value);
       final id = data['id'];
       final moduleId = data['moduleId'];
       if (id is! String ||
-          moduleId != null && (moduleId is! String || !knownModules.contains(moduleId.trim()))) {
+          moduleId != null &&
+              (moduleId is! String ||
+                  !knownModules.contains(moduleId.trim()))) {
         throw StateError('Invalid combat stat ID or module.');
       }
       final min = _optionalInt(data['min'], 'min');
