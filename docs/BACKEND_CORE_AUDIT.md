@@ -16,7 +16,11 @@ En el run de GitHub Actions `36183374729` pasaron Core Dart, SQLite storage, Flu
 - SQLite hace el cambio del binding en una transacción y compara la versión de overlay leída; rechaza encuentros activos y escrituras concurrentes.
 - Un overlay no vacío requiere un transformador explícito y validación de claves superiores contra el paquete destino.
 
-**Pendiente antes del Freeze:** el flujo todavía no transforma referencias persistidas de campaña (por ejemplo, habilidades, estadísticas, objetos o condiciones) entre versiones. La migración actual es de binding/overlay; no equivale a una migración completa de contenido ni debe presentarse como tal.
+**4.5C completada:** el flujo acepta mapeos explícitos de habilidades y definiciones de objetos, valida destinos en los módulos activos y actualiza esas referencias junto al binding dentro de una transacción SQLite. Las pruebas cubren la migración, el rollback si falta un destino y la preservación de referencias históricas.
+
+Las estadísticas, condiciones y acciones están guardadas dentro de snapshots de combate que conservan `rulesetId + rulesetVersion`. Como la migración bloquea encuentros activos, esos snapshots pertenecen a combates cerrados y se mantienen ligados a su Ruleset original; no se traducen ni se reescriben al cambiar la versión de la campaña.
+
+**Pendiente antes del Freeze:** logging operativo general del Core y repositorios, objetivos y escenarios de benchmark representativos, coordinación de restore frente a conexiones vivas, y auditoría final de contratos y errores.
 
 ### SQLite, recuperación y diagnóstico
 

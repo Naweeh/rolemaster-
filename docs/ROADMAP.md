@@ -75,7 +75,7 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Fase 4.5C — migración de referencias de campaña entre versiones de Ruleset**.
+Sprint activo: **Fase 3 — extensibilidad de reglas**. La migración 4.5C está completada.
 
 La migración atómica del binding está implementada; todavía falta transformar datos persistidos que referencian IDs del Ruleset. Los servicios opcionales tienen contratos y proveedores desactivados. Ver `BACKEND_CORE_AUDIT.md`.
 
@@ -95,8 +95,9 @@ Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las i
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
 - [x] Effects: modificadores automáticos con traza (CI `36148253242`)
 - [ ] Extensibilidad de reglas
-- [ ] Migrar referencias persistidas de campaña entre versiones (skills, stats, items y conditions).
-- [x] Fundamento de migración atómica del binding (CI `36150283531`), pendiente completar mapeo de contenido.
+- [x] Migración atómica de IDs de habilidades y definiciones de objetos con mapeos explícitos; pruebas SQLite cubren migración y rollback.
+- [x] Preservar estadísticas, condiciones y acciones de combates cerrados como historial ligado a su versión exacta del Ruleset; no se reescriben al migrar la campaña.
+- [x] Migración atómica del binding y auditoría de referencias persistidas (CI `36150283531`).
 
 ## Fase 4 — Interfaz multiplataforma
 

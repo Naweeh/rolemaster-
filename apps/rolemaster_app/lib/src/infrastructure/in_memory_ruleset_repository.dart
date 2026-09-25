@@ -59,6 +59,7 @@ final class InMemoryCampaignRulesetRepository
   Future<void> migrate({
     required CampaignRulesetState expected,
     required CampaignRulesetState next,
+    required RulesetContentMigration contentMigration,
   }) async {
     final current = _states[expected.binding.campaignId];
     if (current == null ||

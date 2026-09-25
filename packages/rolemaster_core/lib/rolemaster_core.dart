@@ -115,6 +115,7 @@ export 'src/ruleset/initialize_campaign_ruleset.dart';
 export 'src/ruleset/migrate_campaign_ruleset.dart';
 export 'src/ruleset/reset_campaign_rules.dart';
 export 'src/ruleset/resolve_effective_ruleset.dart';
+export 'src/ruleset/ruleset_content_migration.dart';
 export 'src/ruleset/ruleset_exceptions.dart';
 export 'src/ruleset/ruleset_models.dart';
 export 'src/ruleset/ruleset_repository.dart';
