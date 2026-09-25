@@ -31,8 +31,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       return null;
     }
     final row = rows.single;
-    final order = (jsonDecode(row['turn_order_json'] as String) as List)
-        .map((item) {
+    final order = (jsonDecode(row['turn_order_json'] as String) as List).map((
+      item,
+    ) {
       final map = Map<String, Object?>.from(item as Map);
       return CombatParticipant(
         entityType: map['entityType'] as String,
@@ -40,8 +41,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
         name: map['name'] as String,
       );
     });
-    final actions = (jsonDecode(row['actions_json'] as String) as List)
-        .map((item) => _decodeAction(Map<String, Object?>.from(item as Map)));
+    final actions = (jsonDecode(row['actions_json'] as String) as List).map(
+      (item) => _decodeAction(Map<String, Object?>.from(item as Map)),
+    );
     return CombatState(
       encounterId: row['encounter_id'] as String,
       campaignId: row['campaign_id'] as String,
@@ -66,7 +68,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       if (encounterRows.isEmpty ||
           encounterRows.single['campaign_id'] != state.campaignId ||
           encounterRows.single['status'] != 'active') {
-        throw StateError('Combat requires an active encounter in its campaign.');
+        throw StateError(
+          'Combat requires an active encounter in its campaign.',
+        );
       }
       final references = _database.select(
         'SELECT entity_type, entity_id FROM encounter_participants '
@@ -74,9 +78,11 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
         <Object?>[state.encounterId],
       );
       final keys = references
-          .map((row) =>
-              '${(row['entity_type'] as String).toLowerCase()}:'
-              '${row['entity_id'] as String}')
+          .map(
+            (row) =>
+                '${(row['entity_type'] as String).toLowerCase()}:'
+                '${row['entity_id'] as String}',
+          )
           .toSet();
       if (keys.length != state.turnOrder.length ||
           !state.turnOrder.every((item) => keys.contains(item.key))) {
@@ -91,11 +97,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
             'name': item.name,
           },
       ]);
-      final actionsJson = jsonEncode(
-        <Map<String, Object?>>[
-          for (final action in state.actions) _encodeAction(action),
-        ],
-      );
+      final actionsJson = jsonEncode(<Map<String, Object?>>[
+        for (final action in state.actions) _encodeAction(action),
+      ]);
 
       if (state.revision == 0) {
         final existing = _database.select(
@@ -143,7 +147,8 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
           ],
         );
         final changed =
-            _database.select('SELECT changes() AS count').single['count'] as int;
+            _database.select('SELECT changes() AS count').single['count']
+                as int;
         if (changed != 1) {
           throw StateError('Combat state revision conflict.');
         }
