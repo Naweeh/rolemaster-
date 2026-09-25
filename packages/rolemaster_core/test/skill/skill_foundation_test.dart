@@ -262,7 +262,8 @@ final class _MemoryCampaignRulesetRepository
   }) async {
     final current = _states[expected.binding.campaignId];
     if (current == null ||
-        current.binding.rulesetVersion != expected.binding.rulesetVersion) {
+        current.binding.rulesetVersion != expected.binding.rulesetVersion ||
+        current.overlay.updatedAt != expected.overlay.updatedAt) {
       throw StateError('Campaign ruleset changed during migration.');
     }
     _states[expected.binding.campaignId] = next;
