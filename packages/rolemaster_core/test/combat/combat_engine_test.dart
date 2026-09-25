@@ -162,6 +162,60 @@ void main() {
       throwsStateError,
     );
   });
+  test('combat engine initializes and updates only ruleset-defined stats',
+      () async {
+    final engine = _combatEngine();
+    final at = DateTime.utc(2026, 9, 25);
+    final encounter = _encounter(at);
+    final ruleset = _statRuleset();
+    final state = await engine.start(
+      encounter: encounter,
+      ruleset: ruleset,
+      turnOrder: <String>[
+        'character:hero-1',
+        'npc:guide-1',
+        'creature:monster-1',
+      ],
+      initialStats: const <String, Map<String, int>>{
+        'character:hero-1': <String, int>{'stamina': 7},
+      },
+    );
+    expect(state.stats['character:hero-1']!['stamina'], 7);
+    expect(state.stats['npc:guide-1']!['stamina'], 10);
+    final changed = engine.setStat(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: state,
+      participantKey: 'npc:guide-1',
+      statId: 'stamina',
+      value: 3,
+    );
+    expect(changed.stats['npc:guide-1']!['stamina'], 3);
+    expect(changed.revision, 1);
+    expect(
+      () => engine.setStat(
+        encounter: encounter,
+        ruleset: ruleset,
+        state: state,
+        participantKey: 'npc:guide-1',
+        statId: 'health',
+        value: 3,
+      ),
+      throwsStateError,
+    );
+    expect(
+      () => engine.setStat(
+        encounter: encounter,
+        ruleset: ruleset,
+        state: state,
+        participantKey: 'npc:guide-1',
+        statId: 'stamina',
+        value: 11,
+      ),
+      throwsStateError,
+    );
+  });
+
 }
 
 Encounter _encounter(
@@ -288,6 +342,36 @@ EffectiveRuleset _ruleset({String campaignId = 'campaign-1'}) {
     activeModuleIds: const <String>[],
     overlay: CampaignRulesOverlay.clean(
       campaignId: campaignId,
+      updatedAt: DateTime.utc(2026, 9, 25),
+    ),
+  );
+}
+
+EffectiveRuleset _statRuleset() {
+  return EffectiveRuleset(
+    campaignId: 'campaign-1',
+    package: RulesetPackage(
+      manifest: RulesetManifest(
+        id: 'system-1',
+        systemId: 'system',
+        edition: 'Edition',
+        version: '1',
+        displayName: 'System',
+      ),
+      data: const <String, Object?>{
+        'combatStats': <Object?>[
+          <String, Object?>{
+            'id': 'stamina',
+            'min': 0,
+            'max': 10,
+            'initial': 10,
+          },
+        ],
+      },
+    ),
+    activeModuleIds: const <String>[],
+    overlay: CampaignRulesOverlay.clean(
+      campaignId: 'campaign-1',
       updatedAt: DateTime.utc(2026, 9, 25),
     ),
   );
