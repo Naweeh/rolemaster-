@@ -192,6 +192,30 @@ void main() {
     );
     expect(changed.stats['npc:guide-1']!['stamina'], 3);
     expect(changed.revision, 1);
+    final conditioned = engine.applyCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: changed,
+      participantKey: 'npc:guide-1',
+      conditionId: 'fatigue',
+      sourceKey: 'character:hero-1',
+    );
+    expect(conditioned.conditions.single.remainingRounds, 1);
+    expect(conditioned.conditions.single.sourceKey, 'character:hero-1');
+    expect(engine.removeCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: conditioned,
+      participantKey: 'npc:guide-1',
+      conditionId: 'fatigue',
+    ).conditions, isEmpty);
+    expect(() => engine.applyCondition(
+      encounter: encounter,
+      ruleset: ruleset,
+      state: changed,
+      participantKey: 'npc:guide-1',
+      conditionId: 'unknown',
+    ), throwsStateError);
     expect(
       () => engine.setStat(
         encounter: encounter,
@@ -358,6 +382,9 @@ EffectiveRuleset _statRuleset() {
         displayName: 'System',
       ),
       data: const <String, Object?>{
+        'conditions': <Object?>[
+          <String, Object?>{'id': 'fatigue', 'durationRounds': 1},
+        ],
         'combatStats': <Object?>[
           <String, Object?>{
             'id': 'stamina',
