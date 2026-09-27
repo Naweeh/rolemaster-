@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
+import 'src/app/error_logging.dart';
 import 'src/app/rolemaster_app.dart';
 import 'src/features/visual_alpha/visual_alpha_character_profile.dart';
 import 'src/infrastructure/in_memory_campaign_repository.dart';
@@ -10,6 +11,7 @@ import 'src/infrastructure/manual_alpha_rulesets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  installRolemasterErrorLogging();
 
   final CampaignRepository campaignRepository = InMemoryCampaignRepository();
   final CharacterRepository characterRepository = InMemoryCharacterRepository();
