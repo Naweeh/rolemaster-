@@ -25,8 +25,14 @@ void main() {
     expect(logger.events.single.$2, <String, Object?>{
       'changes': <String, int>{'campaigns.insert': 1},
     });
-    expect(logger.events.single.$2.toString(), isNot(contains('campaign-secret')));
-    expect(logger.events.single.$2.toString(), isNot(contains('Private campaign')));
+    expect(
+      logger.events.single.$2.toString(),
+      isNot(contains('campaign-secret')),
+    );
+    expect(
+      logger.events.single.$2.toString(),
+      isNot(contains('Private campaign')),
+    );
 
     database.execute('BEGIN');
     database.execute(
