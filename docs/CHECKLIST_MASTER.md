@@ -277,10 +277,10 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
 - [ ] Logging estructurado para fallos operativos de repositorios y límites del Core; el observador SQLite registra cambios y rollbacks, pero no errores de lectura ni límites del Core.
-- [x] Benchmark reproducible con escenarios de campañas, historial append-only y revisiones de combate. Runs #371 y #372 guardados en `docs/BACKEND_CORE_AUDIT.md`; el umbral sigue siendo provisional.
+- [x] Benchmark reproducible con escenarios de campañas, historial append-only y revisiones de combate. Runs #371, #372 y #374 guardados en `docs/BACKEND_CORE_AUDIT.md`; referencia consolidada disponible, el umbral sigue siendo provisional.
 - [x] Auditoría registrada y actualizada en `docs/BACKEND_CORE_AUDIT.md`.
 - [ ] Integrar un coordinador de aplicación que cierre todas las conexiones vivas antes de restaurar y probarlo con un repositorio abierto.
-- [ ] Reunir una tercera medición comparable y validar el umbral de regresión.
+- [ ] Validar el umbral provisional con ejecuciones posteriores y revisar su idoneidad cuando cambie el entorno de CI.
 - [ ] Cerrar los contratos de errores y servicios antes del Freeze.
 - [ ] Tag Backend/Core Freeze, bloqueado hasta cerrar los gaps de logging, coordinación de restore, medición y auditoría final.
 
