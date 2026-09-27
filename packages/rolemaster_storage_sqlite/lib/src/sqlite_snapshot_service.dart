@@ -262,7 +262,7 @@ final class SqliteSnapshotService {
         mode: migrateSource ? OpenMode.readWrite : OpenMode.readOnly,
       );
       if (migrateSource) {
-        initializeRolemasterSqliteSchema(source);
+        initializeRolemasterSqliteSchema(source, logger: logger);
       } else {
         _verifyRolemasterDatabase(source);
       }
@@ -271,7 +271,7 @@ final class SqliteSnapshotService {
       await source.backup(destination).drain();
 
       if (migrateDestination) {
-        initializeRolemasterSqliteSchema(destination);
+        initializeRolemasterSqliteSchema(destination, logger: logger);
       }
       _verifyRolemasterDatabase(
         destination,
