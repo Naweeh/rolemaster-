@@ -4,9 +4,9 @@ Este archivo es el tablero operativo principal del proyecto. El `ROADMAP.md` man
 
 ## Posición actual
 
-- **Último completado:** Fase 4.5B — modificadores de condiciones y traza de resolución.
-- **Activo:** Fase 4.5C — migración de datos de campaña entre versiones de Ruleset.
-- **Siguiente:** Fase 6 — Hardening y Backend/Core Freeze; luego fase 7.
+- **Último completado:** Fase 4.5C — migración atómica de referencias de habilidades y definiciones de objetos entre versiones de Ruleset.
+- **Activo:** Fase 6 — Hardening y cierre de Backend/Core Freeze.
+- **Siguiente:** Fase 7 — fase gráfica, al cerrar los bloqueos del Freeze.
 - **Regla:** no iniciar la fase gráfica definitiva hasta completar Backend/Core Freeze. La Visual Alpha queda congelada por ahora; se retoma cuando sea útil para validar una función concreta.
 
 ---
@@ -250,11 +250,12 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Orden de aplicación y traza verificables, sin reglas de sistema hardcodeadas.
 - [x] CI Core + SQLite + Flutter verde (run `36148253242`).
 
-### 4.5C Migración de Ruleset — ACTIVO
+### 4.5C Migración de Ruleset — COMPLETADO
 - [x] Base de migración del binding: valida versión origen, paquete destino, módulos, encuentros activos y escrituras concurrentes.
 - [x] Overlay no vacío requiere un transformador explícito; reemplazo silencioso continúa bloqueado.
-- [ ] Mapear y transformar referencias persistidas de campaña (habilidades, estadísticas, objetos y condiciones) entre versiones.
-- [x] CI Core + SQLite + Flutter verde para la base del binding (run `36150283531`).
+- [x] Migrar referencias de habilidades y definiciones de objetos mediante mapeos explícitos y transacción atómica.
+- [x] Mantener estadísticas, condiciones y acciones de snapshots históricos ligados a la versión original del Ruleset.
+- [x] CI Core + SQLite + Flutter verde; la migración y los rollbacks quedan cubiertos por pruebas.
 
 ---
 
@@ -275,11 +276,13 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Suite completa verde: CI Core + SQLite + Flutter verde (validación de servicios opcionales y diagnóstico).
 - [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
-- [ ] Logging estructurado de aplicación; el diagnóstico SQLite cubre estado de la base, no logging general.
-- [x] Benchmark reproducible de lectura/escritura del repositorio SQLite, ejecutado en CI (run `36180797429`): mediana 590.613 ms / 500 altas y 47.901 ms / 500 lecturas en runner GitHub; dato informativo, no umbral.
-- [x] Auditoría registrada en `docs/BACKEND_CORE_AUDIT.md`.
-- [ ] Cerrar gaps enumerados por la auditoría antes del Freeze.
-- [ ] Tag Backend/Core Freeze (bloqueado hasta cerrar migración de datos, logging general, métricas objetivo y coordinación de restore).
+- [ ] Logging estructurado para fallos operativos de repositorios y límites del Core; el observador SQLite registra cambios y rollbacks, pero no errores de lectura ni límites del Core.
+- [x] Benchmark reproducible con escenarios de campañas, historial append-only y revisiones de combate. Runs #371 y #372 guardados en `docs/BACKEND_CORE_AUDIT.md`; el umbral sigue siendo provisional.
+- [x] Auditoría registrada y actualizada en `docs/BACKEND_CORE_AUDIT.md`.
+- [ ] Integrar un coordinador de aplicación que cierre todas las conexiones vivas antes de restaurar y probarlo con un repositorio abierto.
+- [ ] Reunir una tercera medición comparable y validar el umbral de regresión.
+- [ ] Cerrar los contratos de errores y servicios antes del Freeze.
+- [ ] Tag Backend/Core Freeze, bloqueado hasta cerrar los gaps de logging, coordinación de restore, medición y auditoría final.
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
 
