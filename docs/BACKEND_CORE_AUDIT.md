@@ -4,7 +4,7 @@ Fecha: 2026-09-27. Esta auditoría separa capacidades probadas de trabajo pendie
 
 ## Verificación ejecutada
 
-En el run de GitHub Actions `36299261005` (run #372) pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android. SQLite ejecutó los tres benchmarks.
+En el run de GitHub Actions `36299715305` (run #374) pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android. SQLite ejecutó los tres benchmarks.
 
 ## Estado por contrato
 
@@ -50,14 +50,14 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 ### Rendimiento y plataformas
 
 - CI ejecuta tres escenarios: 500 escrituras y 500 lecturas puntuales de campañas; 500 eventos append-only y una lectura completa del historial; 200 revisiones secuenciales de estado de combate y una lectura del snapshot final. Cada escenario usa una ronda de calentamiento y tres medidas; el resultado informa medianas y metadatos del runner.
-- Dos muestras de CI comparables (Linux x64, Dart 3.13.4, 4 procesadores; medianas de tres rondas): run #371 (`36299065832`): campañas 440126/10501 µs, historial 477712/2717 µs, combate 193612/97 µs; run #372 (`36299261005`): campañas 340099/18934 µs, historial 359959/4036 µs, combate 136130/127 µs (escritura/lectura). Son referencias de runners, no objetivos para usuarios.
-- Umbral provisional de investigación: revisar una regresión si la mediana comparable supera 2× la referencia estable en tres ejecuciones consecutivas del mismo SO/runtime. No bloquea CI; faltan al menos una tercera ejecución comparable y validar o ajustar el umbral por la variación entre runners.
+- Tres muestras de CI comparables (Linux x64, Dart 3.13.4, 4 procesadores; cada run informa medianas de tres rondas): #371 (`36299065832`): campañas 440126/10501 µs, historial 477712/2717 µs, combate 193612/97 µs; #372 (`36299261005`): 340099/18934 µs, 359959/4036 µs, 136130/127 µs; #374 (`36299715305`): 400270/19936 µs, 397736/2840 µs, 162229/128 µs (escritura/lectura por escenario). Referencia consolidada —mediana de los tres valores por escenario—: campañas 400270/18934 µs, historial 397736/2840 µs y combate 162229/127 µs. Son referencias de runners, no objetivos para usuarios.
+- Umbral provisional de investigación: revisar una regresión si la mediana comparable supera 2× la referencia estable en tres ejecuciones consecutivas del mismo SO/runtime. No bloquea CI; validar o ajustar el umbral observando ejecuciones posteriores por la variación entre runners.
 - CI genera los runners Windows/Android en directorios de trabajo y compila ambos destinos. No hay configuración nativa específica comprometida al repositorio.
 
 ## Bloqueos para Backend/Core Freeze
 
 1. Completar logging operativo para errores de repositorios y límites del Core; ya se registran cambios y rollbacks SQLite sin datos de campaña.
-2. Reunir una tercera referencia comparable por SO/runtime y validar el umbral provisional de regresión.
+2. Validar el umbral provisional con ejecuciones posteriores y revisar su idoneidad cuando cambie el entorno de CI.
 3. Conectar el callback obligatorio de restore a un coordinador de aplicación que cierre todas las conexiones vivas al destino, y probarlo con una conexión de repositorio abierta.
 4. Cerrar los contratos de servicios y errores antes del tag de Freeze.
 
