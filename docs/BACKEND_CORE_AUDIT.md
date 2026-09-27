@@ -38,7 +38,7 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 - `SqliteDatabaseDiagnostics` abre la base en solo lectura e informa versión, integridad, referencias y presencia de esquema.
 - Snapshot y restore emiten logs estructurados con metadatos operativos; no registran contenido de campaña.
 
-**Limitación operativa:** la capa de aplicación debe cerrar conexiones al destino antes de restaurar. La coordinación de sesión todavía no lo impone.
+**Coordinación parcial:** `restoreSnapshot` ahora exige un callback `closeDestinationConnections` para que la capa llamante cierre las conexiones al destino antes de reemplazar los archivos. Si el callback falla, la restauración aborta y conserva intacta la base. La aplicación todavía debe conectar ese callback a un coordinador que cierre todas las conexiones vivas; esa integración y una prueba con conexiones activas siguen pendientes.
 
 ### Servicios opcionales
 
@@ -56,7 +56,7 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 
 1. Definir logging operativo para repositorios y errores del Core, más allá de snapshots.
 2. Acordar escenarios y objetivos de benchmark representativos; medirlos y conservar una referencia comparable.
-3. Auditar restore frente a conexiones vivas y cerrar esa brecha en la coordinación de aplicación.
+3. Conectar el callback obligatorio de restore a un coordinador de aplicación que cierre todas las conexiones vivas al destino, y probarlo con una conexión de repositorio abierta.
 4. Cerrar los contratos de servicios y errores antes del tag de Freeze.
 
 Hasta cerrar estos puntos, la fase gráfica definitiva sigue detrás de la puerta del Freeze.
