@@ -9,9 +9,7 @@ void main() {
     addTearDown(database.close);
 
     observeSqliteDatabaseOperations(database, logger);
-    database.execute(
-      'CREATE TABLE campaigns (id TEXT PRIMARY KEY, name TEXT)',
-    );
+    database.execute('CREATE TABLE campaigns (id TEXT PRIMARY KEY, name TEXT)');
     database.execute(
       'INSERT INTO campaigns (id, name) VALUES (?, ?)',
       <Object?>['campaign-secret-id', 'Private campaign name'],
