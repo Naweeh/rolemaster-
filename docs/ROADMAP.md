@@ -75,9 +75,9 @@ Estado: **completada para el alcance previo a Rules Engine**.
 
 ## Fase 3 — Reglas y combate
 
-Sprint activo: **Fase 3 — extensibilidad de reglas**. La migración 4.5C está completada.
+Sprint activo: **Backend/Core Freeze — cierre de bloqueos previos a la Fase 4**. La migración 4.5C está completada y la extensibilidad del motor de reglas ya está implementada y probada.
 
-La migración atómica del binding está implementada; todavía falta transformar datos persistidos que referencian IDs del Ruleset. Los servicios opcionales tienen contratos y proveedores desactivados. Ver `BACKEND_CORE_AUDIT.md`.
+La migración 4.5C transforma referencias persistidas de habilidades y definiciones de objetos mediante mapeos explícitos, dentro de la misma transacción que cambia el binding. Los servicios opcionales tienen contratos y proveedores desactivados; sus integraciones funcionales siguen pendientes. Ver `BACKEND_CORE_AUDIT.md`.
 
 Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las integraciones funcionales con proveedores siguen siendo optativas y quedan pendientes para después del freeze.
 
@@ -94,7 +94,7 @@ Los contratos de IA, NPC, STT/TTS y audio tienen proveedores desactivados. Las i
 - [x] Estadísticas de combate definidas por Ruleset y persistidas en SQLite v16
 - [x] Conditions: catálogo, duración por rondas y SQLite v17
 - [x] Effects: modificadores automáticos con traza (CI `36148253242`)
-- [ ] Extensibilidad de reglas
+- [x] Extensibilidad de reglas mediante intérpretes inyectables por `kind`, con rechazo de tipos duplicados y trazas de error para tipos desconocidos.
 - [x] Migración atómica de IDs de habilidades y definiciones de objetos con mapeos explícitos; pruebas SQLite cubren migración y rollback.
 - [x] Preservar estadísticas, condiciones y acciones de combates cerrados como historial ligado a su versión exacta del Ruleset; no se reescriben al migrar la campaña.
 - [x] Migración atómica del binding y auditoría de referencias persistidas (CI `36150283531`).
