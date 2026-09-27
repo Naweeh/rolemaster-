@@ -98,6 +98,9 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-infos
 
+      - name: Test
+        run: flutter test
+
   windows:
     name: Windows runner build
     runs-on: windows-2022
