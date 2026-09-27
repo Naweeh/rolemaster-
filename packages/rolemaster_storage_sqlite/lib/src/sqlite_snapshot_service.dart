@@ -152,7 +152,7 @@ final class SqliteSnapshotService {
     required String snapshotPath,
     required String destinationPath,
     required Future<void> Function(String destinationPath)
-        closeDestinationConnections,
+    closeDestinationConnections,
     String? rollbackPath,
   }) async {
     final snapshot = File(snapshotPath).absolute;
