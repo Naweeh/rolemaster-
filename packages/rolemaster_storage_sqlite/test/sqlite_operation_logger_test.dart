@@ -35,10 +35,10 @@ void main() {
     );
 
     database.execute('BEGIN');
-    database.execute(
-      'UPDATE campaigns SET name = ? WHERE id = ?',
-      <Object?>['Still private', 'campaign-secret-id'],
-    );
+    database.execute('UPDATE campaigns SET name = ? WHERE id = ?', <Object?>[
+      'Still private',
+      'campaign-secret-id',
+    ]);
     database.execute('ROLLBACK');
     await Future<void>.delayed(Duration.zero);
 
