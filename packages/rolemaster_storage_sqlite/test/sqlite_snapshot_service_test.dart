@@ -151,7 +151,7 @@ void main() {
       },
     );
 
-    test('does not replace destination when connection shutdown fails', () async {
+    test('aborts restore when closing connections fails', () async {
       final fixture = await _createFixture('snapshot-restore-open-connection');
       addTearDown(fixture.dispose);
       final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
