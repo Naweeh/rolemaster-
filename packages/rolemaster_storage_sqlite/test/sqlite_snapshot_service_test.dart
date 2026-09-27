@@ -88,10 +88,15 @@ void main() {
         );
         liveEvents.close();
 
+        String? coordinatedPath;
         final result = await service.restoreSnapshot(
           snapshotPath: snapshotPath,
           destinationPath: fixture.path,
+          closeDestinationConnections: (path) async {
+            coordinatedPath = path;
+          },
         );
+        expect(coordinatedPath, File(fixture.path).absolute.path);
 
         final restoredCampaigns = SqliteCampaignRepository.open(fixture.path);
         final restoredCampaign = await restoredCampaigns.getById('campaign-1');
@@ -146,6 +151,39 @@ void main() {
       },
     );
 
+    test('aborts restore when closing connections fails', () async {
+      final fixture = await _createFixture('snapshot-restore-open-connection');
+      addTearDown(fixture.dispose);
+      final snapshotPath = '${fixture.directory.path}/campaign.snapshot.db';
+      final service = SqliteSnapshotService();
+      await service.createSnapshot(
+        sourcePath: fixture.path,
+        snapshotPath: snapshotPath,
+      );
+
+      final live = sqlite3.open(fixture.path);
+      live.execute(
+        "UPDATE campaigns SET name = 'Campaña mutada' WHERE id = 'campaign-1'",
+      );
+      live.close();
+
+      await expectLater(
+        service.restoreSnapshot(
+          snapshotPath: snapshotPath,
+          destinationPath: fixture.path,
+          closeDestinationConnections: (_) async {
+            throw StateError('A database connection is still active.');
+          },
+        ),
+        throwsA(isA<SqliteSnapshotException>()),
+      );
+
+      final campaigns = SqliteCampaignRepository.open(fixture.path);
+      final campaign = await campaigns.getById('campaign-1');
+      campaigns.close();
+      expect(campaign!.name, 'Campaña mutada');
+    });
+
     test('logs snapshot lifecycle without campaign content', () async {
       final fixture = await _createFixture('snapshot-logging');
       addTearDown(fixture.dispose);
@@ -174,14 +212,19 @@ void main() {
       final invalidPath = '${fixture.directory.path}/invalid.snapshot';
       await File(invalidPath).writeAsString('not a sqlite database');
       final service = SqliteSnapshotService();
+      var closeCalled = false;
 
       await expectLater(
         service.restoreSnapshot(
           snapshotPath: invalidPath,
           destinationPath: fixture.path,
+          closeDestinationConnections: (_) async {
+            closeCalled = true;
+          },
         ),
         throwsA(isA<SqliteSnapshotException>()),
       );
+      expect(closeCalled, isFalse);
 
       final campaigns = SqliteCampaignRepository.open(fixture.path);
       final campaign = await campaigns.getById('campaign-1');
