@@ -18,8 +18,9 @@ final class DeveloperSqliteOperationLogger implements SqliteOperationLogger {
   }
 }
 
-final Expando<bool> _observedDatabases =
-    Expando<bool>('rolemaster.sqlite.operation-observer');
+final Expando<bool> _observedDatabases = Expando<bool>(
+  'rolemaster.sqlite.operation-observer',
+);
 
 /// Records committed row changes and rolled-back writes without row IDs,
 /// query text, parameters, or campaign content.
