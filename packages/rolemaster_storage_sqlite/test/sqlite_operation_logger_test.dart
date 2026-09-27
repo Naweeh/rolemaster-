@@ -1,8 +1,6 @@
+import 'package:rolemaster_storage_sqlite/rolemaster_storage_sqlite.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
-
-import '../lib/src/sqlite_operation_logger.dart';
-import '../lib/src/sqlite_schema.dart';
 
 void main() {
   test('logs database changes without row IDs or campaign values', () async {
@@ -10,13 +8,13 @@ void main() {
     final logger = _RecordingSqliteLogger();
     addTearDown(database.close);
 
-    initializeRolemasterSqliteSchema(database, logger: logger);
+    observeSqliteDatabaseOperations(database, logger);
     database.execute(
-      '''
-      INSERT INTO campaigns (id, name, created_at, updated_at)
-      VALUES (?, ?, ?, ?)
-      ''',
-      <Object?>['campaign-secret-id', 'Private campaign name', 1, 1],
+      'CREATE TABLE campaigns (id TEXT PRIMARY KEY, name TEXT)',
+    );
+    database.execute(
+      'INSERT INTO campaigns (id, name) VALUES (?, ?)',
+      <Object?>['campaign-secret-id', 'Private campaign name'],
     );
     await Future<void>.delayed(Duration.zero);
 
