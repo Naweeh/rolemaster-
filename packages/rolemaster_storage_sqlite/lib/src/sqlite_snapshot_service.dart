@@ -151,6 +151,8 @@ final class SqliteSnapshotService {
   Future<SqliteRestoreResult> restoreSnapshot({
     required String snapshotPath,
     required String destinationPath,
+    required Future<void> Function(String destinationPath)
+        closeDestinationConnections,
     String? rollbackPath,
   }) async {
     final snapshot = File(snapshotPath).absolute;
@@ -164,6 +166,19 @@ final class SqliteSnapshotService {
 
     logger.record('snapshot.restore.started', const <String, Object?>{});
     await validateSnapshot(snapshot.path);
+
+    try {
+      await closeDestinationConnections(destination.path);
+    } catch (error) {
+      logger.record('snapshot.restore.failed', <String, Object?>{
+        'errorType': error.runtimeType.toString(),
+        'rollbackAvailable': false,
+      });
+      throw SqliteSnapshotException(
+        'Could not close active connections before restoring the database.',
+        cause: error,
+      );
+    }
 
     String? rollbackSnapshotPath;
     if (await destination.exists()) {
