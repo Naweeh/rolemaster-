@@ -4,7 +4,7 @@ Fecha: 2026-09-27. Esta auditoría separa capacidades probadas de trabajo pendie
 
 ## Verificación ejecutada
 
-En el run de GitHub Actions `36198189973` pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android. SQLite ejecutó además un benchmark informativo.
+En el run de GitHub Actions `36298397897` (run #368) pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android.
 
 ## Estado por contrato
 
