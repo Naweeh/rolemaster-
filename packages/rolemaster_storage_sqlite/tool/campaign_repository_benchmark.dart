@@ -69,7 +69,9 @@ Future<Map<String, Object>> _measure({
 }
 
 Future<({int writes, int reads})> _campaignRound(int round) async {
-  final directory = await Directory.systemTemp.createTemp('rolemaster_campaign_bench');
+  final directory = await Directory.systemTemp.createTemp(
+    'rolemaster_campaign_bench',
+  );
   final path = '${directory.path}/campaign.sqlite';
   final repository = SqliteCampaignRepository.open(path);
 
@@ -100,7 +102,9 @@ Future<({int writes, int reads})> _campaignRound(int round) async {
 }
 
 Future<({int writes, int reads})> _eventHistoryRound(int round) async {
-  final directory = await Directory.systemTemp.createTemp('rolemaster_events_bench');
+  final directory = await Directory.systemTemp.createTemp(
+    'rolemaster_events_bench',
+  );
   final path = '${directory.path}/events.sqlite';
   final campaigns = SqliteCampaignRepository.open(path);
   await campaigns.save(
@@ -146,7 +150,9 @@ Future<({int writes, int reads})> _eventHistoryRound(int round) async {
 }
 
 Future<({int writes, int reads})> _combatStateRound(int round) async {
-  final directory = await Directory.systemTemp.createTemp('rolemaster_combat_bench');
+  final directory = await Directory.systemTemp.createTemp(
+    'rolemaster_combat_bench',
+  );
   final path = '${directory.path}/combat.sqlite';
   final campaigns = SqliteCampaignRepository.open(path);
   await campaigns.save(
@@ -187,7 +193,11 @@ Future<({int writes, int reads})> _combatStateRound(int round) async {
         'npc:guide': <String, int>{'stamina': 10},
       },
       turnOrder: <CombatParticipant>[
-        CombatParticipant(entityType: 'character', entityId: 'hero', name: 'Hero'),
+        CombatParticipant(
+          entityType: 'character',
+          entityId: 'hero',
+          name: 'Hero',
+        ),
         CombatParticipant(entityType: 'npc', entityId: 'guide', name: 'Guide'),
       ],
     );
@@ -205,7 +215,9 @@ Future<({int writes, int reads})> _combatStateRound(int round) async {
     read.stop();
 
     if (restored?.revision != _combatRevisions) {
-      throw StateError('Combat state did not reach revision $_combatRevisions.');
+      throw StateError(
+        'Combat state did not reach revision $_combatRevisions.',
+      );
     }
     return (writes: write.elapsedMicroseconds, reads: read.elapsedMicroseconds);
   } finally {
