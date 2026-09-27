@@ -1,8 +1,13 @@
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
+
 const int rolemasterSqliteSchemaVersion = 17;
 
-void initializeRolemasterSqliteSchema(Database database) {
+void initializeRolemasterSqliteSchema(
+  Database database, {
+  SqliteOperationLogger logger = const DeveloperSqliteOperationLogger(),
+}) {
   database.execute('PRAGMA foreign_keys = ON');
 
   var version = _readSchemaVersion(database);
@@ -204,6 +209,8 @@ void initializeRolemasterSqliteSchema(Database database) {
       'expected $rolemasterSqliteSchemaVersion.',
     );
   }
+
+  observeSqliteDatabaseOperations(database, logger);
 }
 
 int _readSchemaVersion(Database database) {
