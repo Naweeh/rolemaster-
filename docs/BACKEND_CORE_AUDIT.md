@@ -37,6 +37,7 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 - La restauración crea una copia previa y prueba recuperación ante un snapshot inválido.
 - `SqliteDatabaseDiagnostics` abre la base en solo lectura e informa versión, integridad, referencias y presencia de esquema.
 - Snapshot y restore emiten logs estructurados con metadatos operativos; no registran contenido de campaña.
+- Todas las conexiones de repositorio SQLite adjuntan un observador tras inicializar el esquema. Registra recuentos por tabla/operación al confirmar o revertir transacciones, sin IDs de fila, SQL, parámetros ni valores de campaña.
 
 **Coordinación parcial:** `restoreSnapshot` ahora exige un callback `closeDestinationConnections` para que la capa llamante cierre las conexiones al destino antes de reemplazar los archivos. Si el callback falla, la restauración aborta y conserva intacta la base. La aplicación todavía debe conectar ese callback a un coordinador que cierre todas las conexiones vivas; esa integración y una prueba con conexiones activas siguen pendientes.
 
@@ -54,7 +55,7 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 
 ## Bloqueos para Backend/Core Freeze
 
-1. Definir logging operativo para repositorios y errores del Core, más allá de snapshots.
+1. Completar logging operativo para errores de repositorios y límites del Core; ya se registran cambios y rollbacks SQLite sin datos de campaña.
 2. Acordar escenarios y objetivos de benchmark representativos; medirlos y conservar una referencia comparable.
 3. Conectar el callback obligatorio de restore a un coordinador de aplicación que cierre todas las conexiones vivas al destino, y probarlo con una conexión de repositorio abierta.
 4. Cerrar los contratos de servicios y errores antes del tag de Freeze.
