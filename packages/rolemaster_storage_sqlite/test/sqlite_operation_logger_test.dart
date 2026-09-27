@@ -1,7 +1,7 @@
-import 'package:rolemaster_storage_sqlite/rolemaster_storage_sqlite.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 
+import '../lib/src/sqlite_operation_logger.dart';
 import '../lib/src/sqlite_schema.dart';
 
 void main() {
