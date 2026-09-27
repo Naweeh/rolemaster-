@@ -4,7 +4,7 @@ Fecha: 2026-09-27. Esta auditoría separa capacidades probadas de trabajo pendie
 
 ## Verificación ejecutada
 
-En el run de GitHub Actions `36198189973` pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android. SQLite ejecutó además un benchmark informativo.
+En el run de GitHub Actions `36298397897` (run #368) pasaron Core Dart, SQLite storage, Flutter app, build Windows y build Android.
 
 ## Estado por contrato
 
@@ -49,14 +49,14 @@ La extensibilidad del motor queda completada. Los proveedores de servicios opcio
 
 ### Rendimiento y plataformas
 
-- CI ejecuta un benchmark repetible de 500 altas y 500 lecturas de Campaign Repository, con una ronda de calentamiento y tres medidas.
-- La medición es una referencia del runner; no mide carga de sesión, combate, sincronización ni dispositivos finales.
+- CI ejecuta tres escenarios: 500 escrituras y 500 lecturas puntuales de campañas; 500 eventos append-only y una lectura completa del historial; 200 revisiones secuenciales de estado de combate y una lectura del snapshot final. Cada escenario usa una ronda de calentamiento y tres medidas; el resultado informa medianas y metadatos del runner.
+- Las mediciones siguen siendo informativas. Falta conservar una referencia estable por SO/runtime y acordar umbrales de regresión; no representan sincronización ni dispositivos finales.
 - CI genera los runners Windows/Android en directorios de trabajo y compila ambos destinos. No hay configuración nativa específica comprometida al repositorio.
 
 ## Bloqueos para Backend/Core Freeze
 
 1. Completar logging operativo para errores de repositorios y límites del Core; ya se registran cambios y rollbacks SQLite sin datos de campaña.
-2. Acordar escenarios y objetivos de benchmark representativos; medirlos y conservar una referencia comparable.
+2. Conservar la referencia de los tres escenarios por SO/runtime y acordar umbrales de regresión medibles.
 3. Conectar el callback obligatorio de restore a un coordinador de aplicación que cierre todas las conexiones vivas al destino, y probarlo con una conexión de repositorio abierta.
 4. Cerrar los contratos de servicios y errores antes del tag de Freeze.
 
