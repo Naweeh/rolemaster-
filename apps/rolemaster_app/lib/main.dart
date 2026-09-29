@@ -1,56 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:rolemaster_core/rolemaster_core.dart';
 
 import 'src/app/error_logging.dart';
 import 'src/app/rolemaster_app.dart';
 import 'src/features/visual_alpha/visual_alpha_character_profile.dart';
-import 'src/infrastructure/in_memory_campaign_repository.dart';
-import 'src/infrastructure/in_memory_character_repository.dart';
-import 'src/infrastructure/in_memory_ruleset_repository.dart';
+import 'src/infrastructure/app_storage_memory.dart'
+    if (dart.library.io) 'src/infrastructure/app_storage_native.dart'
+    as storage;
 import 'src/infrastructure/manual_alpha_rulesets.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   installRolemasterErrorLogging();
 
-  final CampaignRepository campaignRepository = InMemoryCampaignRepository();
-  final CharacterRepository characterRepository = InMemoryCharacterRepository();
   final VisualAlphaCharacterProfileRepository characterProfileRepository =
       InMemoryVisualAlphaCharacterProfileRepository();
   final manualRulesets = buildManualAlphaRulesets();
-  final RulesetRepository rulesetRepository =
-      InMemoryRulesetRepository(manualRulesets);
-  final CampaignRulesetRepository campaignRulesetRepository =
-      InMemoryCampaignRulesetRepository();
-
-  final package = manualRulesets.single;
-  final campaign = Campaign(
-    id: 'visual-alpha-dnd',
-    name: 'Frontera B/X · Visual Alpha',
-    createdAt: DateTime.utc(2026, 8, 10, 20, 30),
-  );
-  await campaignRepository.save(campaign);
-
-  final initializeRuleset = InitializeCampaignRuleset(
-    campaignRepository: campaignRepository,
-    rulesetRepository: rulesetRepository,
-    campaignRulesetRepository: campaignRulesetRepository,
-    clock: () => DateTime.utc(2026, 8, 10, 20, 30),
-  );
-  await initializeRuleset(
-    campaignId: campaign.id,
-    rulesetId: package.manifest.id,
-    rulesetVersion: package.manifest.version,
-    activeModuleIds: package.manifest.defaultModuleIds,
-  );
+  final appStorage = await storage.openAppStorage(manualRulesets.single);
 
   runApp(
     RolemasterApp(
-      campaignRepository: campaignRepository,
-      characterRepository: characterRepository,
+      campaignRepository: appStorage.campaigns,
+      characterRepository: appStorage.characters,
       characterProfileRepository: characterProfileRepository,
-      rulesetRepository: rulesetRepository,
-      campaignRulesetRepository: campaignRulesetRepository,
+      rulesetRepository: appStorage.rulesets,
+      campaignRulesetRepository: appStorage.campaignRulesets,
     ),
   );
 }
