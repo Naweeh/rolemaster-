@@ -10,7 +10,9 @@ final class AppStorage {
     required this.rulesets,
     required this.campaignRulesets,
     void Function()? close,
-  }) : _close = close;
+    Future<AppStorage> Function(String snapshotPath)? restoreSnapshot,
+  }) : _close = close,
+       _restoreSnapshot = restoreSnapshot;
 
   final CampaignRepository campaigns;
   final CharacterRepository characters;
@@ -18,7 +20,19 @@ final class AppStorage {
   final RulesetRepository rulesets;
   final CampaignRulesetRepository campaignRulesets;
   final void Function()? _close;
+  final Future<AppStorage> Function(String snapshotPath)? _restoreSnapshot;
   bool _closed = false;
+
+  Future<AppStorage> restoreSnapshot(String snapshotPath) async {
+    if (_closed) throw StateError('Storage session is closed.');
+    final restore = _restoreSnapshot;
+    if (restore == null) {
+      throw UnsupportedError(
+        'Snapshot restore requires native SQLite storage.',
+      );
+    }
+    return restore(snapshotPath);
+  }
 
   void close() {
     if (_closed) return;

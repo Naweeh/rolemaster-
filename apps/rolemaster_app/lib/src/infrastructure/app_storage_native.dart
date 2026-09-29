@@ -63,7 +63,8 @@ Future<AppStorage> openNativeAppStorageAt(
         null) {
       await rulesets.repository.publish(package);
     }
-    final storage = AppStorage(
+    late final AppStorage storage;
+    storage = AppStorage(
       campaigns: campaigns.repository,
       characters: characters.repository,
       characterProfiles: characterProfiles.repository,
@@ -73,6 +74,14 @@ Future<AppStorage> openNativeAppStorageAt(
         for (final close in handles.reversed) {
           close();
         }
+      },
+      restoreSnapshot: (snapshotPath) async {
+        await coordinator.restoreSnapshot(
+          snapshotPath: snapshotPath,
+          destinationPath: path,
+        );
+        storage.close();
+        return openNativeAppStorageAt(path, package);
       },
     );
     await initializeVisualAlphaCampaign(storage, package);
