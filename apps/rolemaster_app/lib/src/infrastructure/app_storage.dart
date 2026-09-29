@@ -1,9 +1,12 @@
 import 'package:rolemaster_core/rolemaster_core.dart';
 
+import '../features/visual_alpha/visual_alpha_character_profile.dart';
+
 final class AppStorage {
   AppStorage({
     required this.campaigns,
     required this.characters,
+    required this.characterProfiles,
     required this.rulesets,
     required this.campaignRulesets,
     void Function()? close,
@@ -11,6 +14,7 @@ final class AppStorage {
 
   final CampaignRepository campaigns;
   final CharacterRepository characters;
+  final VisualAlphaCharacterProfileRepository characterProfiles;
   final RulesetRepository rulesets;
   final CampaignRulesetRepository campaignRulesets;
   final void Function()? _close;

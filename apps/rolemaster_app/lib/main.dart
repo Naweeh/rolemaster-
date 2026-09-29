@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'src/app/error_logging.dart';
 import 'src/app/rolemaster_app.dart';
-import 'src/features/visual_alpha/visual_alpha_character_profile.dart';
 import 'src/infrastructure/app_storage_memory.dart'
     if (dart.library.io) 'src/infrastructure/app_storage_native.dart'
     as storage;
@@ -12,8 +11,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   installRolemasterErrorLogging();
 
-  final VisualAlphaCharacterProfileRepository characterProfileRepository =
-      InMemoryVisualAlphaCharacterProfileRepository();
   final manualRulesets = buildManualAlphaRulesets();
   final appStorage = await storage.openAppStorage(manualRulesets.single);
 
@@ -21,7 +18,7 @@ Future<void> main() async {
     RolemasterApp(
       campaignRepository: appStorage.campaigns,
       characterRepository: appStorage.characters,
-      characterProfileRepository: characterProfileRepository,
+      characterProfileRepository: appStorage.characterProfiles,
       rulesetRepository: appStorage.rulesets,
       campaignRulesetRepository: appStorage.campaignRulesets,
     ),
