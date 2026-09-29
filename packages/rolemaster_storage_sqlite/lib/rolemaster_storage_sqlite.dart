@@ -1,5 +1,6 @@
 library rolemaster_storage_sqlite;
 
+export 'src/sqlite_application_coordinator.dart';
 export 'src/sqlite_calendar_repository.dart';
 export 'src/sqlite_campaign_repository.dart';
 export 'src/sqlite_character_repository.dart';
