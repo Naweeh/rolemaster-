@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
+import '../../app/error_logging.dart';
 import '../campaign/campaign_home_page.dart';
 import 'visual_alpha_character_panel.dart';
 import 'visual_alpha_character_profile.dart';
@@ -68,6 +69,7 @@ final class _VisualAlphaLandingPageState extends State<VisualAlphaLandingPage> {
         _loading = false;
       });
     } catch (error) {
+      recordHandledRolemasterError('ui.campaign.load.failed', error);
       if (!mounted) return;
       setState(() {
         _error = error;

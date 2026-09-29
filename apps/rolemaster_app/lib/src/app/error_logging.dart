@@ -8,6 +8,26 @@ typedef RolemasterErrorSink = void Function(
   Map<String, Object?> fields,
 );
 
+/// Records an error already handled by the UI without including its message.
+void recordHandledRolemasterError(
+  String event,
+  Object error, {
+  RolemasterErrorSink? sink,
+}) {
+  try {
+    final fields = <String, Object?>{
+      'errorType': error.runtimeType.toString(),
+    };
+    if (sink != null) {
+      sink(event, fields);
+    } else {
+      developer.log('$event ${jsonEncode(fields)}', name: 'rolemaster.app');
+    }
+  } catch (_) {
+    // Diagnostics must not replace the UI's original error handling.
+  }
+}
+
 /// Installs privacy-conscious handlers for uncaught application errors.
 ///
 /// The original exception message is deliberately omitted because it may

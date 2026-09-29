@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
+import '../../app/error_logging.dart';
+
 final class CampaignHomePage extends StatefulWidget {
   const CampaignHomePage({
     required this.campaignRepository,
@@ -132,6 +134,7 @@ final class _CampaignHomePageState extends State<CampaignHomePage> {
       _nameController.clear();
       await _reload();
     } catch (error) {
+      recordHandledRolemasterError('ui.campaign.create.failed', error);
       if (!mounted) return;
       setState(() => _errorMessage = error.toString());
     } finally {

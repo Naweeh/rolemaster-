@@ -5,6 +5,26 @@ import 'package:rolemaster_app/src/app/error_logging.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('handled errors omit campaign content and tolerate sink failures', () {
+    final events = <(String, Map<String, Object?>)>[];
+    recordHandledRolemasterError(
+      'ui.campaign.load.failed',
+      StateError('private campaign title'),
+      sink: (event, fields) => events.add((event, fields)),
+    );
+    expect(events.single.$1, 'ui.campaign.load.failed');
+    expect(events.single.$2, <String, Object?>{'errorType': 'StateError'});
+    expect(events.toString(), isNot(contains('private campaign title')));
+    expect(
+      () => recordHandledRolemasterError(
+        'ui.campaign.load.failed',
+        StateError('private campaign title'),
+        sink: (_, __) => throw StateError('logger failed'),
+      ),
+      returnsNormally,
+    );
+  });
+
   group('installRolemasterErrorLogging', () {
     late FlutterExceptionHandler? previousFlutterHandler;
     late bool Function(Object, StackTrace)? previousPlatformHandler;
