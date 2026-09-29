@@ -16,8 +16,8 @@ final class StateManager {
   StateManager({
     required CampaignStateRepository repository,
     StateOperationLogger? logger,
-  }) : _repository = repository,
-       _logger = logger ?? _developerLog;
+  })  : _repository = repository,
+        _logger = logger ?? _developerLog;
 
   final CampaignStateRepository _repository;
   final StateOperationLogger _logger;
