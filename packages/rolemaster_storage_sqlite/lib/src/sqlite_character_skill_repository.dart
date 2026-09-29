@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCharacterSkillRepository implements CharacterSkillRepository {
@@ -27,7 +28,7 @@ final class SqliteCharacterSkillRepository implements CharacterSkillRepository {
     required String characterId,
     required String skillId,
   }) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT character_id, skill_id, ranks, modifiers_json, notes, updated_at
       FROM character_skills
@@ -41,7 +42,7 @@ final class SqliteCharacterSkillRepository implements CharacterSkillRepository {
 
   @override
   Future<List<CharacterSkillState>> getForCharacter(String characterId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT character_id, skill_id, ranks, modifiers_json, notes, updated_at
       FROM character_skills
@@ -55,7 +56,7 @@ final class SqliteCharacterSkillRepository implements CharacterSkillRepository {
 
   @override
   Future<void> save(CharacterSkillState state) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO character_skills (
         character_id,

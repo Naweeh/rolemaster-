@@ -3,6 +3,35 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('logs read and write failures without SQL or campaign values', () {
+    final database = sqlite3.openInMemory();
+    final logger = _RecordingSqliteLogger();
+    addTearDown(database.close);
+    observeSqliteDatabaseOperations(database, logger);
+
+    expect(
+      () => database.loggedSelect('SELECT private_campaign FROM missing_table'),
+      throwsA(isA<SqliteException>()),
+    );
+    expect(
+      () => database.loggedExecute(
+        'INSERT INTO missing_table VALUES (?)',
+        <Object?>['secret-campaign-value'],
+      ),
+      throwsA(isA<SqliteException>()),
+    );
+
+    expect(logger.events.map((event) => event.$1), <String>[
+      'sqlite.repository.operation.failed',
+      'sqlite.repository.operation.failed',
+    ]);
+    expect(logger.events[0].$2['operation'], 'read');
+    expect(logger.events[1].$2['operation'], 'write');
+    expect(logger.events.toString(), isNot(contains('private_campaign')));
+    expect(logger.events.toString(), isNot(contains('secret-campaign-value')));
+    expect(logger.events.toString(), isNot(contains('missing_table')));
+  });
+
   test('logs database changes without row IDs or campaign values', () async {
     final database = sqlite3.openInMemory();
     final logger = _RecordingSqliteLogger();

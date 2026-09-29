@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteNpcRepository implements NpcRepository {
@@ -24,7 +25,7 @@ final class SqliteNpcRepository implements NpcRepository {
 
   @override
   Future<Npc?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -68,7 +69,7 @@ final class SqliteNpcRepository implements NpcRepository {
     }
 
     final archivedClause = includeArchived ? '' : 'AND archived_at IS NULL';
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -96,7 +97,7 @@ final class SqliteNpcRepository implements NpcRepository {
 
   @override
   Future<void> save(Npc npc) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO npcs (
         id,

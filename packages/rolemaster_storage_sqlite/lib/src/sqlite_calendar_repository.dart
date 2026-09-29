@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCalendarRepository implements CalendarRepository {
@@ -24,7 +25,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
 
   @override
   Future<CalendarDefinition?> getCalendarById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -45,7 +46,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
 
   @override
   Future<void> saveCalendar(CalendarDefinition calendar) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO calendars (
         id,
@@ -78,7 +79,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
 
   @override
   Future<CampaignTimeline?> getTimelineForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         campaign_id,
@@ -100,7 +101,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
   @override
   Future<void> saveTimeline(CampaignTimeline timeline) async {
     final moment = timeline.currentMoment;
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO campaign_timelines (
         campaign_id,
@@ -133,7 +134,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
 
   @override
   Future<TemporalEvent?> getEventById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -157,7 +158,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
 
   @override
   Future<List<TemporalEvent>> getEventsForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -188,7 +189,7 @@ final class SqliteCalendarRepository implements CalendarRepository {
   @override
   Future<void> saveEvent(TemporalEvent event) async {
     final moment = event.scheduledAt;
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO temporal_events (
         id,
