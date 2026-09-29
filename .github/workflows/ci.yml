@@ -101,6 +101,11 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Build web preview
+        run: |
+          flutter create . --platforms=web --project-name rolemaster_app --org app.rolemaster
+          flutter build web --release
+
   windows:
     name: Windows runner build
     runs-on: windows-2022
