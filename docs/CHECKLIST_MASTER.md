@@ -276,10 +276,11 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Suite completa verde: CI Core + SQLite + Flutter verde (validación de servicios opcionales y diagnóstico).
 - [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
-- [ ] Logging estructurado para fallos operativos de repositorios y límites del Core; el observador SQLite registra cambios y rollbacks, pero no errores de lectura ni límites del Core.
+- [x] Handlers globales registran errores Flutter/plataforma no controlados con tipo y stack trace, sin mensaje de excepción; tests en CI.
+- [ ] Añadir logs estructurados a fallos de repositorios y límites del Core que se manejan localmente; el observador SQLite registra cambios y rollbacks, no errores de lectura.
 - [x] Benchmark reproducible con escenarios de campañas, historial append-only y revisiones de combate. Runs #371, #372 y #374 guardados en `docs/BACKEND_CORE_AUDIT.md`; referencia consolidada disponible, el umbral sigue siendo provisional.
 - [x] Auditoría registrada y actualizada en `docs/BACKEND_CORE_AUDIT.md`.
-- [ ] Integrar un coordinador de aplicación que cierre todas las conexiones vivas antes de restaurar y probarlo con un repositorio abierto.
+- [ ] Integrar SQLite en el ciclo de vida de la app y conectar un coordinador que cierre todas las conexiones vivas antes de restaurar; probarlo con un repositorio abierto. La Visual Alpha actual usa repositorios en memoria.
 - [ ] Validar el umbral provisional con ejecuciones posteriores y revisar su idoneidad cuando cambie el entorno de CI.
 - [ ] Cerrar los contratos de errores y servicios antes del Freeze.
 - [ ] Tag Backend/Core Freeze, bloqueado hasta cerrar los gaps de logging, coordinación de restore, medición y auditoría final.
