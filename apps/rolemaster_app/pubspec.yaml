@@ -10,8 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^8.2.0
+  path_provider: ^2.1.6
   rolemaster_core:
     path: ../../packages/rolemaster_core
+  rolemaster_storage_sqlite:
+    path: ../../packages/rolemaster_storage_sqlite
 
 dev_dependencies:
   flutter_test:
