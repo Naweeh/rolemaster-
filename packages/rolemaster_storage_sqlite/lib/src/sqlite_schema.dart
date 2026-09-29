@@ -463,7 +463,7 @@ void _createCharacterSchemaV7(Database database) {
 
 void _createVisualAlphaProfilesSchemaV18(Database database) {
   database.execute('''
-    CREATE TABLE visual_alpha_character_profiles (
+    CREATE TABLE IF NOT EXISTS visual_alpha_character_profiles (
       character_id TEXT NOT NULL PRIMARY KEY,
       ruleset_id TEXT NOT NULL,
       ruleset_version TEXT NOT NULL,
