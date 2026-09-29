@@ -277,13 +277,15 @@ Regla arquitectónica: el Core provee mecánicas genéricas y trazabilidad; las 
 - [x] Migraciones secuenciales cubiertas por pruebas históricas y migración controlada de Ruleset.
 - [x] Corrupción/recuperación: snapshots validan integridad y FKs, restauran con rollback previo; diagnóstico de DB de solo lectura distingue daños y FKs rotas.
 - [x] Handlers globales registran errores Flutter/plataforma no controlados con tipo y stack trace, sin mensaje de excepción; tests en CI.
-- [ ] Añadir logs estructurados a fallos de repositorios y límites del Core que se manejan localmente; el observador SQLite registra cambios y rollbacks, no errores de lectura.
+- [x] Repositorios SQLite registran errores de lectura/escritura con tipo de operación y excepción, sin SQL, parámetros ni datos de campaña (PR #19; CI `36568000053`).
+- [ ] Auditar errores de conversión de filas y límites del Core que se capturan y manejan localmente.
 - [x] Benchmark reproducible con escenarios de campañas, historial append-only y revisiones de combate. Runs #371, #372 y #374 guardados en `docs/BACKEND_CORE_AUDIT.md`; referencia consolidada disponible, el umbral sigue siendo provisional.
 - [x] Auditoría registrada y actualizada en `docs/BACKEND_CORE_AUDIT.md`.
-- [ ] Integrar SQLite en el ciclo de vida de la app y conectar un coordinador que cierre todas las conexiones vivas antes de restaurar; probarlo con un repositorio abierto. La Visual Alpha actual usa repositorios en memoria.
-- [ ] Validar el umbral provisional con ejecuciones posteriores y revisar su idoneidad cuando cambie el entorno de CI.
+- [x] Coordinador de sesión cierra los repositorios registrados antes del restore; prueba con dos conexiones vivas y reapertura (PR #18; CI `36567081693`).
+- [ ] Integrar SQLite y el coordinador en el ciclo de vida de la app cuando se sustituya el almacenamiento en memoria de Visual Alpha.
+- [x] Revisar umbral provisional con tres runs posteriores en Linux x64/Dart 3.13.5 (`36566471037`, `36567081693`, `36568000053`). Mantenerlo informativo y recalibrar si cambia el runner.
 - [ ] Cerrar los contratos de errores y servicios antes del Freeze.
-- [ ] Tag Backend/Core Freeze, bloqueado hasta cerrar los gaps de logging, coordinación de restore, medición y auditoría final.
+- [ ] Tag Backend/Core Freeze, bloqueado hasta integrar persistencia en app y cerrar errores/contratos en la auditoría final.
 
 **Puerta obligatoria:** no iniciar UI definitiva antes de este punto.
 
