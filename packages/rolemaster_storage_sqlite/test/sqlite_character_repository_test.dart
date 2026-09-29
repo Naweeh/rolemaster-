@@ -8,6 +8,40 @@ import 'package:test/test.dart';
 
 void main() {
   group('SqliteCharacterRepository', () {
+    test('migrates v17 to v18 without losing characters', () async {
+      final fixture = await _createFixture('profile-v18-migration');
+      addTearDown(fixture.dispose);
+      final before = SqliteCharacterRepository.open(fixture.path);
+      await before.save(
+        Character(
+          id: 'character-1',
+          campaignId: 'campaign-1',
+          name: 'Aria',
+          createdAt: DateTime.utc(2026, 8, 10),
+        ),
+      );
+      before.close();
+
+      final legacy = sqlite3.open(fixture.path);
+      legacy.execute('DROP TABLE visual_alpha_character_profiles');
+      legacy.execute('PRAGMA user_version = 17');
+      legacy.close();
+
+      final migrated = SqliteCharacterRepository.open(fixture.path);
+      expect((await migrated.getById('character-1'))?.name, 'Aria');
+      migrated.close();
+      final database = sqlite3.open(fixture.path);
+      expect(database.userVersion, 18);
+      expect(
+        database.select('''
+          SELECT name FROM sqlite_master
+          WHERE name = 'visual_alpha_character_profiles'
+        '''),
+        hasLength(1),
+      );
+      database.close();
+    });
+
     test('persists character metadata after reopening', () async {
       final fixture = await _createFixture('character-reopen');
       addTearDown(fixture.dispose);

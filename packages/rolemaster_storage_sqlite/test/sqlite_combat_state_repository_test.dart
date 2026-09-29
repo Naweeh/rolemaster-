@@ -124,7 +124,7 @@ void main() {
     database.close();
 
     final combat = SqliteCombatStateRepository.open(path);
-    expect(SqliteCombatStateRepository.schemaVersion, 17);
+    expect(SqliteCombatStateRepository.schemaVersion, 18);
     expect(await combat.getByEncounterId('enc-1'), isNull);
     await combat.save(_state());
     combat.close();

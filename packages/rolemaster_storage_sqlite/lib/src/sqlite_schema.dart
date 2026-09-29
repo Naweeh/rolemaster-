@@ -2,7 +2,7 @@ import 'package:sqlite3/sqlite3.dart';
 
 import 'sqlite_operation_logger.dart';
 
-const int rolemasterSqliteSchemaVersion = 17;
+const int rolemasterSqliteSchemaVersion = 18;
 
 void initializeRolemasterSqliteSchema(
   Database database, {
@@ -201,6 +201,17 @@ void initializeRolemasterSqliteSchema(
       },
     );
     version = 17;
+  }
+
+  if (version == 17) {
+    _runMigration(
+      database,
+      targetVersion: 18,
+      migrate: () {
+        _createVisualAlphaProfilesSchemaV18(database);
+      },
+    );
+    version = 18;
   }
 
   if (version != rolemasterSqliteSchemaVersion) {
@@ -448,6 +459,21 @@ void _createCharacterSchemaV7(Database database) {
     'CREATE INDEX idx_characters_campaign_archived '
     'ON characters(campaign_id, archived_at)',
   );
+}
+
+void _createVisualAlphaProfilesSchemaV18(Database database) {
+  database.execute('''
+    CREATE TABLE visual_alpha_character_profiles (
+      character_id TEXT NOT NULL PRIMARY KEY,
+      ruleset_id TEXT NOT NULL,
+      ruleset_version TEXT NOT NULL,
+      class_name TEXT NOT NULL,
+      alignment TEXT NOT NULL,
+      abilities_json TEXT NOT NULL,
+      starting_gold INTEGER NOT NULL CHECK (starting_gold >= 0),
+      FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE
+    ) STRICT
+  ''');
 }
 
 void _createNpcSchemaV8(Database database) {

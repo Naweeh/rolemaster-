@@ -5,6 +5,7 @@ import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:rolemaster_storage_sqlite/rolemaster_storage_sqlite.dart';
 
 import 'app_storage.dart';
+import 'sqlite_visual_alpha_character_profile_repository.dart';
 
 Future<AppStorage> openAppStorage(RulesetPackage package) async {
   final directory = await getApplicationSupportDirectory();
@@ -47,6 +48,13 @@ Future<AppStorage> openNativeAppStorageAt(
       close: (SqliteCampaignRulesetRepository repository) => repository.close(),
     );
     handles.add(campaignRulesets.close);
+    final characterProfiles = coordinator.openRepository(
+      databasePath: path,
+      open: SqliteVisualAlphaCharacterProfileRepository.open,
+      close: (SqliteVisualAlphaCharacterProfileRepository repository) =>
+          repository.close(),
+    );
+    handles.add(characterProfiles.close);
 
     if (await rulesets.repository.getPackage(
           rulesetId: package.manifest.id,
@@ -58,6 +66,7 @@ Future<AppStorage> openNativeAppStorageAt(
     final storage = AppStorage(
       campaigns: campaigns.repository,
       characters: characters.repository,
+      characterProfiles: characterProfiles.repository,
       rulesets: rulesets.repository,
       campaignRulesets: campaignRulesets.repository,
       close: () {

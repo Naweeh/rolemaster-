@@ -14,6 +14,7 @@ export 'src/sqlite_item_instance_repository.dart';
 export 'src/sqlite_npc_repository.dart';
 export 'src/sqlite_operation_logger.dart';
 export 'src/sqlite_ruleset_repository.dart';
+export 'src/sqlite_schema.dart';
 export 'src/sqlite_scene_map_repository.dart';
 export 'src/sqlite_snapshot_service.dart';
 export 'src/sqlite_world_repository.dart';
