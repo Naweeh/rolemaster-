@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteRulesetRepository
@@ -26,7 +27,7 @@ final class SqliteRulesetRepository
   @override
   Future<void> publish(RulesetPackage package) async {
     final manifest = package.manifest;
-    final existing = _database.select(
+    final existing = _database.loggedSelect(
       'SELECT 1 FROM ruleset_packages WHERE ruleset_id = ? AND version = ?',
       <Object?>[manifest.id, manifest.version],
     );
@@ -37,7 +38,7 @@ final class SqliteRulesetRepository
       );
     }
 
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO ruleset_packages (
         ruleset_id,
@@ -79,7 +80,7 @@ final class SqliteRulesetRepository
     required String rulesetId,
     required String version,
   }) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         ruleset_id,
@@ -101,7 +102,7 @@ final class SqliteRulesetRepository
 
   @override
   Future<List<RulesetPackage>> getAvailablePackages() async {
-    final rows = _database.select('''
+    final rows = _database.loggedSelect('''
       SELECT
         ruleset_id,
         version,
@@ -176,7 +177,7 @@ final class SqliteCampaignRulesetRepository
 
   @override
   Future<CampaignRulesetState?> getForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         campaign_id,
@@ -238,7 +239,7 @@ final class SqliteCampaignRulesetRepository
       );
     }
 
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO campaign_rulesets (
         campaign_id,
@@ -277,23 +278,23 @@ final class SqliteCampaignRulesetRepository
         expected.binding.rulesetVersion == next.binding.rulesetVersion) {
       throw StateError('Invalid campaign ruleset migration.');
     }
-    _database.execute('BEGIN IMMEDIATE');
+    _database.loggedExecute('BEGIN IMMEDIATE');
     try {
-      final active = _database.select(
+      final active = _database.loggedSelect(
         "SELECT 1 FROM encounters WHERE campaign_id = ? AND status = 'active' LIMIT 1",
         <Object?>[expected.binding.campaignId],
       );
       if (active.isNotEmpty) {
         throw StateError('Close active encounters before migrating rulesets.');
       }
-      final target = _database.select(
+      final target = _database.loggedSelect(
         'SELECT 1 FROM ruleset_packages WHERE ruleset_id = ? AND version = ?',
         <Object?>[next.binding.rulesetId, next.binding.rulesetVersion],
       );
       if (target.isEmpty) {
         throw StateError('Target ruleset package is not published.');
       }
-      final skillRows = _database.select(
+      final skillRows = _database.loggedSelect(
         '''SELECT cs.rowid, cs.character_id, cs.skill_id
            FROM character_skills cs
            JOIN characters c ON c.id = cs.character_id
@@ -323,7 +324,7 @@ final class SqliteCampaignRulesetRepository
         skillMoves[rowId] = targetId;
       }
 
-      final itemRows = _database.select(
+      final itemRows = _database.loggedSelect(
         '''SELECT id, definition_id FROM item_instances
            WHERE campaign_id = ? AND definition_id IS NOT NULL''',
         <Object?>[expected.binding.campaignId],
@@ -346,25 +347,25 @@ final class SqliteCampaignRulesetRepository
         temporaryPrefix = '_$temporaryPrefix';
       }
       for (final rowId in skillMoves.keys) {
-        _database.execute(
+        _database.loggedExecute(
           'UPDATE character_skills SET skill_id = ? WHERE rowid = ?',
           <Object?>['$temporaryPrefix$rowId', rowId],
         );
       }
       for (final entry in skillMoves.entries) {
-        _database.execute(
+        _database.loggedExecute(
           'UPDATE character_skills SET skill_id = ? WHERE rowid = ?',
           <Object?>[entry.value, entry.key],
         );
       }
       for (final entry in itemMoves.entries) {
-        _database.execute(
+        _database.loggedExecute(
           'UPDATE item_instances SET definition_id = ? WHERE id = ?',
           <Object?>[entry.value, entry.key],
         );
       }
 
-      final changed = _database.select(
+      final changed = _database.loggedSelect(
         '''UPDATE campaign_rulesets
            SET ruleset_version = ?, active_module_ids_json = ?,
                bound_at = ?, overlay_json = ?, overlay_updated_at = ?
@@ -388,9 +389,9 @@ final class SqliteCampaignRulesetRepository
       if (changed.length != 1) {
         throw StateError('Campaign ruleset changed during migration.');
       }
-      _database.execute('COMMIT');
+      _database.loggedExecute('COMMIT');
     } catch (_) {
-      _database.execute('ROLLBACK');
+      _database.loggedExecute('ROLLBACK');
       rethrow;
     }
   }

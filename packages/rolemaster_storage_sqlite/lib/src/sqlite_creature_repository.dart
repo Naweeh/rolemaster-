@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCreatureRepository implements CreatureRepository {
@@ -24,7 +25,7 @@ final class SqliteCreatureRepository implements CreatureRepository {
 
   @override
   Future<Creature?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -67,7 +68,7 @@ final class SqliteCreatureRepository implements CreatureRepository {
     }
 
     final archivedClause = includeArchived ? '' : 'AND archived_at IS NULL';
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -94,7 +95,7 @@ final class SqliteCreatureRepository implements CreatureRepository {
 
   @override
   Future<void> save(Creature creature) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO creatures (
         id,

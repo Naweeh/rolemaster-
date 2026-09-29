@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCharacterRepository implements CharacterRepository {
@@ -24,7 +25,7 @@ final class SqliteCharacterRepository implements CharacterRepository {
 
   @override
   Future<Character?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -64,7 +65,7 @@ final class SqliteCharacterRepository implements CharacterRepository {
     }
 
     final archivedClause = includeArchived ? '' : 'AND archived_at IS NULL';
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -88,7 +89,7 @@ final class SqliteCharacterRepository implements CharacterRepository {
 
   @override
   Future<void> save(Character character) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO characters (
         id,

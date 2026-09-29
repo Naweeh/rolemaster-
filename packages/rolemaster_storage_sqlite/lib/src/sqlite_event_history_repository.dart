@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteEventHistoryRepository implements EventHistoryRepository {
@@ -24,7 +25,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
 
   @override
   Future<void> append(DomainEvent event) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO domain_events (
         id,
@@ -51,7 +52,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
   @override
   Future<DomainEvent?> getById(String id) async {
     final normalizedId = id.trim();
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -100,7 +101,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
     }
 
     if (limit == null) {
-      final rows = _database.select('''
+      final rows = _database.loggedSelect('''
         SELECT
           id,
           type,
@@ -118,7 +119,7 @@ final class SqliteEventHistoryRepository implements EventHistoryRepository {
     }
 
     parameters.add(limit);
-    final rows = _database.select('''
+    final rows = _database.loggedSelect('''
       SELECT
         id,
         type,

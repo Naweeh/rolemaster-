@@ -1,6 +1,7 @@
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCampaignStateRepository implements CampaignStateRepository {
@@ -31,7 +32,7 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
       );
     }
 
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT campaign_id, revision, updated_at
       FROM campaign_states
@@ -80,7 +81,7 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
     }
 
     if (expectedRevision == 0) {
-      _database.execute(
+      _database.loggedExecute(
         '''
         INSERT OR IGNORE INTO campaign_states (
           campaign_id,
@@ -97,7 +98,7 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
       return _changedRows() == 1;
     }
 
-    _database.execute(
+    _database.loggedExecute(
       '''
       UPDATE campaign_states
       SET revision = ?, updated_at = ?
@@ -118,6 +119,7 @@ final class SqliteCampaignStateRepository implements CampaignStateRepository {
   }
 
   int _changedRows() {
-    return _database.select('SELECT changes() AS count').single['count'] as int;
+    return _database.loggedSelect('SELECT changes() AS count').single['count']
+        as int;
   }
 }

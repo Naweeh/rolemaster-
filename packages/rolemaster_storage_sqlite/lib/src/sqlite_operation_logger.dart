@@ -21,6 +21,42 @@ final class DeveloperSqliteOperationLogger implements SqliteOperationLogger {
 final Expando<bool> _observedDatabases = Expando<bool>(
   'rolemaster.sqlite.operation-observer',
 );
+final Expando<SqliteOperationLogger> _databaseLoggers =
+    Expando<SqliteOperationLogger>('rolemaster.sqlite.logger');
+
+/// Logs only the operation kind and exception type. Query text, parameters,
+/// values, paths, and exception messages must stay out of operational logs.
+extension LoggedSqliteRepositoryOperations on Database {
+  ResultSet loggedSelect(String sql, [List<Object?> parameters = const []]) {
+    try {
+      return select(sql, parameters);
+    } catch (error) {
+      _recordFailure(this, 'read', error);
+      rethrow;
+    }
+  }
+
+  void loggedExecute(String sql, [List<Object?> parameters = const []]) {
+    try {
+      execute(sql, parameters);
+    } catch (error) {
+      _recordFailure(this, 'write', error);
+      rethrow;
+    }
+  }
+}
+
+void _recordFailure(Database database, String operation, Object error) {
+  try {
+    (_databaseLoggers[database] ?? const DeveloperSqliteOperationLogger())
+        .record('sqlite.repository.operation.failed', <String, Object?>{
+          'operation': operation,
+          'errorType': error.runtimeType.toString(),
+        });
+  } catch (_) {
+    // Logging must never replace the database error.
+  }
+}
 
 /// Records committed row changes and rolled-back writes without row IDs,
 /// query text, parameters, or campaign content.
@@ -28,6 +64,7 @@ void observeSqliteDatabaseOperations(
   Database database,
   SqliteOperationLogger logger,
 ) {
+  _databaseLoggers[database] = logger;
   if (_observedDatabases[database] == true) {
     return;
   }

@@ -1,6 +1,7 @@
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteEncounterRepository implements EncounterRepository {
@@ -22,7 +23,7 @@ final class SqliteEncounterRepository implements EncounterRepository {
 
   @override
   Future<Encounter?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, campaign_id, name, status, world_id, location_id, scene_map_id,
              notes, created_at, updated_at, started_at, closed_at
@@ -61,15 +62,15 @@ final class SqliteEncounterRepository implements EncounterRepository {
     final parameters = status == null
         ? <Object?>[campaignId.trim()]
         : <Object?>[campaignId.trim(), status.name];
-    final rows = _database.select(sql, parameters);
+    final rows = _database.loggedSelect(sql, parameters);
     return rows.map(_encounterFromRow).toList(growable: false);
   }
 
   @override
   Future<void> save(Encounter encounter) async {
-    _database.execute('BEGIN IMMEDIATE');
+    _database.loggedExecute('BEGIN IMMEDIATE');
     try {
-      _database.execute(
+      _database.loggedExecute(
         '''
         INSERT INTO encounters (
           id, campaign_id, name, status, world_id, location_id, scene_map_id,
@@ -102,12 +103,12 @@ final class SqliteEncounterRepository implements EncounterRepository {
         ],
       );
 
-      _database.execute(
+      _database.loggedExecute(
         'DELETE FROM encounter_participants WHERE encounter_id = ?',
         <Object?>[encounter.id],
       );
       for (final participant in encounter.participants) {
-        _database.execute(
+        _database.loggedExecute(
           '''
           INSERT INTO encounter_participants (
             encounter_id, entity_type, entity_id, label
@@ -121,9 +122,9 @@ final class SqliteEncounterRepository implements EncounterRepository {
           ],
         );
       }
-      _database.execute('COMMIT');
+      _database.loggedExecute('COMMIT');
     } catch (_) {
-      _database.execute('ROLLBACK');
+      _database.loggedExecute('ROLLBACK');
       rethrow;
     }
   }
@@ -134,7 +135,7 @@ final class SqliteEncounterRepository implements EncounterRepository {
 
   Encounter _encounterFromRow(Row row) {
     final encounterId = row['id'] as String;
-    final participantRows = _database.select(
+    final participantRows = _database.loggedSelect(
       '''
       SELECT entity_type, entity_id, label
       FROM encounter_participants

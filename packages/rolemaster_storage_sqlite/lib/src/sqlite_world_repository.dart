@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteWorldRepository implements WorldRepository {
@@ -24,7 +25,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<World?> getWorldById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, campaign_id, name, created_at, updated_at, description, tags_json
       FROM worlds
@@ -38,7 +39,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<List<World>> getWorldsForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, campaign_id, name, created_at, updated_at, description, tags_json
       FROM worlds
@@ -52,7 +53,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<void> saveWorld(World world) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO worlds (
         id, campaign_id, name, created_at, updated_at, description, tags_json
@@ -79,7 +80,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<Region?> getRegionById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -101,7 +102,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<List<Region>> getRegionsForWorld(String worldId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -123,7 +124,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<void> saveRegion(Region region) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO regions (
         id,
@@ -159,7 +160,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<Location?> getLocationById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -182,7 +183,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<List<Location>> getLocationsForWorld(String worldId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -205,7 +206,7 @@ final class SqliteWorldRepository implements WorldRepository {
 
   @override
   Future<void> saveLocation(Location location) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO locations (
         id,

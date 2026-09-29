@@ -1,6 +1,7 @@
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteItemInstanceRepository implements ItemInstanceRepository {
@@ -22,7 +23,7 @@ final class SqliteItemInstanceRepository implements ItemInstanceRepository {
 
   @override
   Future<ItemInstance?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -48,7 +49,7 @@ final class SqliteItemInstanceRepository implements ItemInstanceRepository {
 
   @override
   Future<List<ItemInstance>> getForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -75,7 +76,7 @@ final class SqliteItemInstanceRepository implements ItemInstanceRepository {
   @override
   Future<void> save(ItemInstance item) async {
     final holder = item.placement.holder;
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO item_instances (
         id,

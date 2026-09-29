@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCombatStateRepository implements CombatStateRepository {
@@ -23,7 +24,7 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
 
   @override
   Future<CombatState?> getByEncounterId(String encounterId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       'SELECT * FROM combat_states WHERE encounter_id = ?',
       <Object?>[encounterId.trim()],
     );
@@ -74,9 +75,9 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
 
   @override
   Future<void> save(CombatState state) async {
-    _database.execute('BEGIN IMMEDIATE');
+    _database.loggedExecute('BEGIN IMMEDIATE');
     try {
-      final encounterRows = _database.select(
+      final encounterRows = _database.loggedSelect(
         'SELECT campaign_id, status FROM encounters WHERE id = ?',
         <Object?>[state.encounterId],
       );
@@ -87,7 +88,7 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
           'Combat requires an active encounter in its campaign.',
         );
       }
-      final references = _database.select(
+      final references = _database.loggedSelect(
         'SELECT entity_type, entity_id FROM encounter_participants '
         'WHERE encounter_id = ?',
         <Object?>[state.encounterId],
@@ -128,14 +129,14 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
       ]);
 
       if (state.revision == 0) {
-        final existing = _database.select(
+        final existing = _database.loggedSelect(
           'SELECT revision FROM combat_states WHERE encounter_id = ?',
           <Object?>[state.encounterId],
         );
         if (existing.isNotEmpty) {
           throw StateError('Combat state already exists.');
         }
-        _database.execute(
+        _database.loggedExecute(
           '''INSERT INTO combat_states
              (encounter_id, campaign_id, ruleset_id, ruleset_version,
               revision, round_number, turn_index, turn_order_json, actions_json,
@@ -156,7 +157,7 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
           ],
         );
       } else {
-        _database.execute(
+        _database.loggedExecute(
           '''UPDATE combat_states SET
                revision = ?, round_number = ?, turn_index = ?,
                turn_order_json = ?, actions_json = ?, stats_json = ?, conditions_json = ?
@@ -178,15 +179,15 @@ final class SqliteCombatStateRepository implements CombatStateRepository {
           ],
         );
         final changed =
-            _database.select('SELECT changes() AS count').single['count']
+            _database.loggedSelect('SELECT changes() AS count').single['count']
                 as int;
         if (changed != 1) {
           throw StateError('Combat state revision conflict.');
         }
       }
-      _database.execute('COMMIT');
+      _database.loggedExecute('COMMIT');
     } catch (_) {
-      _database.execute('ROLLBACK');
+      _database.loggedExecute('ROLLBACK');
       rethrow;
     }
   }

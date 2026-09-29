@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteCampaignRepository implements CampaignRepository {
@@ -24,7 +25,7 @@ final class SqliteCampaignRepository implements CampaignRepository {
 
   @override
   Future<Campaign?> getById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT
         id,
@@ -53,7 +54,7 @@ final class SqliteCampaignRepository implements CampaignRepository {
   @override
   Future<List<Campaign>> getAll({bool includeArchived = false}) async {
     final whereClause = includeArchived ? '' : 'WHERE archived_at IS NULL';
-    final rows = _database.select('''
+    final rows = _database.loggedSelect('''
       SELECT
         id,
         name,
@@ -75,7 +76,7 @@ final class SqliteCampaignRepository implements CampaignRepository {
 
   @override
   Future<void> save(Campaign campaign) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO campaigns (
         id,

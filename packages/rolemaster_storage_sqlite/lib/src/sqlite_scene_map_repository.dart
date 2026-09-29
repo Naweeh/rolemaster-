@@ -1,6 +1,7 @@
 import 'package:rolemaster_core/rolemaster_core.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'sqlite_operation_logger.dart';
 import 'sqlite_schema.dart';
 
 final class SqliteSceneMapRepository implements SceneMapRepository {
@@ -22,7 +23,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<SceneMap?> getMapById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, campaign_id, name, world_id, location_id,
              logical_width, logical_height, notes, created_at, updated_at
@@ -37,7 +38,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<List<SceneMap>> getMapsForCampaign(String campaignId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, campaign_id, name, world_id, location_id,
              logical_width, logical_height, notes, created_at, updated_at
@@ -52,7 +53,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<void> saveMap(SceneMap map) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO scene_maps (
         id, campaign_id, name, world_id, location_id,
@@ -84,7 +85,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<SceneLayer?> getLayerById(String id) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, scene_map_id, name, order_index, visibility
       FROM scene_layers
@@ -98,7 +99,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<List<SceneLayer>> getLayersForMap(String sceneMapId) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT id, scene_map_id, name, order_index, visibility
       FROM scene_layers
@@ -112,7 +113,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<void> saveLayer(SceneLayer layer) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO scene_layers (
         id, scene_map_id, name, order_index, visibility
@@ -138,7 +139,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
     required String entityType,
     required String entityId,
   }) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT scene_map_id, entity_type, entity_id, x, y, layer_id, updated_at
       FROM scene_entity_positions
@@ -154,7 +155,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
   Future<List<SceneEntityPosition>> getEntityPositionsForMap(
     String sceneMapId,
   ) async {
-    final rows = _database.select(
+    final rows = _database.loggedSelect(
       '''
       SELECT scene_map_id, entity_type, entity_id, x, y, layer_id, updated_at
       FROM scene_entity_positions
@@ -168,7 +169,7 @@ final class SqliteSceneMapRepository implements SceneMapRepository {
 
   @override
   Future<void> saveEntityPosition(SceneEntityPosition position) async {
-    _database.execute(
+    _database.loggedExecute(
       '''
       INSERT INTO scene_entity_positions (
         scene_map_id, entity_type, entity_id, x, y, layer_id, updated_at
