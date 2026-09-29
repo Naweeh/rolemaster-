@@ -5,6 +5,41 @@ import 'package:test/test.dart';
 
 void main() {
   group('StateManager', () {
+    test('records handled failures without leaking campaign values', () async {
+      final events = <(String, Map<String, Object?>)>[];
+      final manager = StateManager(
+        repository: _MemoryStateRepository(),
+        logger: (event, fields) => events.add((event, fields)),
+      );
+      final secret = 'private-campaign-content';
+
+      await expectLater(
+        manager.execute(
+          StateTransaction(
+            campaignId: secret,
+            expectedRevision: 0,
+            changes: <StateChange>[
+              _RecordingChange(
+                name: 'change',
+                log: <String>[],
+                applyError: StateError(secret),
+                rollbackError: StateError(secret),
+              ),
+            ],
+            changedAt: DateTime.utc(2026, 9, 29),
+          ),
+        ),
+        throwsA(isA<StateTransactionException>()),
+      );
+
+      expect(events.map((event) => event.$1), <String>[
+        'state.rollback.failed',
+        'state.change.apply.failed',
+      ]);
+      expect(events.last.$2['rollbackFailureCount'], 1);
+      expect(events.toString(), isNot(contains(secret)));
+    });
+
     test('validates all changes before applying and advances revision',
         () async {
       final log = <String>[];

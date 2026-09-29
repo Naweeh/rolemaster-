@@ -1,14 +1,26 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'campaign_state.dart';
 import 'campaign_state_repository.dart';
 import 'state_change.dart';
 import 'state_exceptions.dart';
 import 'state_transaction.dart';
 
+typedef StateOperationLogger = void Function(
+  String event,
+  Map<String, Object?> fields,
+);
+
 final class StateManager {
-  StateManager({required CampaignStateRepository repository})
-      : _repository = repository;
+  StateManager({
+    required CampaignStateRepository repository,
+    StateOperationLogger? logger,
+  }) : _repository = repository,
+       _logger = logger ?? _developerLog;
 
   final CampaignStateRepository _repository;
+  final StateOperationLogger _logger;
   final Set<String> _activeCampaigns = <String>{};
 
   Future<CampaignState> getState(String campaignId) async {
@@ -58,6 +70,7 @@ final class StateManager {
           await change.apply();
         } catch (cause) {
           final rollbackFailures = await _rollback(invokedChanges);
+          _recordFailure('state.change.apply.failed', cause, rollbackFailures);
           throw StateTransactionException(
             cause: cause,
             rollbackFailures: rollbackFailures,
@@ -74,6 +87,7 @@ final class StateManager {
         );
       } catch (cause) {
         final rollbackFailures = await _rollback(invokedChanges);
+        _recordFailure('state.persistence.failed', cause, rollbackFailures);
         throw StateTransactionException(
           cause: cause,
           rollbackFailures: rollbackFailures,
@@ -110,8 +124,28 @@ final class StateManager {
         await change.rollback();
       } catch (failure) {
         failures.add(failure);
+        _recordFailure('state.rollback.failed', failure, const <Object>[]);
       }
     }
     return failures;
+  }
+
+  void _recordFailure(
+    String event,
+    Object error,
+    List<Object> rollbackFailures,
+  ) {
+    try {
+      _logger(event, <String, Object?>{
+        'errorType': error.runtimeType.toString(),
+        'rollbackFailureCount': rollbackFailures.length,
+      });
+    } catch (_) {
+      // Logging must not replace the transaction result or its original error.
+    }
+  }
+
+  static void _developerLog(String event, Map<String, Object?> fields) {
+    developer.log('$event ${jsonEncode(fields)}', name: 'rolemaster.core');
   }
 }
