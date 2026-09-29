@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
 
+import '../../app/error_logging.dart';
 import 'visual_alpha_character_profile.dart';
 
 Future<void> showVisualAlphaCharacterPanel(
@@ -103,6 +104,7 @@ final class _CharacterPanelState extends State<_CharacterPanel> {
         _error = null;
       });
     } catch (error) {
+      recordHandledRolemasterError('ui.character.load.failed', error);
       if (!mounted) return;
       setState(() => _error = error);
     }
@@ -209,6 +211,7 @@ final class _CharacterPanelState extends State<_CharacterPanel> {
       });
       await _reload();
     } catch (error) {
+      recordHandledRolemasterError('ui.character.save.failed', error);
       if (!mounted) return;
       setState(() => _error = error);
     } finally {
