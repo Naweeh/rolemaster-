@@ -5,8 +5,36 @@ import 'package:rolemaster_app/src/features/visual_alpha/visual_alpha_character_
 import 'package:rolemaster_app/src/infrastructure/app_storage_native.dart';
 import 'package:rolemaster_app/src/infrastructure/manual_alpha_rulesets.dart';
 import 'package:rolemaster_core/rolemaster_core.dart';
+import 'package:rolemaster_storage_sqlite/rolemaster_storage_sqlite.dart';
 
 void main() {
+  test('native restore closes live repositories and reopens the session',
+      () async {
+    final directory = await Directory.systemTemp.createTemp('rolemaster-app-');
+    addTearDown(() => directory.delete(recursive: true));
+    final path = '${directory.path}/rolemaster.db';
+    final snapshotPath = '${directory.path}/before.snapshot.db';
+    final package = buildManualAlphaRulesets().single;
+    final first = await openNativeAppStorageAt(path, package);
+    await SqliteSnapshotService().createSnapshot(
+      sourcePath: path,
+      snapshotPath: snapshotPath,
+    );
+
+    final campaign = (await first.campaigns.getById('visual-alpha-dnd'))!;
+    await first.campaigns.save(
+      campaign.rename(name: 'Changed', at: DateTime.utc(2026, 9, 29)),
+    );
+    final restored = await first.restoreSnapshot(snapshotPath);
+    addTearDown(restored.close);
+
+    expect(
+      (await restored.campaigns.getById('visual-alpha-dnd'))?.name,
+      campaign.name,
+    );
+    first.close();
+  });
+
   test('native session reopens campaign and exact ruleset binding', () async {
     final directory = await Directory.systemTemp.createTemp('rolemaster-app-');
     addTearDown(() => directory.delete(recursive: true));
